@@ -191,7 +191,7 @@ export default function HomeExperience() {
             <div className="journey-shade" />
           </div>
           <div className="journey-scene scene-hero" style={{ "--scene-opacity": 1 } as CSSProperties} inert={activePanel !== 0}>
-            <div className="journey-copy"><div aria-hidden="true"><h1>{t.hero.title}</h1><p>{t.hero.intro}</p></div><div className="hero-actions"><a className="action action-primary" href="#collections">{t.hero.explore}<svg aria-hidden="true" width="18" height="14" viewBox="0 0 18 14" fill="none"><path d="M1 7h15m-5-5 5 5-5 5" stroke="currentColor" /></svg></a></div></div>
+            <div className="journey-copy"><div aria-hidden="true"><h1>{t.hero.title}</h1><p>{t.hero.intro}</p></div></div>
           </div>
           <div aria-hidden="true" className="journey-scene scene-intro">
             <div className="journey-copy"><h2>{t.story.heading}</h2><p>{t.story.intro}</p></div>

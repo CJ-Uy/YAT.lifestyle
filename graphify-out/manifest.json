@@ -95,8 +95,8 @@
     "semantic_hash": ""
   },
   "app/home-experience.tsx": {
-    "mtime": 1790257530.897297,
-    "ast_hash": "c0a24b2be812ad2278817bac4a1d1444",
+    "mtime": 1790258301.5684998,
+    "ast_hash": "ab345a5f8bf71e1bf7035aaef22ba2fe",
     "semantic_hash": ""
   },
   ".impeccable/home-build-brief.md": {
@@ -205,8 +205,8 @@
     "semantic_hash": ""
   },
   "DESIGN.md": {
-    "mtime": 1790257860.493757,
-    "ast_hash": "d77db28e5a0913d9009d8712fc618013",
+    "mtime": 1790258358.0173054,
+    "ast_hash": "a7f255e12c8c3b9475bc20f8d89699d2",
     "semantic_hash": ""
   },
   "public/media/hong-kong-harbour-afterimage-poster.jpg": {
@@ -595,13 +595,13 @@
     "semantic_hash": ""
   },
   "app/site-header.tsx": {
-    "mtime": 1790257860.489247,
-    "ast_hash": "c53bf0853a376b9e167fd0778b0a4019",
+    "mtime": 1790258419.7067866,
+    "ast_hash": "5d7a57c4d867616e169f44aacb953d4c",
     "semantic_hash": ""
   },
   "scripts/check-navigation.js": {
-    "mtime": 1790257601.9096615,
-    "ast_hash": "4b13f69148bf0428d26f5dd04dcaf4cb",
+    "mtime": 1790258419.7092907,
+    "ast_hash": "20ba27702335fe6ed2d4f2b6d836b1fd",
     "semantic_hash": ""
   },
   "public/brand-emblem.svg": {

@@ -61,9 +61,9 @@ The hero display size is `clamp(3.4rem, 5.35vw, 5.65rem)` on desktop. Section he
 
 ## Layout
 
-The fixed header is 82px high on desktop and 96px on small screens. Main content uses horizontal padding of `clamp(1.25rem, 4.5vw, 4.75rem)`. Desktop compositions pair a readable text field with a larger media field. Below 1000px, navigation becomes a native disclosure. Below 680px, the portrait pipette remains central while the story copy stays below the falling drop.
+The fixed header is 82px high on desktop and 76px on small screens. Main content uses horizontal padding of `clamp(1.25rem, 4.5vw, 4.75rem)`. Desktop compositions pair a readable text field with a larger media field. Below 1000px, navigation becomes a native disclosure. Below 680px, the portrait pipette remains central while the story copy stays below the falling drop.
 
-The first viewport gives visitors a headline, a plain description, one understated collection link, and the pipette. The story can be bypassed through the navigation and anchors.
+The first viewport gives visitors a headline, a plain description, and the pipette, without duplicating the navigation's collection link. The story can be bypassed through the navigation and anchors.
 
 ## Elevation & Depth
 
@@ -81,7 +81,7 @@ Actions have square corners, a 56px minimum height, a fine border, and serif tex
 
 ### Navigation
 
-The fixed header holds the curved gold dropper emblem with the YAT wordmark, section links, a native language dropdown, and a Shop link. Mobile uses a native `details` menu. All touch targets are at least 44px. The language dropdown shows English, Traditional Chinese, and Simplified Chinese by their full names and remembers the choice across pages. Shop leads to a localized, read-only coming-soon page using existing lab imagery and the Hong Kong delivery notice.
+The fixed header centers the curved gold dropper emblem alone, with section links on the left and language plus Shop on the right. Mobile keeps the same single-row arrangement with a native `details` navigation menu. All touch targets are at least 44px. The language disclosure uses a dark panel, full language names and a gold check for the current choice; its mobile trigger is abbreviated. It supports Tab, Escape, outside-click dismissal and remembers the choice across pages. Shop leads to a localized, read-only coming-soon page using existing lab imagery and the Hong Kong delivery notice.
 
 ### Collection Frames
 
