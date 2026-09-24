@@ -1,0 +1,14 @@
+{
+  "synthetic": true,
+  "provider": "Higgsfield",
+  "model": "bytedance/seedance-2.0/text-to-video",
+  "request_id": "1f663818-ba4f-437d-9d53-b8ee27170fa6",
+  "placement": "Mobile hero and scroll story",
+  "prompt": "Vertical 9:16 single continuous luxury perfume film. A real transparent laboratory glass pipette hangs centered from the upper edge against a nearly black Hong Kong night atmosphere with very distant soft amber harbour lights. One luminous warm gold perfume droplet gathers at the glass tip, detaches, and falls straight down through the center of the frame in slow motion. The droplet remains clearly visible and centered with generous dark negative space around it. On reaching the lower third it becomes a precise, elegant gold teardrop shape. Restrained optical glass highlights, natural liquid physics, black and gold palette, premium macro cinematography, no camera cuts, no camera shake, no people, no hands, no bottle, no text, no letters, no logo, no extra droplets.",
+  "specification": {
+    "duration_seconds": 5,
+    "resolution": "720p",
+    "aspect_ratio": "9:16",
+    "audio": false
+  }
+}

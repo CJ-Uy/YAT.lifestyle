@@ -8,6 +8,7 @@ colors:
   muted: "#aaa499"
   liquid-gold: "#d8a443"
   paper: "#ece5d8"
+  logo-white: "#fff"
 typography:
   display:
     fontFamily: "Bodoni Moda, Bodoni 72, Didot, Georgia, serif"
@@ -61,7 +62,7 @@ The hero display size is `clamp(3.4rem, 5.35vw, 5.65rem)` on desktop. Section he
 
 ## Layout
 
-The fixed header is 82px high on desktop and 96px on small screens. Main content uses horizontal padding of `clamp(1.25rem, 4.5vw, 4.75rem)`. Desktop compositions pair a readable text field with a larger media field. Below 1000px, navigation becomes a native disclosure. Below 680px, content stacks and collection previews scroll horizontally.
+The fixed header is 82px high on desktop and 96px on small screens. Main content uses horizontal padding of `clamp(1.25rem, 4.5vw, 4.75rem)`. Desktop compositions pair a readable text field with a larger media field. Below 1000px, navigation becomes a native disclosure. Below 680px, the portrait film leads, copy overlaps its dark lower edge, and the three collection links form a compact row.
 
 The first viewport gives visitors a headline, a plain description, direct collection and story links, launch status, and the pipette. The story can be bypassed through the navigation and anchors.
 
@@ -71,7 +72,7 @@ The interface uses no card shadows. Depth comes from dark tonal layers, glass hi
 
 ## Shapes
 
-Most interface edges are square. Fine rules, film perforations, contact sheets, and registration marks create precision. The pipette and droplet supply the main curves. Do not add rounded cards or pill controls without a concrete need.
+Most interface edges are square. Fine rules, film perforations, and contact sheets create precision. The pipette and droplet supply the main curves. Do not add rounded cards or pill controls without a concrete need.
 
 ## Components
 
@@ -89,7 +90,7 @@ Three contact sheet frames pair a local image with a collection name, short desc
 
 ### Signature Media
 
-The hero layers a Higgsfield film and an authored pipette canvas behind readable copy. Scroll moves the pipette and story stage. Reduced motion uses a still poster and a fixed canvas frame, without a running animation loop.
+The hero uses a landscape Higgsfield film on desktop and a portrait Higgsfield film on phones. The story keeps the film in a sticky frame and seeks through the falling drop as the visitor scrolls. The film resolves into the user-supplied draft YAT logo, with the gold drop inside the A. This is a provisional logo treatment, not final brand approval. Reduced motion uses a still poster and the logo without scroll animation.
 
 ## Do's and Don'ts
 

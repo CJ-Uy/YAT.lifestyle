@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { RefObject } from "react";
+import { storyMotion } from "../lib/story-motion";
 
 type Locale = "en" | "zh-Hant" | "zh-Hans";
 
@@ -35,7 +35,7 @@ const copy = {
     },
     about: { title: "A Hong Kong beginning.", body: "YAT.lifestyle was started by an HKUST Biotechnology student who wanted laboratory curiosity and perfumery to share the same bench. The work is local, early, and deliberately small in scale.", quote: "Not a formula for Hong Kong. A practice of noticing it." },
     soon: { title: "The first release is in development.", body: "YAT.lifestyle is not taking orders yet. When purchasing opens, delivery will initially be available to Hong Kong addresses.", status: "Coming Soon", availability: "Hong Kong first" },
-    footer: { top: "Back to top", note: "Perfume, laboratory curiosity, and Hong Kong memory." }, canvas: "Interactive glass pipette and perfume droplet", skip: "Skip to collections",
+    footer: { top: "Back to top", note: "Perfume, laboratory curiosity, and Hong Kong memory." }, skip: "Skip to collections",
   },
   "zh-Hant": {
     nav: { home: "首頁", collections: "系列", process: "過程", about: "關於", status: "即將推出", menu: "選單" },
@@ -45,7 +45,7 @@ const copy = {
     process: { title: "從觀察走到配方。", intro: "YAT.lifestyle 源於一位生物科技學生對實驗室工作與香水的興趣。方法先由留意開始，再進入細心的反覆試驗。", steps: [["觀察", "從值得理解的時刻、地方或氣味偏好開始。"], ["調配", "透過反覆並有記錄的試驗，建立及調整香氣。"], ["重聞", "讓香氣隨時間展開，只留下忠於最初想法的部分。"]], note: "Element 最終的諮詢及分析流程尚未公布。" },
     about: { title: "從香港開始。", body: "YAT.lifestyle 由一位香港科技大學生物科技學生創立，希望讓實驗室的好奇心與香水並排在同一張工作枱上。這是一項本地、早期，而且刻意保持小規模的工作。", quote: "不是為香港寫下一條公式，而是練習好好留意它。" },
     soon: { title: "首個作品仍在開發中。", body: "YAT.lifestyle 暫未接受訂購。購買服務開放初期，只會送貨到香港地址。", status: "即將推出", availability: "香港先行" },
-    footer: { top: "返回頂部", note: "香水、實驗室的好奇心與香港記憶。" }, canvas: "互動玻璃滴管與香水液滴", skip: "跳至系列",
+    footer: { top: "返回頂部", note: "香水、實驗室的好奇心與香港記憶。" }, skip: "跳至系列",
   },
   "zh-Hans": {
     nav: { home: "首页", collections: "系列", process: "过程", about: "关于", status: "即将推出", menu: "菜单" },
@@ -55,7 +55,7 @@ const copy = {
     process: { title: "从观察走到配方。", intro: "YAT.lifestyle 源于一位生物科技学生对实验室工作与香水的兴趣。方法先由留意开始，再进入细心的反复试验。", steps: [["观察", "从值得理解的时刻、地方或气味偏好开始。"], ["调配", "通过反复并有记录的试验，建立及调整香气。"], ["重闻", "让香气随时间展开，只留下忠于最初想法的部分。"]], note: "Element 最终的咨询及分析流程尚未公布。" },
     about: { title: "从香港开始。", body: "YAT.lifestyle 由一位香港科技大学生物科技学生创立，希望让实验室的好奇心与香水并排在同一张工作台上。这是一项本地、早期，而且刻意保持小规模的工作。", quote: "不是为香港写下一条公式，而是练习好好留意它。" },
     soon: { title: "首个作品仍在开发中。", body: "YAT.lifestyle 暂未接受订购。购买服务开放初期，只会送货到香港地址。", status: "即将推出", availability: "香港先行" },
-    footer: { top: "返回顶部", note: "香水、实验室的好奇心与香港记忆。" }, canvas: "互动玻璃滴管与香水液滴", skip: "跳至系列",
+    footer: { top: "返回顶部", note: "香水、实验室的好奇心与香港记忆。" }, skip: "跳至系列",
   },
 } as const;
 
@@ -69,76 +69,13 @@ const collectionImages = [
   "/media/element-lab.png",
 ];
 
-function PipetteCanvas({ label, progress }: { label: string; progress: RefObject<number> }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const pointer = useRef({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const context = canvas.getContext("2d");
-    if (!context) return;
-    let raf = 0;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const render = () => {
-      const rect = canvas.getBoundingClientRect();
-      const ratio = Math.min(window.devicePixelRatio || 1, 2);
-      const width = Math.max(1, Math.round(rect.width * ratio));
-      const height = Math.max(1, Math.round(rect.height * ratio));
-      if (canvas.width !== width || canvas.height !== height) { canvas.width = width; canvas.height = height; }
-      context.setTransform(ratio, 0, 0, ratio, 0, 0);
-      context.clearRect(0, 0, rect.width, rect.height);
-      const scroll = reduced ? 0.18 : progress.current;
-      const px = reduced ? 0 : pointer.current.x * 11;
-      const py = reduced ? 0 : pointer.current.y * 7;
-      const drift = reduced ? 0 : Math.sin(scroll * Math.PI * 5) * 8;
-      const scale = Math.min(rect.width / 640, rect.height / 690) * 1.12;
-      const cx = rect.width * (0.48 + scroll * 0.06) + px;
-      const top = rect.height * (-0.2 + scroll * 0.12) + py;
-      context.save();
-      context.translate(cx, top);
-      context.rotate(-0.64 + scroll * 0.3 + pointer.current.x * 0.025);
-      context.scale(scale, scale);
-      const glass = context.createLinearGradient(-100, 0, 110, 0);
-      glass.addColorStop(0, "rgba(255,255,255,0.06)"); glass.addColorStop(0.25, "rgba(255,246,220,0.62)"); glass.addColorStop(0.45, "rgba(255,255,255,0.08)"); glass.addColorStop(0.72, "rgba(255,224,151,0.42)"); glass.addColorStop(1, "rgba(255,255,255,0.13)");
-      context.fillStyle = glass; context.strokeStyle = "rgba(255,248,232,0.78)"; context.lineWidth = 3;
-      context.beginPath(); context.moveTo(-72, 0); context.lineTo(72, 0); context.lineTo(48, 390); context.quadraticCurveTo(40, 458, 13, 502); context.lineTo(-13, 502); context.quadraticCurveTo(-40, 458, -48, 390); context.closePath(); context.fill(); context.stroke();
-      const liquid = context.createLinearGradient(0, 110, 0, 480);
-      liquid.addColorStop(0, "rgba(202,143,43,0.25)"); liquid.addColorStop(0.42, "rgba(244,190,83,0.86)"); liquid.addColorStop(1, "rgba(119,71,10,0.92)");
-      context.fillStyle = liquid; context.beginPath(); context.moveTo(-43, 118); context.lineTo(43, 118); context.lineTo(29, 382); context.quadraticCurveTo(23, 430, 8, 461); context.lineTo(-8, 461); context.quadraticCurveTo(-23, 430, -29, 382); context.closePath(); context.fill();
-      context.strokeStyle = "rgba(255,255,255,0.52)"; context.lineWidth = 8; context.beginPath(); context.moveTo(-48, 30); context.bezierCurveTo(-30, 110, -34, 300, -15, 410); context.stroke(); context.restore();
-      const dropX = cx + (155 - scroll * 42) * scale + px * 0.2; const dropY = rect.height * (0.64 - scroll * 0.08) + drift + py; const dropR = 78 * scale;
-      context.save(); context.translate(dropX, dropY);
-      const drop = context.createRadialGradient(-dropR * 0.35, -dropR * 0.45, 2, 0, 0, dropR);
-      drop.addColorStop(0, "rgba(255,255,255,0.92)"); drop.addColorStop(0.25, "rgba(255,211,116,0.72)"); drop.addColorStop(0.76, "rgba(155,92,15,0.76)"); drop.addColorStop(1, "rgba(255,236,188,0.35)");
-      context.fillStyle = drop; context.strokeStyle = "rgba(255,245,214,0.9)"; context.lineWidth = 2;
-      context.beginPath(); context.moveTo(0, -dropR * 1.32); context.bezierCurveTo(dropR * 0.25, -dropR * 0.78, dropR, -dropR * 0.2, dropR * 0.82, dropR * 0.54); context.bezierCurveTo(dropR * 0.65, dropR * 1.18, -dropR * 0.65, dropR * 1.18, -dropR * 0.82, dropR * 0.54); context.bezierCurveTo(-dropR, -dropR * 0.2, -dropR * 0.25, -dropR * 0.78, 0, -dropR * 1.32); context.fill(); context.stroke();
-      context.globalAlpha = 0.62; context.fillStyle = "#17150f";
-      const skyline = [18, 29, 21, 38, 26, 55, 33, 28, 46, 31, 64, 24, 37, 22]; const unit = (dropR * 1.45) / skyline.length;
-      skyline.forEach((building, i) => { context.fillRect(-dropR * 0.73 + i * unit, dropR * 0.25 - building * scale, unit * 0.72, building * scale); });
-      context.fillStyle = "rgba(255,240,202,0.42)"; context.fillRect(-dropR * 0.7, dropR * 0.31, dropR * 1.4, 1); context.restore();
-    };
-    const onPointer = (event: PointerEvent) => { const rect = canvas.getBoundingClientRect(); pointer.current = { x: event.clientX / rect.width - 0.5, y: event.clientY / rect.height - 0.5 }; };
-    const onResize = () => render();
-    if (reduced) {
-      render();
-      window.addEventListener("resize", onResize);
-      return () => window.removeEventListener("resize", onResize);
-    }
-    const tick = () => { render(); raf = requestAnimationFrame(tick); };
-    canvas.addEventListener("pointermove", onPointer);
-    tick();
-    return () => { canvas.removeEventListener("pointermove", onPointer); cancelAnimationFrame(raf); };
-  }, [progress]);
-  return <canvas aria-label={label} className="pipette-canvas" ref={canvasRef} role="img" />;
-}
-
 function FilmEdge() { return <div aria-hidden="true" className="film-edge" />; }
 
 export default function HomeExperience() {
   const [locale, setLocale] = useState<Locale>("en");
   const [reducedMotion, setReducedMotion] = useState(true);
-  const pageProgress = useRef(0);
+  const storyRef = useRef<HTMLElement>(null);
+  const storyVideoRef = useRef<HTMLVideoElement>(null);
   const t = copy[locale];
   const collectionItems = [t.collections.hours, t.collections.afterimage, t.collections.element];
   const storyItems = [t.story.hours, t.story.afterimage, t.story.element];
@@ -151,27 +88,34 @@ export default function HomeExperience() {
     return () => query.removeEventListener("change", update);
   }, []);
   useEffect(() => {
-    const root = document.documentElement;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const story = storyRef.current;
+    const video = storyVideoRef.current;
+    if (!story || !video || reducedMotion) return;
+    if (video.readyState >= 1) video.pause();
     let frame = 0;
     const update = () => {
       frame = 0;
-      const range = Math.max(1, root.scrollHeight - window.innerHeight);
-      pageProgress.current = reduced ? 0.18 : Math.min(1, Math.max(0, window.scrollY / range));
-      root.style.setProperty("--page-progress", String(pageProgress.current));
+      const header = window.innerWidth <= 680 ? 96 : 0;
+      const { progress, logoReveal, time } = storyMotion(story.getBoundingClientRect().top, story.offsetHeight, window.innerHeight, header, video.duration);
+      story.style.setProperty("--story-progress", String(progress));
+      story.style.setProperty("--logo-reveal", String(logoReveal));
+      if (Number.isFinite(video.duration) && video.duration > 0) {
+        if (Math.abs(video.currentTime - time) > 0.04) video.currentTime = time;
+      }
     };
     const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
+    const onReady = () => { video.pause(); schedule(); };
+    video.addEventListener("loadedmetadata", onReady);
     update();
-    if (reduced) return () => root.style.removeProperty("--page-progress");
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule);
     return () => {
+      video.removeEventListener("loadedmetadata", onReady);
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
       cancelAnimationFrame(frame);
-      root.style.removeProperty("--page-progress");
     };
-  }, []);
+  }, [reducedMotion]);
   return <>
     <a className="skip-link" href="#collections">{t.skip}</a>
     <header className="site-header">
@@ -186,15 +130,19 @@ export default function HomeExperience() {
     <main id="top">
       <section aria-labelledby="hero-heading" className="hero">
         <div aria-hidden="true" className="exposure exposure-left" /><div aria-hidden="true" className="exposure exposure-right" />
-        <div className="hero-copy"><div aria-hidden="true" className="register-marks"><i /><i /><i /></div><h1 id="hero-heading">{t.hero.title}</h1><p>{t.hero.intro}</p><div className="hero-actions"><a className="action action-primary" href="#collections">{t.hero.explore}</a><a className="action action-secondary" href="#story">{t.hero.story}</a></div><p className="frame-note">{t.hero.note}</p></div>
         <div className="hero-stage">
-          {reducedMotion ? <img alt="" aria-hidden="true" className="hero-film" src="/media/hong-kong-harbour-afterimage-poster.jpg" /> : <video aria-hidden="true" autoPlay className="hero-film" loop muted playsInline poster="/media/hong-kong-harbour-afterimage-poster.jpg" preload="metadata" src="/media/hong-kong-harbour-afterimage.mp4" />}
-          <div aria-hidden="true" className="harbour-silhouette"><span /><span /><span /><span /><span /><span /><span /></div><PipetteCanvas key={reducedMotion ? "still" : "motion"} label={t.canvas} progress={pageProgress} /><p className="stage-caption">{t.hero.note}</p><span aria-hidden="true" className="timecode">912116</span>
+          {reducedMotion ? <picture><source media="(max-width: 680px)" srcSet="/media/hong-kong-drop-mobile-poster.jpg" /><img alt="" aria-hidden="true" className="hero-film" src="/media/hong-kong-harbour-afterimage-poster.jpg" /></picture> : <video aria-hidden="true" autoPlay className="hero-film" loop muted playsInline poster="/media/hong-kong-harbour-afterimage-poster.jpg" preload="metadata"><source media="(max-width: 680px)" src="/media/hong-kong-drop-mobile.mp4" type="video/mp4" /><source src="/media/hong-kong-harbour-afterimage.mp4" type="video/mp4" /></video>}
+          <p className="stage-caption">{t.hero.note}</p>
         </div>
+        <div className="hero-copy"><h1 id="hero-heading">{t.hero.title}</h1><p>{t.hero.intro}</p><div className="hero-actions"><a className="action action-primary" href="#collections">{t.hero.explore}</a><a className="action action-secondary" href="#story">{t.hero.story}</a></div><p className="frame-note">{t.hero.note}</p></div>
         <div className="hero-rail" aria-label={t.collections.title}>{collectionItems.map((item, index) => <a href={`#collection-${index + 1}`} key={item.title}><span>{String(index + 1).padStart(2, "0")}</span><strong>{item.title}</strong><small>{item.line}</small></a>)}</div><FilmEdge />
       </section>
-      <section aria-labelledby="story-heading" className="story" id="story">
-        <div className="story-stage" aria-hidden="true"><div className="story-orbit"><span /></div><div className="story-drop" /><div className="story-words">{t.story.stage.map((word) => <span key={word}>{word}</span>)}</div></div>
+      <section aria-labelledby="story-heading" className="story" id="story" ref={storyRef}>
+        <div className="story-stage" aria-hidden="true">
+          {reducedMotion ? <picture><source media="(max-width: 680px)" srcSet="/media/hong-kong-drop-mobile-poster.jpg" /><img alt="" className="story-film" src="/media/hong-kong-harbour-afterimage-poster.jpg" /></picture> : <video autoPlay className="story-film" muted playsInline preload="auto" ref={storyVideoRef}><source media="(max-width: 680px)" src="/media/hong-kong-drop-mobile.mp4" type="video/mp4" /><source src="/media/hong-kong-harbour-afterimage.mp4" type="video/mp4" /></video>}
+          <div className="story-logo"><img alt="" src="/media/yat-logo-reference.jpg" /></div>
+          <div className="story-words">{t.story.stage.map((word) => <span key={word}>{word}</span>)}</div>
+        </div>
         <div className="story-copy"><header><h2 id="story-heading">{t.story.heading}</h2><p>{t.story.intro}</p></header>{storyItems.map((item, index) => <article key={item.title}><span className="chapter-index">{String(index + 1).padStart(2, "0")}</span><h3>{item.title}</h3><p>{item.body}</p></article>)}</div>
       </section>
       <section aria-labelledby="collections-heading" className="collections" id="collections">

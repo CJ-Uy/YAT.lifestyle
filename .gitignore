@@ -6,4 +6,6 @@ next-env.d.ts
 .vinext/
 .wrangler/
 .higgsfield/
+.tmp/
+.playwright-mcp/
 *.tsbuildinfo

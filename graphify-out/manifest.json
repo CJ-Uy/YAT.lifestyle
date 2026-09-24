@@ -5,8 +5,8 @@
     "semantic_hash": ""
   },
   "app/layout.tsx": {
-    "mtime": 1790091704.9251835,
-    "ast_hash": "9a22a9e105c5e3e103b135698e2fed8d",
+    "mtime": 1790230894.0081134,
+    "ast_hash": "9420fefc22cdb8e58aedb5e82cbc2626",
     "semantic_hash": ""
   },
   "app/page.tsx": {
@@ -30,8 +30,8 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1790093015.2694106,
-    "ast_hash": "dcddadb7756d59306ccedcacea3d730d",
+    "mtime": 1790230748.371121,
+    "ast_hash": "d678a084ee1426b54a857c531e2b48d8",
     "semantic_hash": ""
   },
   "postcss.config.mjs": {
@@ -95,8 +95,8 @@
     "semantic_hash": ""
   },
   "app/home-experience.tsx": {
-    "mtime": 1790093854.8619282,
-    "ast_hash": "9b071ce09bce4a12a20abc23e24aaf84",
+    "mtime": 1790230819.972014,
+    "ast_hash": "eafc22ddd71cb2a1879614cddf84cb58",
     "semantic_hash": ""
   },
   ".impeccable/home-build-brief.md": {
@@ -115,8 +115,8 @@
     "semantic_hash": ""
   },
   "public/media/asset-manifest.md": {
-    "mtime": 1790093758.0196862,
-    "ast_hash": "541bbe9e734b67e30d7fd47a101b135a",
+    "mtime": 1790230420.957516,
+    "ast_hash": "0933f2c3c55571275350eb0cb4b3ce03",
     "semantic_hash": ""
   },
   ".impeccable/mocks/home-a.png": {
@@ -205,13 +205,118 @@
     "semantic_hash": ""
   },
   "DESIGN.md": {
-    "mtime": 1790228671.8537526,
-    "ast_hash": "18f45f08ce052a8d08f46a0cd1054b9a",
+    "mtime": 1790230894.0061123,
+    "ast_hash": "fbf53ce2ebe48e548ef847e301609f3f",
     "semantic_hash": ""
   },
   "public/media/hong-kong-harbour-afterimage-poster.jpg": {
     "mtime": 1790093682.058073,
     "ast_hash": "f7962baeb7d19adb1dfe5017f4ae8452",
+    "semantic_hash": ""
+  },
+  "lib/story-motion.test.ts": {
+    "mtime": 1790230748.3661218,
+    "ast_hash": "571d594b18a64b39746e3dc4aef61ddf",
+    "semantic_hash": ""
+  },
+  "lib/story-motion.ts": {
+    "mtime": 1790230748.3631198,
+    "ast_hash": "e2abc04ff0a6cd955ee399d2d9b79a85",
+    "semantic_hash": ""
+  },
+  "public/media/hong-kong-drop-mobile.json": {
+    "mtime": 1790230420.956521,
+    "ast_hash": "1ba6c5c1a2bd318568d67e634b67e136",
+    "semantic_hash": ""
+  },
+  ".playwright-mcp/page-2026-09-24T06-14-24-954Z.yml": {
+    "mtime": 1790230464.9570744,
+    "ast_hash": "7adb084ec4abfee94bb18b51f430fc32",
+    "semantic_hash": ""
+  },
+  ".playwright-mcp/page-2026-09-24T06-17-16-030Z.yml": {
+    "mtime": 1790230636.0339532,
+    "ast_hash": "73a219834090e5f52271a5546b963291",
+    "semantic_hash": ""
+  },
+  ".playwright-mcp/page-2026-09-24T06-17-55-095Z.yml": {
+    "mtime": 1790230675.0979002,
+    "ast_hash": "9d3a7a139f25e9a2b2a787e15ae02d28",
+    "semantic_hash": ""
+  },
+  ".playwright-mcp/page-2026-09-24T06-14-29-368Z.png": {
+    "mtime": 1790230469.3735106,
+    "ast_hash": "534f4131380473344bae126aa6214ba9",
+    "semantic_hash": ""
+  },
+  ".playwright-mcp/page-2026-09-24T06-15-02-323Z.png": {
+    "mtime": 1790230502.3298762,
+    "ast_hash": "01d7ae59606c6d214f85e5d13a8c5480",
+    "semantic_hash": ""
+  },
+  ".playwright-mcp/page-2026-09-24T06-16-08-265Z.png": {
+    "mtime": 1790230568.270124,
+    "ast_hash": "c4c392fbafffb0d0aca4f5e25a72dc01",
+    "semantic_hash": ""
+  },
+  ".playwright-mcp/page-2026-09-24T06-16-38-226Z.png": {
+    "mtime": 1790230598.2292712,
+    "ast_hash": "ad9192bcec0f1e8ad6e8172af83ba4e5",
+    "semantic_hash": ""
+  },
+  ".playwright-mcp/page-2026-09-24T06-17-16-723Z.png": {
+    "mtime": 1790230636.7292707,
+    "ast_hash": "95cc3341c1bc90da171dd034f2cc3ac2",
+    "semantic_hash": ""
+  },
+  ".playwright-mcp/page-2026-09-24T06-17-56-416Z.png": {
+    "mtime": 1790230676.4177647,
+    "ast_hash": "a757e77c01cb720dc9418cb6a5f843ae",
+    "semantic_hash": ""
+  },
+  ".tmp/media-inspect/mobile-01.jpg": {
+    "mtime": 1790230347.8249767,
+    "ast_hash": "6b01483f44125849f3df0bf802c9dc02",
+    "semantic_hash": ""
+  },
+  ".tmp/media-inspect/mobile-02.jpg": {
+    "mtime": 1790230347.8259757,
+    "ast_hash": "21d6dad169cf079edf3870cd2136affd",
+    "semantic_hash": ""
+  },
+  ".tmp/media-inspect/mobile-03.jpg": {
+    "mtime": 1790230347.827976,
+    "ast_hash": "98e0a12b2e9a1482d899822bb6a9bdad",
+    "semantic_hash": ""
+  },
+  ".tmp/media-inspect/mobile-04.jpg": {
+    "mtime": 1790230347.8319757,
+    "ast_hash": "20d39982e8db0abb8716d88e87bf0b1d",
+    "semantic_hash": ""
+  },
+  ".tmp/media-inspect/mobile-05.jpg": {
+    "mtime": 1790230347.833975,
+    "ast_hash": "39f700a391df3d14a02a0280374b5f60",
+    "semantic_hash": ""
+  },
+  "public/icon.svg": {
+    "mtime": 1790230659.790402,
+    "ast_hash": "4e8759908e370d1402cc3f297f1a8d84",
+    "semantic_hash": ""
+  },
+  "public/media/hong-kong-drop-mobile-poster.jpg": {
+    "mtime": 1790230390.7193954,
+    "ast_hash": "aa7042e0e7fb8804753b9214c5e2cd07",
+    "semantic_hash": ""
+  },
+  "public/media/yat-logo-reference.jpg": {
+    "mtime": 1790229903.3373196,
+    "ast_hash": "79d6881b874c5856e95eae78e775f842",
+    "semantic_hash": ""
+  },
+  "public/media/hong-kong-drop-mobile.mp4": {
+    "mtime": 1790230334.71671,
+    "ast_hash": "46980021857c6c817eee13811a635b00",
     "semantic_hash": ""
   }
 }

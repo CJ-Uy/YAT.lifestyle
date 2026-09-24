@@ -1,13 +1,18 @@
 # Graph Report - YAT.lifestyle  (2026-09-24)
 
 ## Corpus Check
-- 28 files · ~742,652 words
+- 31 files · ~747,917 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 152 nodes · 156 edges · 17 communities (13 shown, 4 thin omitted)
+- 155 nodes · 162 edges · 17 communities (13 shown, 4 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
+
+## Graph Freshness
+- Built from commit: `83a5001a`
+- Run `git rev-parse HEAD` and compare to check if the graph is stale.
+- Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - [[_COMMUNITY_Community 0|Community 0]]
@@ -60,12 +65,12 @@ Cohesion: 0.17
 Nodes (12): devDependencies, @cloudflare/vite-plugin, tailwindcss, @tailwindcss/postcss, @types/node, @types/react, @types/react-dom, typescript (+4 more)
 
 ### Community 3 - "Community 3"
-Cohesion: 0.29
-Nodes (7): dependencies, @fontsource/bodoni-moda, react, react-dom, react-server-dom-webpack, vinext, @vinext/cloudflare
+Cohesion: 0.15
+Nodes (12): dependencies, @fontsource/bodoni-moda, react, react-dom, react-server-dom-webpack, vinext, @vinext/cloudflare, name (+4 more)
 
 ### Community 4 - "Community 4"
-Cohesion: 0.15
-Nodes (12): name, packageManager, private, scripts, build, deploy, dev, higgsfield:video (+4 more)
+Cohesion: 0.29
+Nodes (7): scripts, build, deploy, dev, higgsfield:video, start, test
 
 ### Community 5 - "Community 5"
 Cohesion: 0.18
@@ -76,8 +81,8 @@ Cohesion: 0.50
 Nodes (3): Higgsfield Seedance 2.0, Scripts, YAT.lifestyle
 
 ### Community 8 - "Community 8"
-Cohesion: 0.22
-Nodes (5): collectionImages, copy, HomeExperience(), Locale, localeLabels
+Cohesion: 0.21
+Nodes (7): collectionImages, copy, HomeExperience(), Locale, localeLabels, clamp(), storyMotion()
 
 ### Community 9 - "Community 9"
 Cohesion: 0.18
@@ -103,10 +108,8 @@ Nodes (15): Actions, Collection Frames, Colors, Components, Design System: YAT.l
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `devDependencies` connect `Community 2` to `Community 4`?**
-  _High betweenness centrality (0.024) - this node is a cross-community bridge._
-- **Why does `dependencies` connect `Community 3` to `Community 4`?**
-  _High betweenness centrality (0.015) - this node is a cross-community bridge._
+- **Why does `devDependencies` connect `Community 2` to `Community 3`?**
+  _High betweenness centrality (0.023) - this node is a cross-community bridge._
 - **What connects `Locale`, `copy`, `localeLabels` to the rest of the system?**
   _107 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
