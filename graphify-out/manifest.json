@@ -5,8 +5,8 @@
     "semantic_hash": ""
   },
   "app/layout.tsx": {
-    "mtime": 1790257034.973445,
-    "ast_hash": "183634270abfc0cf573101d42a1a7afd",
+    "mtime": 1790257412.6871393,
+    "ast_hash": "a6123f0ad2f0fa3090d4c8c7a7aca25f",
     "semantic_hash": ""
   },
   "app/page.tsx": {
@@ -95,8 +95,8 @@
     "semantic_hash": ""
   },
   "app/home-experience.tsx": {
-    "mtime": 1790257061.968827,
-    "ast_hash": "c61d5b1898c787e8eaab7602625f5387",
+    "mtime": 1790257530.897297,
+    "ast_hash": "c0a24b2be812ad2278817bac4a1d1444",
     "semantic_hash": ""
   },
   ".impeccable/home-build-brief.md": {
@@ -205,8 +205,8 @@
     "semantic_hash": ""
   },
   "DESIGN.md": {
-    "mtime": 1790256538.1334872,
-    "ast_hash": "18e16b82dca845b0ca0f574c692f8d81",
+    "mtime": 1790257860.493757,
+    "ast_hash": "d77db28e5a0913d9009d8712fc618013",
     "semantic_hash": ""
   },
   "public/media/hong-kong-harbour-afterimage-poster.jpg": {
@@ -300,8 +300,8 @@
     "semantic_hash": ""
   },
   "public/icon.svg": {
-    "mtime": 1790257034.9724374,
-    "ast_hash": "fd9655969af065af72223cb6ecf849cd",
+    "mtime": 1790257860.492253,
+    "ast_hash": "75799872ff445f4087e79dea0f063d68",
     "semantic_hash": ""
   },
   "public/media/hong-kong-drop-mobile-poster.jpg": {
@@ -575,13 +575,38 @@
     "semantic_hash": ""
   },
   "public/apple-touch-icon.png": {
-    "mtime": 1790257063.3964474,
-    "ast_hash": "c4034697603615138c15a27accea8b3d",
+    "mtime": 1790257881.2420855,
+    "ast_hash": "484de3ebd0dcdec64df4e7470cef2f22",
     "semantic_hash": ""
   },
   "public/favicon-32.png": {
-    "mtime": 1790257063.339443,
-    "ast_hash": "efe5ea6f140860e993215a8b36ad8dbd",
+    "mtime": 1790257881.212627,
+    "ast_hash": "70db3a88916fd645a166c716c148cc09",
+    "semantic_hash": ""
+  },
+  "app/shop/page.tsx": {
+    "mtime": 1790257316.1406608,
+    "ast_hash": "39d220c6eb7e2287ae94c6149011aab5",
+    "semantic_hash": ""
+  },
+  "app/shop/shop-experience.tsx": {
+    "mtime": 1790257316.1406608,
+    "ast_hash": "1b44f96dc33082e6eade3cb760c6032f",
+    "semantic_hash": ""
+  },
+  "app/site-header.tsx": {
+    "mtime": 1790257860.489247,
+    "ast_hash": "c53bf0853a376b9e167fd0778b0a4019",
+    "semantic_hash": ""
+  },
+  "scripts/check-navigation.js": {
+    "mtime": 1790257601.9096615,
+    "ast_hash": "4b13f69148bf0428d26f5dd04dcaf4cb",
+    "semantic_hash": ""
+  },
+  "public/brand-emblem.svg": {
+    "mtime": 1790257860.4912515,
+    "ast_hash": "6575ee4a0737f6576dc773b7cf1862aa",
     "semantic_hash": ""
   }
 }

@@ -63,7 +63,7 @@ The hero display size is `clamp(3.4rem, 5.35vw, 5.65rem)` on desktop. Section he
 
 The fixed header is 82px high on desktop and 96px on small screens. Main content uses horizontal padding of `clamp(1.25rem, 4.5vw, 4.75rem)`. Desktop compositions pair a readable text field with a larger media field. Below 1000px, navigation becomes a native disclosure. Below 680px, the portrait pipette remains central while the story copy stays below the falling drop.
 
-The first viewport gives visitors a headline, a plain description, direct collection and story links, launch status, and the pipette. The story can be bypassed through the navigation and anchors.
+The first viewport gives visitors a headline, a plain description, one understated collection link, and the pipette. The story can be bypassed through the navigation and anchors.
 
 ## Elevation & Depth
 
@@ -81,7 +81,7 @@ Actions have square corners, a 56px minimum height, a fine border, and serif tex
 
 ### Navigation
 
-The fixed header holds the wordmark, section links, language buttons, and launch status. Mobile uses a native `details` menu. All touch targets are at least 44px. English, Traditional Chinese, and Simplified Chinese receive equal treatment.
+The fixed header holds the curved gold dropper emblem with the YAT wordmark, section links, a native language dropdown, and a Shop link. Mobile uses a native `details` menu. All touch targets are at least 44px. The language dropdown shows English, Traditional Chinese, and Simplified Chinese by their full names and remembers the choice across pages. Shop leads to a localized, read-only coming-soon page using existing lab imagery and the Hong Kong delivery notice.
 
 ### Collection Frames
 
@@ -95,7 +95,7 @@ The filmed droplet hands off to a gold-gradient vector drop, which settles insid
 
 The About section uses the existing generated laboratory still, with an explicit localized illustration caption. It must not imply a photograph of the founder's actual laboratory. Its grid columns can shrink and the text measure remains readable on intermediate widths.
 
-The signature drop uses layered radial shading, a soft upper-left reflection, and a restrained lower bounce to read as dimensional gold without adding WebGL. Every shading layer shares the same morphing outline. The favicon uses the drop alone on ink for legibility at tab sizes, with SVG, 32px PNG, and 180px Apple touch variants.
+The signature drop uses layered radial shading, a soft upper-left reflection, and a restrained lower bounce to read as dimensional gold without adding WebGL. Every shading layer shares the same morphing outline. The favicon uses a simplified version of the reference's dropper and curved bottle outline on ink, not a standalone drop. It has SVG, 32px PNG, and 180px Apple touch variants.
 
 ## Do's and Don'ts
 

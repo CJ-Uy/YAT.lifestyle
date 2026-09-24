@@ -2,12 +2,10 @@
 
 import { type CSSProperties, useEffect, useRef, useState } from "react";
 import { STORY_FRAMES, storyMotion } from "../lib/story-motion";
-
-type Locale = "en" | "zh-Hant" | "zh-Hans";
+import SiteHeader, { useLocale } from "./site-header";
 
 const copy = {
   en: {
-    nav: { home: "Home", collections: "Collections", process: "Process", about: "About", status: "Coming Soon", menu: "Menu" },
     hero: {
       title: "Perfume through time, place, and you.",
       intro: "Born in Hong Kong, YAT.lifestyle brings laboratory curiosity to perfume. Each scent begins with an hour, a place, or a person.",
@@ -38,7 +36,6 @@ const copy = {
     footer: { top: "Back to top", note: "Perfume, laboratory curiosity, and Hong Kong memory." }, skip: "Skip to collections",
   },
   "zh-Hant": {
-    nav: { home: "首頁", collections: "系列", process: "過程", about: "關於", status: "即將推出", menu: "選單" },
     hero: { title: "讓香氣留住時間、地方與你。", intro: "YAT.lifestyle 誕生於香港，把實驗室的好奇心帶進香水。每款香氣從一個時刻、一處地方，或一個人開始。", explore: "探索系列", story: "進入香氣故事", note: "香港，留在香氣之中。" },
     collections: { title: "三個進入香氣的方向。", intro: "每個系列都從不同地方開始：身邊的時間、身後的城市，或眼前的人。", hours: { title: "Hours", line: "流動中的城市", body: "以香港每個時段的節奏、空氣與光線變化為起點。", imageAlt: "晨霧與暖光中的香港天際線" }, afterimage: { title: "Afterimage", line: "留在空氣中的記憶", body: "從茶、樹林、街道與地方出發，不把香港簡化成一張明信片。", imageAlt: "從車廂望向城市的香港電車乘客" }, element: { title: "Element", line: "由探問開始的個人香氣", body: "計劃中的個人化系列，從氣味樣本及你原本喜歡的基礎香氣開始。", imageAlt: "暗色工作枱上的實驗室玻璃器皿與滴管" } },
     story: { heading: "香氣可以留住時間。", intro: "跟隨一滴香氣，走過三個仍在發展中的系列方向。", hours: { title: "Hours", body: "清晨的提振、正午的熱、入夜的空氣。Hours 觀察香港在一天內的轉變，再把這些變化帶進香水。" }, afterimage: { title: "Afterimage", body: "一杯茶、濕潤的石面、雨後的樹葉。Afterimage 從具體的香港記憶開始，追尋時刻過去後仍然留下的氣息。" }, element: { title: "Element", body: "Element 是計劃中的科學個人化系列，構想是研究顧客提供的氣味樣本，再調整他們偏好的現有基礎香氣。過程仍在開發中。" }, stage: ["時間", "地方", "你"] },
@@ -48,7 +45,6 @@ const copy = {
     footer: { top: "返回頂部", note: "香水、實驗室的好奇心與香港記憶。" }, skip: "跳至系列",
   },
   "zh-Hans": {
-    nav: { home: "首页", collections: "系列", process: "过程", about: "关于", status: "即将推出", menu: "菜单" },
     hero: { title: "让香气留住时间、地方与你。", intro: "YAT.lifestyle 诞生于香港，把实验室的好奇心带进香水。每款香气从一个时刻、一处地方，或一个人开始。", explore: "探索系列", story: "进入香气故事", note: "香港，留在香气之中。" },
     collections: { title: "三个进入香气的方向。", intro: "每个系列都从不同地方开始：身边的时间、身后的城市，或眼前的人。", hours: { title: "Hours", line: "流动中的城市", body: "以香港每个时段的节奏、空气与光线变化为起点。", imageAlt: "晨雾与暖光中的香港天际线" }, afterimage: { title: "Afterimage", line: "留在空气中的记忆", body: "从茶、树林、街道与地方出发，不把香港简化成一张明信片。", imageAlt: "从车厢望向城市的香港电车乘客" }, element: { title: "Element", line: "由探问开始的个人香气", body: "计划中的个性化系列，从气味样本及你原本喜欢的基础香气开始。", imageAlt: "暗色工作台上的实验室玻璃器皿与滴管" } },
     story: { heading: "香气可以留住时间。", intro: "跟随一滴香气，走过三个仍在发展的系列方向。", hours: { title: "Hours", body: "清晨的提振、正午的热、入夜的空气。Hours 观察香港在一天内的转变，再把这些变化带进香水。" }, afterimage: { title: "Afterimage", body: "一杯茶、湿润的石面、雨后的树叶。Afterimage 从具体的香港记忆开始，追寻时刻过去后仍然留下的气息。" }, element: { title: "Element", body: "Element 是计划中的科学个性化系列，构想是研究顾客提供的气味样本，再调整他们偏好的现有基础香气。过程仍在开发中。" }, stage: ["时间", "地方", "你"] },
@@ -59,10 +55,6 @@ const copy = {
   },
 } as const;
 
-const localeLabels: { id: Locale; short: string; name: string }[] = [
-  { id: "en", short: "EN", name: "English" }, { id: "zh-Hant", short: "繁", name: "繁體中文" }, { id: "zh-Hans", short: "简", name: "简体中文" },
-];
-
 const collectionImages = [
   "/media/hours-dawn.webp",
   "/media/afterimage-tram.webp",
@@ -70,7 +62,7 @@ const collectionImages = [
 ];
 
 export default function HomeExperience() {
-  const [locale, setLocale] = useState<Locale>("en");
+  const [locale, setLocale] = useLocale();
   const [reducedMotion, setReducedMotion] = useState(true);
   const [activePanel, setActivePanel] = useState(0);
   const activePanelRef = useRef(0);
@@ -82,7 +74,6 @@ export default function HomeExperience() {
   const t = copy[locale];
   const collectionItems = [t.collections.hours, t.collections.afterimage, t.collections.element];
   const storyItems = [t.story.hours, t.story.afterimage, t.story.element];
-  useEffect(() => { document.documentElement.lang = locale; }, [locale]);
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
     const update = () => setReducedMotion(query.matches);
@@ -188,15 +179,7 @@ export default function HomeExperience() {
   }, [reducedMotion]);
   return <>
     <a className="skip-link" href="#collections">{t.skip}</a>
-    <header className="site-header">
-      <a className="wordmark" href="#top" aria-label="YAT.lifestyle home">YAT.lifestyle</a>
-      <nav aria-label="Primary navigation" className="primary-nav"><a href="#top">{t.nav.home}</a><a href="#collections">{t.nav.collections}</a><a href="#process">{t.nav.process}</a><a href="#about">{t.nav.about}</a></nav>
-      <details className="mobile-nav">
-        <summary>{t.nav.menu}</summary>
-        <nav aria-label="Mobile navigation"><a href="#top" onClick={(event) => event.currentTarget.closest("details")?.removeAttribute("open")}>{t.nav.home}</a><a href="#collections" onClick={(event) => event.currentTarget.closest("details")?.removeAttribute("open")}>{t.nav.collections}</a><a href="#process" onClick={(event) => event.currentTarget.closest("details")?.removeAttribute("open")}>{t.nav.process}</a><a href="#about" onClick={(event) => event.currentTarget.closest("details")?.removeAttribute("open")}>{t.nav.about}</a><span>{t.nav.status}</span></nav>
-      </details>
-      <div className="header-tools"><div aria-label="Language" className="locale-switcher" role="group">{localeLabels.map((item) => <button aria-label={item.name} aria-pressed={locale === item.id} key={item.id} onClick={() => setLocale(item.id)} type="button">{item.short}</button>)}</div><span className="status-label">{t.nav.status}</span></div>
-    </header>
+    <SiteHeader locale={locale} onLocaleChange={setLocale} />
     <main>
       <section aria-labelledby="hero-heading" className="journey" id="top" ref={journeyRef}>
         <div className={`journey-stage${reducedMotion ? " is-still" : ""}`} ref={stageRef}>
@@ -208,7 +191,7 @@ export default function HomeExperience() {
             <div className="journey-shade" />
           </div>
           <div className="journey-scene scene-hero" style={{ "--scene-opacity": 1 } as CSSProperties} inert={activePanel !== 0}>
-            <div className="journey-copy"><div aria-hidden="true"><h1>{t.hero.title}</h1><p>{t.hero.intro}</p></div><div className="hero-actions"><a className="action action-primary" href="#collections">{t.hero.explore}</a><a className="action action-secondary" href="#story">{t.hero.story}<svg aria-hidden="true" width="14" height="18" viewBox="0 0 14 18" fill="none"><path d="M7 1v15m-5-5 5 5 5-5" stroke="currentColor" /></svg></a></div></div>
+            <div className="journey-copy"><div aria-hidden="true"><h1>{t.hero.title}</h1><p>{t.hero.intro}</p></div><div className="hero-actions"><a className="action action-primary" href="#collections">{t.hero.explore}<svg aria-hidden="true" width="18" height="14" viewBox="0 0 18 14" fill="none"><path d="M1 7h15m-5-5 5 5-5 5" stroke="currentColor" /></svg></a></div></div>
           </div>
           <div aria-hidden="true" className="journey-scene scene-intro">
             <div className="journey-copy"><h2>{t.story.heading}</h2><p>{t.story.intro}</p></div>

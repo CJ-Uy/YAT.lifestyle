@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 100" fill="none">
+  <title>YAT dropper emblem</title>
+  <defs>
+    <linearGradient id="gold" x1="7" y1="0" x2="58" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8f5719"/><stop offset=".2" stop-color="#f8df91"/><stop offset=".38" stop-color="#a97628"/><stop offset=".5" stop-color="#fff1bf"/><stop offset=".63" stop-color="#b67a25"/><stop offset=".83" stop-color="#f6d57b"/><stop offset="1" stop-color="#976322"/>
+    </linearGradient>
+    <linearGradient id="cap" x1="26" y1="0" x2="39" y2="0" gradientUnits="userSpaceOnUse"><stop stop-color="#131310"/><stop offset=".3" stop-color="#58564c"/><stop offset=".6" stop-color="#191916"/><stop offset="1" stop-color="#080806"/></linearGradient>
+  </defs>
+  <path d="M26.5 22V9a5.5 5.5 0 0 1 11 0v13" fill="url(#cap)" stroke="#c8b784" stroke-width=".7"/>
+  <path d="M22.5 22h19v15h-19Z" fill="url(#gold)"/>
+  <path d="M29.3 37v27c0 5 2.7 8 2.7 11 0 7-5.7 11-5.7 16a5.7 5.7 0 0 0 11.4 0c0-5-5.7-9-5.7-16 0-3 2.7-6 2.7-11V37Z" fill="url(#gold)"/>
+  <path d="M31 38v21" stroke="#fff1c7" stroke-width="1.1"/>
+  <path d="M19 40h9c-9 1-6 10-12 14C7 60 1 63 1 70c0 9 14 21 25 29C16 87 5 78 5 70c0-7 7-11 14-16 6-5 4-11 0-14Z" fill="url(#gold)"/>
+  <path d="M45 40h-9c9 1 6 10 12 14 9 6 15 9 15 16 0 9-14 21-25 29 10-12 21-21 21-29 0-7-7-11-14-16-6-5-4-11 0-14Z" fill="url(#gold)"/>
+</svg>
