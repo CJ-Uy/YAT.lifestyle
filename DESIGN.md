@@ -95,6 +95,8 @@ The filmed droplet hands off to a gold-gradient vector drop, which settles insid
 
 The About section uses the existing generated laboratory still, with an explicit localized illustration caption. It must not imply a photograph of the founder's actual laboratory. Its grid columns can shrink and the text measure remains readable on intermediate widths.
 
+The signature drop uses layered radial shading, a soft upper-left reflection, and a restrained lower bounce to read as dimensional gold without adding WebGL. Every shading layer shares the same morphing outline. The favicon uses the drop alone on ink for legibility at tab sizes, with SVG, 32px PNG, and 180px Apple touch variants.
+
 ## Do's and Don'ts
 
 ### Do:

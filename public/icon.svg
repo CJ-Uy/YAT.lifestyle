@@ -1,5 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" fill="#080806"/>
-  <path d="M32 6c3 13 17 27 17 39a17 17 0 0 1-34 0C15 33 29 19 32 6Z" fill="#d8a443"/>
-  <path d="M23 45c0-6 5-13 9-19" fill="none" stroke="#fff4dc" stroke-linecap="round" stroke-width="3" opacity=".72"/>
+  <title>YAT.lifestyle gold drop</title>
+  <defs>
+    <radialGradient id="gold" cx=".3" cy=".4" r=".78">
+      <stop stop-color="#fff0b3"/><stop offset=".3" stop-color="#e2b858"/><stop offset=".64" stop-color="#a36717"/><stop offset=".86" stop-color="#53300d"/><stop offset="1" stop-color="#e8c579"/>
+    </radialGradient>
+    <radialGradient id="light" cx=".29" cy=".6" r=".35" gradientTransform="translate(.16 0) scale(.5 1)">
+      <stop stop-color="#fffdf1" stop-opacity=".95"/><stop offset=".4" stop-color="#fff4c7" stop-opacity=".5"/><stop offset="1" stop-color="#fff4c7" stop-opacity="0"/>
+    </radialGradient>
+    <path id="drop" d="M32 7C31 20 13 33 13 43C13 54 21 59 32 59C43 59 51 54 51 43C51 33 33 20 32 7Z"/>
+  </defs>
+  <rect width="64" height="64" rx="13" fill="#080806"/>
+  <use href="#drop" fill="url(#gold)" stroke="#dfbd70" stroke-width=".55"/>
+  <use href="#drop" fill="url(#light)"/>
 </svg>

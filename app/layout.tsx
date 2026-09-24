@@ -5,7 +5,10 @@ import "./globals.css";
 export const metadata: Metadata = {
 	title: "YAT.lifestyle | Perfume through time, place, and you",
 	description: "A Hong Kong perfume project shaped by laboratory curiosity, time, place, and personalization.",
-	icons: { icon: "/icon.svg" },
+	icons: {
+    icon: [{ url: "/favicon-32.png?v=2", sizes: "32x32", type: "image/png" }, { url: "/icon.svg?v=2", sizes: "any", type: "image/svg+xml" }],
+    apple: "/apple-touch-icon.png?v=2",
+  },
 };
 
 const directionContract = `THESIS: Hong Kong memory held inside a laboratory drop, refusing the generic luxury bottle hero.

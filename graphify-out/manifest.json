@@ -5,8 +5,8 @@
     "semantic_hash": ""
   },
   "app/layout.tsx": {
-    "mtime": 1790256538.1347222,
-    "ast_hash": "e247b8662c5445553712e59cf915d4f5",
+    "mtime": 1790257034.973445,
+    "ast_hash": "183634270abfc0cf573101d42a1a7afd",
     "semantic_hash": ""
   },
   "app/page.tsx": {
@@ -95,8 +95,8 @@
     "semantic_hash": ""
   },
   "app/home-experience.tsx": {
-    "mtime": 1790256628.8842947,
-    "ast_hash": "7de1777b0f158e63600b0b0c7d704bc4",
+    "mtime": 1790257061.968827,
+    "ast_hash": "c61d5b1898c787e8eaab7602625f5387",
     "semantic_hash": ""
   },
   ".impeccable/home-build-brief.md": {
@@ -300,8 +300,8 @@
     "semantic_hash": ""
   },
   "public/icon.svg": {
-    "mtime": 1790230659.790402,
-    "ast_hash": "4e8759908e370d1402cc3f297f1a8d84",
+    "mtime": 1790257034.9724374,
+    "ast_hash": "fd9655969af065af72223cb6ecf849cd",
     "semantic_hash": ""
   },
   "public/media/hong-kong-drop-mobile-poster.jpg": {
@@ -572,6 +572,16 @@
   "public/media/hours-dawn.webp": {
     "mtime": 1790256120.782612,
     "ast_hash": "dc08785c0280bd9986cb09d1f7f0a736",
+    "semantic_hash": ""
+  },
+  "public/apple-touch-icon.png": {
+    "mtime": 1790257063.3964474,
+    "ast_hash": "c4034697603615138c15a27accea8b3d",
+    "semantic_hash": ""
+  },
+  "public/favicon-32.png": {
+    "mtime": 1790257063.339443,
+    "ast_hash": "efe5ea6f140860e993215a8b36ad8dbd",
     "semantic_hash": ""
   }
 }

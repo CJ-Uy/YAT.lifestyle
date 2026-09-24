@@ -233,8 +233,21 @@ export default function HomeExperience() {
               </div>
             </div>
             <svg className="signature-drop" viewBox="0 0 100 145" preserveAspectRatio="none">
-              <defs><linearGradient id="signature-gold" x1="0" y1="0" x2="1" y2=".35"><stop stopColor="#8d6021" /><stop offset=".27" stopColor="#f8df99" /><stop offset=".53" stopColor="#d5ab51" /><stop offset="1" stopColor="#8a581c" /></linearGradient></defs>
-              <path ref={dropPathRef} d="M50 3C48 41 8 73 8 103C8 128 25 142 50 142C75 142 92 128 92 103C92 73 52 41 50 3Z" fill="url(#signature-gold)" />
+              <defs>
+                <radialGradient id="signature-gold" cx=".32" cy=".4" r=".76" gradientTransform="translate(0 .08) scale(1 .92)">
+                  <stop stopColor="#f8df91" /><stop offset=".3" stopColor="#d7a641" /><stop offset=".62" stopColor="#95590f" /><stop offset=".84" stopColor="#3e260d" /><stop offset=".95" stopColor="#98692b" /><stop offset="1" stopColor="#eed79c" />
+                </radialGradient>
+                <radialGradient id="signature-reflection" gradientUnits="userSpaceOnUse" cx="29" cy="84" r="39" gradientTransform="translate(29 84) rotate(19) scale(.42 1) translate(-29 -84)">
+                  <stop stopColor="#fffdf0" stopOpacity=".95" /><stop offset=".28" stopColor="#fff6cc" stopOpacity=".72" /><stop offset=".64" stopColor="#ffebac" stopOpacity=".2" /><stop offset="1" stopColor="#ffebac" stopOpacity="0" />
+                </radialGradient>
+                <radialGradient id="signature-bounce" cx=".55" cy=".94" r=".5" gradientTransform="translate(0 .7) scale(1 .3)">
+                  <stop stopColor="#ffeab0" stopOpacity=".7" /><stop offset=".55" stopColor="#dca947" stopOpacity=".2" /><stop offset="1" stopColor="#dca947" stopOpacity="0" />
+                </radialGradient>
+                <path id="signature-outline" ref={dropPathRef} d="M50 3C48 41 8 73 8 103C8 128 25 142 50 142C75 142 92 128 92 103C92 73 52 41 50 3Z" />
+              </defs>
+              <use href="#signature-outline" fill="url(#signature-gold)" stroke="#e9ca82" strokeOpacity=".5" strokeWidth=".65" />
+              <use href="#signature-outline" fill="url(#signature-reflection)" stroke="none" />
+              <use href="#signature-outline" fill="url(#signature-bounce)" stroke="none" />
             </svg>
           </div>
         </div>
