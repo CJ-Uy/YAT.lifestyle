@@ -13,7 +13,25 @@ The Worker has D1 (`yat-lifestyle-prod-db`) and R2
 (`yat-lifestyle-prod-assets`) bindings ready for later features. The current
 read only page stores no visitor data and needs no migrations.
 
-## Scripts
+## Contact email setup
+
+The site publishes these `mailto:` links at the owner's request. Publishing a
+link does not create an inbox or confirm email delivery. Configure these addresses
+with your email provider, either as inboxes or aliases to a monitored inbox:
+
+| Address | Placement |
+| --- | --- |
+| hello@yatlifestyle.com | Home and Shop footers, general inquiries |
+| care@yatlifestyle.com | Shop, customer care |
+| orders@yatlifestyle.com | Shop, order and delivery questions (orders are not open yet) |
+| element@yatlifestyle.com | Element collection, personalization inquiries |
+| press@yatlifestyle.com | About, media and collaborations |
+
+Before relying on them, send a message from an external account to each address,
+confirm receipt, and confirm you can reply using the same brand address. This
+change does not configure DNS, forwarding, mailboxes, or automated sending.
+
+## Development scripts
 
 - `npm run dev` starts the vinext dev server.
 - `npm run build` builds the Cloudflare Worker output.

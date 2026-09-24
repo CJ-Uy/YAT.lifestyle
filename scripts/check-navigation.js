@@ -1,6 +1,16 @@
 // Run with the browser_run_code_unsafe tool's filename argument.
 async (page) => {
   const assert = (condition, message) => { if (!condition) throw new Error(message); };
+  const checkEmails = async (names) => {
+    const links = page.locator('a[href^="mailto:"]');
+    assert(await links.count() === names.length, "Unexpected number of contact addresses");
+    for (const name of names) {
+      const address = `${name}@yatlifestyle.com`;
+      const link = page.locator(`a[href="mailto:${address}"]`);
+      assert(await link.count() === 1, `Missing ${address}`);
+      assert((await link.innerText()).includes(address), `Address not visible: ${address}`);
+    }
+  };
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("http://localhost:3000");
   const chooseLanguage = async (locale) => {
@@ -15,11 +25,13 @@ async (page) => {
   assert(!await page.locator(".site-header").innerText().then(text => text.includes("Coming Soon")), "Header must link to Shop instead of announcing launch status");
   for (const locale of ["zh-Hant", "zh-Hans", "en"]) {
     await chooseLanguage(locale);
+    await checkEmails(["hello", "element", "press"]);
     await page.locator(".shop-link").click();
     await page.waitForURL("**/shop");
     await page.waitForFunction(locale => document.documentElement.lang === locale, locale);
     assert(await page.locator(".shop-link").getAttribute("aria-current") === "page", "Shop must show current-page state");
     assert(await page.locator(".shop-page h1").count() === 1, "Shop must have a main heading");
+    await checkEmails(["hello", "care", "orders"]);
     assert(await page.locator(`.language-options button[lang="${locale}"]`).getAttribute("aria-pressed") === "true", "Language must persist across pages");
     await page.locator(".shop-actions a").first().click();
     await page.waitForURL("**/#collections");
@@ -52,5 +64,5 @@ async (page) => {
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `Shop overflows at ${width}`);
     await page.goto("http://localhost:3000");
   }
-  return "PASS: left-aligned emblem, centered story subtext, accessible language disclosure, language persistence, four responsive widths";
+  return "PASS: contextual email links in three languages, header and story alignment, language controls, four responsive widths";
 }

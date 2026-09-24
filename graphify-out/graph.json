@@ -27,7 +27,7 @@
       "label": "collectionImages",
       "file_type": "code",
       "source_file": "app/home-experience.tsx",
-      "source_location": "L58",
+      "source_location": "L61",
       "_origin": "ast",
       "id": "app_home_experience_collectionimages",
       "community": 8,
@@ -37,7 +37,7 @@
       "label": "HomeExperience()",
       "file_type": "code",
       "source_file": "app/home-experience.tsx",
-      "source_location": "L64",
+      "source_location": "L67",
       "_origin": "ast",
       "id": "app_home_experience_homeexperience",
       "community": 8,
@@ -144,10 +144,20 @@
       "norm_label": "copy"
     },
     {
-      "label": "ShopExperience()",
+      "label": "contactCopy",
       "file_type": "code",
       "source_file": "app/shop/shop-experience.tsx",
       "source_location": "L11",
+      "_origin": "ast",
+      "id": "shop_shop_experience_contactcopy",
+      "community": 8,
+      "norm_label": "contactcopy"
+    },
+    {
+      "label": "ShopExperience()",
+      "file_type": "code",
+      "source_file": "app/shop/shop-experience.tsx",
+      "source_location": "L17",
       "_origin": "ast",
       "id": "shop_shop_experience_shopexperience",
       "community": 8,
@@ -1427,7 +1437,7 @@
       "label": "Signature Media",
       "file_type": "document",
       "source_file": "DESIGN.md",
-      "source_location": "L90",
+      "source_location": "L96",
       "_origin": "ast",
       "id": "design_signature_media",
       "community": 17,
@@ -1437,7 +1447,7 @@
       "label": "Do's and Don'ts",
       "file_type": "document",
       "source_file": "DESIGN.md",
-      "source_location": "L100",
+      "source_location": "L106",
       "_origin": "ast",
       "id": "design_do_s_and_don_ts",
       "community": 17,
@@ -1447,7 +1457,7 @@
       "label": "Do:",
       "file_type": "document",
       "source_file": "DESIGN.md",
-      "source_location": "L102",
+      "source_location": "L108",
       "_origin": "ast",
       "id": "design_do",
       "community": 17,
@@ -1457,7 +1467,7 @@
       "label": "Don't:",
       "file_type": "document",
       "source_file": "DESIGN.md",
-      "source_location": "L108",
+      "source_location": "L114",
       "_origin": "ast",
       "id": "design_don_t",
       "community": 17,
@@ -1594,20 +1604,30 @@
       "norm_label": "yat.lifestyle"
     },
     {
-      "label": "Scripts",
+      "label": "Contact email setup",
       "file_type": "document",
       "source_file": "README.md",
       "source_location": "L16",
       "_origin": "ast",
-      "id": "readme_scripts",
+      "id": "readme_contact_email_setup",
       "community": 6,
-      "norm_label": "scripts"
+      "norm_label": "contact email setup"
+    },
+    {
+      "label": "Development scripts",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L34",
+      "_origin": "ast",
+      "id": "readme_development_scripts",
+      "community": 6,
+      "norm_label": "development scripts"
     },
     {
       "label": "Higgsfield Seedance 2.0",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L25",
+      "source_location": "L43",
       "_origin": "ast",
       "id": "readme_higgsfield_seedance_2_0",
       "community": 6,
@@ -1702,9 +1722,9 @@
       "source_file": "app/home-experience.tsx",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_home_experience",
-      "target": "app_site_header",
-      "confidence_score": 1.0
+      "target": "app_site_header"
     },
     {
       "relation": "imports",
@@ -1713,9 +1733,9 @@
       "source_file": "app/home-experience.tsx",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_home_experience",
-      "target": "app_site_header_siteheader",
-      "confidence_score": 1.0
+      "target": "app_site_header_siteheader"
     },
     {
       "relation": "imports",
@@ -1724,9 +1744,9 @@
       "source_file": "app/home-experience.tsx",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_home_experience",
-      "target": "app_site_header_uselocale",
-      "confidence_score": 1.0
+      "target": "app_site_header_uselocale"
     },
     {
       "relation": "imports_from",
@@ -1819,9 +1839,9 @@
       "source_file": "app/shop/page.tsx",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shop_page",
-      "target": "shop_page_metadata",
-      "confidence_score": 1.0
+      "target": "shop_page_metadata"
     },
     {
       "relation": "contains",
@@ -1829,9 +1849,9 @@
       "source_file": "app/shop/page.tsx",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shop_page",
-      "target": "shop_page_shop",
-      "confidence_score": 1.0
+      "target": "shop_page_shop"
     },
     {
       "relation": "imports_from",
@@ -1840,9 +1860,9 @@
       "source_file": "app/shop/page.tsx",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shop_page",
-      "target": "shop_shop_experience",
-      "confidence_score": 1.0
+      "target": "shop_shop_experience"
     },
     {
       "relation": "imports",
@@ -1851,9 +1871,9 @@
       "source_file": "app/shop/page.tsx",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shop_page",
-      "target": "shop_shop_experience_shopexperience",
-      "confidence_score": 1.0
+      "target": "shop_shop_experience_shopexperience"
     },
     {
       "relation": "imports_from",
@@ -1862,9 +1882,9 @@
       "source_file": "app/shop/shop-experience.tsx",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shop_shop_experience",
-      "target": "app_site_header",
-      "confidence_score": 1.0
+      "target": "app_site_header"
     },
     {
       "relation": "imports",
@@ -1873,9 +1893,9 @@
       "source_file": "app/shop/shop-experience.tsx",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shop_shop_experience",
-      "target": "app_site_header_siteheader",
-      "confidence_score": 1.0
+      "target": "app_site_header_siteheader"
     },
     {
       "relation": "imports",
@@ -1884,19 +1904,9 @@
       "source_file": "app/shop/shop-experience.tsx",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shop_shop_experience",
-      "target": "app_site_header_uselocale",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/shop/shop-experience.tsx",
-      "source_location": "L5",
-      "weight": 1.0,
-      "source": "shop_shop_experience",
-      "target": "shop_shop_experience_copy",
-      "confidence_score": 1.0
+      "target": "app_site_header_uselocale"
     },
     {
       "relation": "contains",
@@ -1905,8 +1915,28 @@
       "source_location": "L11",
       "weight": 1.0,
       "source": "shop_shop_experience",
-      "target": "shop_shop_experience_shopexperience",
+      "target": "shop_shop_experience_contactcopy",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/shop/shop-experience.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "shop_shop_experience",
+      "target": "shop_shop_experience_copy"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/shop/shop-experience.tsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "shop_shop_experience",
+      "target": "shop_shop_experience_shopexperience"
     },
     {
       "relation": "calls",
@@ -1925,9 +1955,9 @@
       "source_file": "app/site-header.tsx",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_site_header",
-      "target": "app_site_header_languages",
-      "confidence_score": 1.0
+      "target": "app_site_header_languages"
     },
     {
       "relation": "contains",
@@ -1935,9 +1965,9 @@
       "source_file": "app/site-header.tsx",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_site_header",
-      "target": "app_site_header_locale",
-      "confidence_score": 1.0
+      "target": "app_site_header_locale"
     },
     {
       "relation": "contains",
@@ -1945,9 +1975,9 @@
       "source_file": "app/site-header.tsx",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_site_header",
-      "target": "app_site_header_navigation",
-      "confidence_score": 1.0
+      "target": "app_site_header_navigation"
     },
     {
       "relation": "contains",
@@ -1955,9 +1985,9 @@
       "source_file": "app/site-header.tsx",
       "source_location": "L32",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_site_header",
-      "target": "app_site_header_siteheader",
-      "confidence_score": 1.0
+      "target": "app_site_header_siteheader"
     },
     {
       "relation": "contains",
@@ -1965,9 +1995,9 @@
       "source_file": "app/site-header.tsx",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_site_header",
-      "target": "app_site_header_uselocale",
-      "confidence_score": 1.0
+      "target": "app_site_header_uselocale"
     },
     {
       "relation": "contains",
@@ -3458,21 +3488,31 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "README.md",
-      "source_location": "L14",
+      "source_location": "L16",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "readme_yat_lifestyle",
-      "target": "readme_higgsfield_seedance_2_0"
+      "target": "readme_contact_email_setup",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "README.md",
-      "source_location": "L5",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "readme_yat_lifestyle",
+      "target": "readme_development_scripts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L14",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "readme_yat_lifestyle",
-      "target": "readme_scripts"
+      "target": "readme_higgsfield_seedance_2_0"
     },
     {
       "relation": "contains",
@@ -3516,5 +3556,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "50df4da474911d463288a63cdc15d65bbfe5ee4d"
+  "built_at_commit": "1151882d43af8b8c869fa1a9f1cda06cb7c450b4"
 }

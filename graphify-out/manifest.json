@@ -70,8 +70,8 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1790256538.1324258,
-    "ast_hash": "1896b64ba230282c74a908c358c4308a",
+    "mtime": 1790262430.462299,
+    "ast_hash": "1a27e00d2a79f847910d73a039cfc03f",
     "semantic_hash": ""
   },
   ".impeccable/direction-options.json": {
@@ -95,8 +95,8 @@
     "semantic_hash": ""
   },
   "app/home-experience.tsx": {
-    "mtime": 1790261888.808817,
-    "ast_hash": "0da7ce53ef441b77f768055a9ff7f70c",
+    "mtime": 1790262390.2914057,
+    "ast_hash": "f4a325c7725d1498a8665b3e92ffb6a2",
     "semantic_hash": ""
   },
   ".impeccable/home-build-brief.md": {
@@ -205,8 +205,8 @@
     "semantic_hash": ""
   },
   "DESIGN.md": {
-    "mtime": 1790261727.8919344,
-    "ast_hash": "9599937f9e96f3349236fc2181d7dd72",
+    "mtime": 1790262429.7512534,
+    "ast_hash": "e87a17f04b4c161517d0b89b9b95258a",
     "semantic_hash": ""
   },
   "public/media/hong-kong-harbour-afterimage-poster.jpg": {
@@ -590,8 +590,8 @@
     "semantic_hash": ""
   },
   "app/shop/shop-experience.tsx": {
-    "mtime": 1790257316.1406608,
-    "ast_hash": "1b44f96dc33082e6eade3cb760c6032f",
+    "mtime": 1790262390.293408,
+    "ast_hash": "156dfd97280f6ac3a6bbc5aa7fdfdf88",
     "semantic_hash": ""
   },
   "app/site-header.tsx": {
@@ -600,8 +600,8 @@
     "semantic_hash": ""
   },
   "scripts/check-navigation.js": {
-    "mtime": 1790261727.8904216,
-    "ast_hash": "26f3852b9759ecb1c2e3f3556da223c3",
+    "mtime": 1790262429.7542536,
+    "ast_hash": "6dfd8cb7ae72a7f340453e35dd973781",
     "semantic_hash": ""
   },
   "public/brand-emblem.svg": {

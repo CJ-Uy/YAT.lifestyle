@@ -6,6 +6,7 @@ import SiteHeader, { useLocale } from "./site-header";
 
 const copy = {
   en: {
+    contact: { element: "Element inquiries", press: "Press & collaborations", general: "General inquiries" },
     hero: {
       title: "Perfume through time, place, and you.",
       intro: "Born in Hong Kong, YAT.lifestyle brings laboratory curiosity to perfume. Each scent begins with an hour, a place, or a person.",
@@ -36,6 +37,7 @@ const copy = {
     footer: { top: "Back to top", note: "Perfume, laboratory curiosity, and Hong Kong memory." }, skip: "Skip to collections",
   },
   "zh-Hant": {
+    contact: { element: "Element 查詢", press: "傳媒與合作", general: "一般查詢" },
     hero: { title: "讓香氣留住時間、地方與你。", intro: "YAT.lifestyle 誕生於香港，把實驗室的好奇心帶進香水。每款香氣從一個時刻、一處地方，或一個人開始。", explore: "探索系列", story: "進入香氣故事", note: "香港，留在香氣之中。" },
     collections: { title: "三個進入香氣的方向。", intro: "每個系列都從不同地方開始：身邊的時間、身後的城市，或眼前的人。", hours: { title: "Hours", line: "流動中的城市", body: "以香港每個時段的節奏、空氣與光線變化為起點。", imageAlt: "晨霧與暖光中的香港天際線" }, afterimage: { title: "Afterimage", line: "留在空氣中的記憶", body: "從茶、樹林、街道與地方出發，不把香港簡化成一張明信片。", imageAlt: "從車廂望向城市的香港電車乘客" }, element: { title: "Element", line: "由探問開始的個人香氣", body: "計劃中的個人化系列，從氣味樣本及你原本喜歡的基礎香氣開始。", imageAlt: "暗色工作枱上的實驗室玻璃器皿與滴管" } },
     story: { heading: "香氣可以留住時間。", intro: "跟隨一滴香氣，走過三個仍在發展中的系列方向。", hours: { title: "Hours", body: "清晨的提振、正午的熱、入夜的空氣。Hours 觀察香港在一天內的轉變，再把這些變化帶進香水。" }, afterimage: { title: "Afterimage", body: "一杯茶、濕潤的石面、雨後的樹葉。Afterimage 從具體的香港記憶開始，追尋時刻過去後仍然留下的氣息。" }, element: { title: "Element", body: "Element 是計劃中的科學個人化系列，構想是研究顧客提供的氣味樣本，再調整他們偏好的現有基礎香氣。過程仍在開發中。" }, stage: ["時間", "地方", "你"] },
@@ -45,6 +47,7 @@ const copy = {
     footer: { top: "返回頂部", note: "香水、實驗室的好奇心與香港記憶。" }, skip: "跳至系列",
   },
   "zh-Hans": {
+    contact: { element: "Element 咨询", press: "媒体与合作", general: "一般咨询" },
     hero: { title: "让香气留住时间、地方与你。", intro: "YAT.lifestyle 诞生于香港，把实验室的好奇心带进香水。每款香气从一个时刻、一处地方，或一个人开始。", explore: "探索系列", story: "进入香气故事", note: "香港，留在香气之中。" },
     collections: { title: "三个进入香气的方向。", intro: "每个系列都从不同地方开始：身边的时间、身后的城市，或眼前的人。", hours: { title: "Hours", line: "流动中的城市", body: "以香港每个时段的节奏、空气与光线变化为起点。", imageAlt: "晨雾与暖光中的香港天际线" }, afterimage: { title: "Afterimage", line: "留在空气中的记忆", body: "从茶、树林、街道与地方出发，不把香港简化成一张明信片。", imageAlt: "从车厢望向城市的香港电车乘客" }, element: { title: "Element", line: "由探问开始的个人香气", body: "计划中的个性化系列，从气味样本及你原本喜欢的基础香气开始。", imageAlt: "暗色工作台上的实验室玻璃器皿与滴管" } },
     story: { heading: "香气可以留住时间。", intro: "跟随一滴香气，走过三个仍在发展的系列方向。", hours: { title: "Hours", body: "清晨的提振、正午的热、入夜的空气。Hours 观察香港在一天内的转变，再把这些变化带进香水。" }, afterimage: { title: "Afterimage", body: "一杯茶、湿润的石面、雨后的树叶。Afterimage 从具体的香港记忆开始，追寻时刻过去后仍然留下的气息。" }, element: { title: "Element", body: "Element 是计划中的科学个性化系列，构想是研究顾客提供的气味样本，再调整他们偏好的现有基础香气。过程仍在开发中。" }, stage: ["时间", "地方", "你"] },
@@ -247,12 +250,12 @@ export default function HomeExperience() {
       </section>
       <section aria-labelledby="collections-heading" className="collections" id="collections">
         <header className="section-heading"><h2 id="collections-heading">{t.collections.title}</h2><p>{t.collections.intro}</p></header>
-        <div className="contact-sheet">{collectionItems.map((item, index) => <article id={`collection-${index + 1}`} key={item.title}><div className={`contact-image contact-image-${index + 1}`}><img alt={item.imageAlt} loading="lazy" src={collectionImages[index]} /><span aria-hidden="true" className="contact-time">{index === 0 ? "06:00" : index === 1 ? "18:42" : "YAT.E"}</span></div><div className="contact-copy"><span>{String(index + 1).padStart(2, "0")}</span><h3>{item.title}</h3><p>{item.body}</p><small>{item.line}</small></div></article>)}</div>
+        <div className="contact-sheet">{collectionItems.map((item, index) => <article id={`collection-${index + 1}`} key={item.title}><div className={`contact-image contact-image-${index + 1}`}><img alt={item.imageAlt} loading="lazy" src={collectionImages[index]} /><span aria-hidden="true" className="contact-time">{index === 0 ? "06:00" : index === 1 ? "18:42" : "YAT.E"}</span></div><div className="contact-copy"><span>{String(index + 1).padStart(2, "0")}</span><h3>{item.title}</h3><p>{item.body}</p><small>{item.line}</small>{index === 2 && <a className="email-link" href="mailto:element@yatlifestyle.com"><span>{t.contact.element}</span><span>element@yatlifestyle.com</span></a>}</div></article>)}</div>
       </section>
       <section aria-labelledby="process-heading" className="process" id="process"><header><h2 id="process-heading">{t.process.title}</h2><p>{t.process.intro}</p></header><ol>{t.process.steps.map(([title, body], index) => <li key={title}><span>{String(index + 1).padStart(2, "0")}</span><h3>{title}</h3><p>{body}</p></li>)}</ol><p className="process-note">{t.process.note}</p></section>
-      <section aria-labelledby="about-heading" className="about" id="about"><figure className="about-frame"><img alt={t.collections.element.imageAlt} loading="lazy" src="/media/element-lab.webp" /><figcaption>{locale === "en" ? "A study in glass and light. Generated illustration." : locale === "zh-Hant" ? "玻璃與光的習作。生成概念圖。" : "玻璃与光的习作。生成概念图。"}</figcaption></figure><div className="about-copy"><h2 id="about-heading">{t.about.title}</h2><p>{t.about.body}</p><blockquote>{t.about.quote}</blockquote></div></section>
+      <section aria-labelledby="about-heading" className="about" id="about"><figure className="about-frame"><img alt={t.collections.element.imageAlt} loading="lazy" src="/media/element-lab.webp" /><figcaption>{locale === "en" ? "A study in glass and light. Generated illustration." : locale === "zh-Hant" ? "玻璃與光的習作。生成概念圖。" : "玻璃与光的习作。生成概念图。"}</figcaption></figure><div className="about-copy"><h2 id="about-heading">{t.about.title}</h2><p>{t.about.body}</p><blockquote>{t.about.quote}</blockquote><a className="email-link" href="mailto:press@yatlifestyle.com"><span>{t.contact.press}</span><span>press@yatlifestyle.com</span></a></div></section>
       <section aria-labelledby="soon-heading" className="soon"><div><span className="soon-status">{t.soon.status}</span><h2 id="soon-heading">{t.soon.title}</h2><p>{t.soon.body}</p></div><p className="availability">{t.soon.availability}</p></section>
     </main>
-    <footer><a className="footer-wordmark" href="#top">YAT.lifestyle</a><p>{t.footer.note}</p><a href="#top">{t.footer.top}</a></footer>
+    <footer><a className="footer-wordmark" href="#top">YAT.lifestyle</a><div className="footer-contact"><p>{t.footer.note}</p><a className="email-link" href="mailto:hello@yatlifestyle.com"><span>{t.contact.general}</span><span>hello@yatlifestyle.com</span></a></div><a href="#top">{t.footer.top}</a></footer>
   </>;
 }

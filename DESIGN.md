@@ -85,6 +85,12 @@ The fixed header places the curved gold dropper emblem alone on the left, with s
 
 ### Collection Frames
 
+Contact links are placed in context rather than in a new form or modal: Element
+inquiries in its collection, press in About, general inquiries in both footers,
+and care/order questions on Shop. Labels follow the selected language; addresses
+remain unchanged. Links open the visitor's email app and do not imply ordering
+or the Element service is available yet.
+
 Three staggered photographic frames pair a local image with a collection name and short description. Mobile stacks these vertically so every collection is discoverable without a horizontal swipe. Images may carry film treatment, but text remains HTML with useful localized alt text.
 
 ### Signature Media

@@ -1,16 +1,16 @@
 # Graph Report - YAT.lifestyle  (2026-09-24)
 
 ## Corpus Check
-- 35 files · ~787,016 words
+- 35 files · ~809,642 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 166 nodes · 181 edges · 18 communities (14 shown, 4 thin omitted)
+- 168 nodes · 183 edges · 18 communities (14 shown, 4 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `50df4da4`
+- Built from commit: `1151882d`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -80,12 +80,12 @@ Cohesion: 0.18
 Nodes (10): Asset inventory, Component grammar, Copy rules, Direction, First viewport, Home build brief, Interaction, Page sequence (+2 more)
 
 ### Community 6 - "Community 6"
-Cohesion: 0.50
-Nodes (3): Higgsfield Seedance 2.0, Scripts, YAT.lifestyle
+Cohesion: 0.40
+Nodes (4): Contact email setup, Development scripts, Higgsfield Seedance 2.0, YAT.lifestyle
 
 ### Community 8 - "Community 8"
-Cohesion: 0.16
-Nodes (11): collectionImages, copy, HomeExperience(), languages, Locale, navigation, SiteHeader(), useLocale() (+3 more)
+Cohesion: 0.15
+Nodes (12): collectionImages, copy, HomeExperience(), languages, Locale, navigation, SiteHeader(), useLocale() (+4 more)
 
 ### Community 9 - "Community 9"
 Cohesion: 0.18
@@ -104,7 +104,7 @@ Cohesion: 0.12
 Nodes (15): Actions, Collection Frames, Colors, Components, Design System: YAT.lifestyle, Do:, Do's and Don'ts, Don't: (+7 more)
 
 ## Knowledge Gaps
-- **110 isolated node(s):** `copy`, `collectionImages`, `metadata`, `metadata`, `copy` (+105 more)
+- **112 isolated node(s):** `copy`, `collectionImages`, `metadata`, `metadata`, `copy` (+107 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -114,7 +114,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `devDependencies` connect `Community 2` to `Community 3`?**
   _High betweenness centrality (0.020) - this node is a cross-community bridge._
 - **What connects `copy`, `collectionImages`, `metadata` to the rest of the system?**
-  _110 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _112 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.09523809523809523 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**
