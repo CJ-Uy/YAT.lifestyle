@@ -307,7 +307,7 @@
       "label": "storyMotion()",
       "file_type": "code",
       "source_file": "lib/story-motion.ts",
-      "source_location": "L3",
+      "source_location": "L5",
       "_origin": "ast",
       "id": "lib_story_motion_storymotion",
       "community": 8,
@@ -1537,7 +1537,7 @@
       "label": "Produce later as image-native media",
       "file_type": "document",
       "source_file": "public/media/asset-manifest.md",
-      "source_location": "L16",
+      "source_location": "L17",
       "_origin": "ast",
       "id": "media_asset_manifest_produce_later_as_image_native_media",
       "community": 15,
@@ -1547,7 +1547,7 @@
       "label": "Build without generated imagery",
       "file_type": "document",
       "source_file": "public/media/asset-manifest.md",
-      "source_location": "L24",
+      "source_location": "L25",
       "_origin": "ast",
       "id": "media_asset_manifest_build_without_generated_imagery",
       "community": 15,
@@ -3204,5 +3204,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "83a5001ad4ad5231c7f0c99b3f3f83a7d40d370b"
+  "built_at_commit": "97c1d7b2efea472f7e44e4667157843729bf9e2c"
 }

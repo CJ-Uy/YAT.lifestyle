@@ -70,8 +70,8 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1790228941.630054,
-    "ast_hash": "1fee9446a20a24a1729ae54fb3309de2",
+    "mtime": 1790240071.267655,
+    "ast_hash": "811dec9267d746cdd1b1835846bec44b",
     "semantic_hash": ""
   },
   ".impeccable/direction-options.json": {
@@ -95,8 +95,8 @@
     "semantic_hash": ""
   },
   "app/home-experience.tsx": {
-    "mtime": 1790230819.972014,
-    "ast_hash": "eafc22ddd71cb2a1879614cddf84cb58",
+    "mtime": 1790239871.3683925,
+    "ast_hash": "e7aed044a9c1fc6c6eede7c128fe13f0",
     "semantic_hash": ""
   },
   ".impeccable/home-build-brief.md": {
@@ -115,8 +115,8 @@
     "semantic_hash": ""
   },
   "public/media/asset-manifest.md": {
-    "mtime": 1790230420.957516,
-    "ast_hash": "0933f2c3c55571275350eb0cb4b3ce03",
+    "mtime": 1790239956.3499517,
+    "ast_hash": "24759b787a4022b4bffe316810481219",
     "semantic_hash": ""
   },
   ".impeccable/mocks/home-a.png": {
@@ -205,8 +205,8 @@
     "semantic_hash": ""
   },
   "DESIGN.md": {
-    "mtime": 1790230894.0061123,
-    "ast_hash": "fbf53ce2ebe48e548ef847e301609f3f",
+    "mtime": 1790239950.6304545,
+    "ast_hash": "47843388b3f9fbab46880282c8f048d0",
     "semantic_hash": ""
   },
   "public/media/hong-kong-harbour-afterimage-poster.jpg": {
@@ -215,13 +215,13 @@
     "semantic_hash": ""
   },
   "lib/story-motion.test.ts": {
-    "mtime": 1790230748.3661218,
-    "ast_hash": "571d594b18a64b39746e3dc4aef61ddf",
+    "mtime": 1790240094.6396618,
+    "ast_hash": "d32c7e753bbb0eaaab3596ac45f6a388",
     "semantic_hash": ""
   },
   "lib/story-motion.ts": {
-    "mtime": 1790230748.3631198,
-    "ast_hash": "e2abc04ff0a6cd955ee399d2d9b79a85",
+    "mtime": 1790239823.798589,
+    "ast_hash": "9a560b88562124a9d858c958a1948a48",
     "semantic_hash": ""
   },
   "public/media/hong-kong-drop-mobile.json": {
@@ -317,6 +317,246 @@
   "public/media/hong-kong-drop-mobile.mp4": {
     "mtime": 1790230334.71671,
     "ast_hash": "46980021857c6c817eee13811a635b00",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-000.webp": {
+    "mtime": 1790238806.0519896,
+    "ast_hash": "af40ea3e3d20584e7bc31355e6107ffe",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-001.webp": {
+    "mtime": 1790238806.070115,
+    "ast_hash": "455d13d13ddcb4dc8ce2bb6dbc85c911",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-002.webp": {
+    "mtime": 1790238806.0879803,
+    "ast_hash": "3b4adf9e07f09f6093bf2435d81ebd3d",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-003.webp": {
+    "mtime": 1790238806.1060402,
+    "ast_hash": "9415c769e542d371920e5054f65de730",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-004.webp": {
+    "mtime": 1790238806.123818,
+    "ast_hash": "18c9b60850c05f61d9f4d36073b222d7",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-005.webp": {
+    "mtime": 1790238806.1415186,
+    "ast_hash": "b07de46d5671048637036519dc27865a",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-006.webp": {
+    "mtime": 1790238806.1585186,
+    "ast_hash": "550cf6badd079ece95d30cc228bd8093",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-007.webp": {
+    "mtime": 1790238806.176032,
+    "ast_hash": "f3e264577b5c2348f48944153622b35a",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-008.webp": {
+    "mtime": 1790238806.1931987,
+    "ast_hash": "cc250cc88b54ae639a0c1c530d24517c",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-009.webp": {
+    "mtime": 1790238806.2112398,
+    "ast_hash": "1690927b3dbc6587e4a87586acdc8756",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-010.webp": {
+    "mtime": 1790238806.2292397,
+    "ast_hash": "7d696742b484ae09c41f86fc22a6f331",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-011.webp": {
+    "mtime": 1790238806.2462382,
+    "ast_hash": "0100ea36eb30c40bca5dbc912b02ee63",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-012.webp": {
+    "mtime": 1790238806.2642465,
+    "ast_hash": "130d17823805d488615c47b6ddfe5692",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-013.webp": {
+    "mtime": 1790238806.281165,
+    "ast_hash": "1e503ff813be4ec3b26cd2119cc2022f",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-014.webp": {
+    "mtime": 1790238806.2976627,
+    "ast_hash": "a6bd3943ac9572ada7d8e3d501690f88",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-015.webp": {
+    "mtime": 1790238806.316176,
+    "ast_hash": "e75605057ae566b2b49f2f00e3eecc48",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-016.webp": {
+    "mtime": 1790238806.3335192,
+    "ast_hash": "d9b3e378052d3f1beac0096e932eb4b1",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-017.webp": {
+    "mtime": 1790238806.3515067,
+    "ast_hash": "8e45b736eb73250555876ea0259d5f2d",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-018.webp": {
+    "mtime": 1790238806.3695066,
+    "ast_hash": "90ab30b57c6b0d8614987868b3b4ffc4",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-019.webp": {
+    "mtime": 1790238806.3865087,
+    "ast_hash": "b62bbde55cbe7812b3a008314e812606",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-020.webp": {
+    "mtime": 1790238806.4035177,
+    "ast_hash": "163d6ad3261c459ecb10046939a83ac7",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-021.webp": {
+    "mtime": 1790238806.420603,
+    "ast_hash": "1e4622d06c89f996b044d6e99b4234f4",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-022.webp": {
+    "mtime": 1790238806.438519,
+    "ast_hash": "9a96b216b237872d5928908143894485",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-023.webp": {
+    "mtime": 1790238806.4565253,
+    "ast_hash": "525e26bace2bc8a15975f067028bff9b",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-024.webp": {
+    "mtime": 1790238806.4745278,
+    "ast_hash": "e3520d791395ce8cdd81f1c7f4f575ae",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-025.webp": {
+    "mtime": 1790238806.4930482,
+    "ast_hash": "e11c0114b3cf62c3363be136e1e422ba",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-026.webp": {
+    "mtime": 1790238806.5105715,
+    "ast_hash": "09d26ab0a0391d2ba1dcdeace36e860a",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-027.webp": {
+    "mtime": 1790238806.529565,
+    "ast_hash": "d678ef17caf61c58f53cc527bed445e0",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-028.webp": {
+    "mtime": 1790238806.5465634,
+    "ast_hash": "609142c2a4581c431d9db04ba02c5bf3",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-029.webp": {
+    "mtime": 1790238806.563563,
+    "ast_hash": "0a00d6b6aefed5ba0c81d36ad234dbd9",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-030.webp": {
+    "mtime": 1790238806.5806553,
+    "ast_hash": "1d80cac8bbf954611c1bb1c522f7c134",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-031.webp": {
+    "mtime": 1790238806.5987005,
+    "ast_hash": "41ef345759b38f1fe3ebf5d73418d24b",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-032.webp": {
+    "mtime": 1790238806.6162162,
+    "ast_hash": "0ee8d80989c68bd7d27cf1eb9d9b12e3",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-033.webp": {
+    "mtime": 1790238806.6342149,
+    "ast_hash": "3163bb687b5dcab88ef67573323113a2",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-034.webp": {
+    "mtime": 1790238806.652207,
+    "ast_hash": "1ea9d6032e4c974bd9bb75ec6e7336f6",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-035.webp": {
+    "mtime": 1790238806.6699958,
+    "ast_hash": "55232894ec6a7864e67f207180444c63",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-036.webp": {
+    "mtime": 1790238806.6880014,
+    "ast_hash": "8db9edf22f66b2847f3127468368ab3d",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-037.webp": {
+    "mtime": 1790238806.7066758,
+    "ast_hash": "e8e95e74c12e2f051a3b39677bde4a46",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-038.webp": {
+    "mtime": 1790238806.724675,
+    "ast_hash": "05adc454d56fc359ce0b6a4af5b6f133",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-039.webp": {
+    "mtime": 1790238806.7436752,
+    "ast_hash": "d915f4241f353e08946a4656b217213d",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-040.webp": {
+    "mtime": 1790238806.7616751,
+    "ast_hash": "76e6b487a2e8291135865a7ffd70c464",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-041.webp": {
+    "mtime": 1790238806.7796743,
+    "ast_hash": "e9f1157e1e83a633688a82a51b491172",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-042.webp": {
+    "mtime": 1790238806.7971802,
+    "ast_hash": "f6cfb81dd7476a4cac30cd485403ce11",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-043.webp": {
+    "mtime": 1790238806.8156946,
+    "ast_hash": "0e4053100624c178dd202270af7b537f",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-044.webp": {
+    "mtime": 1790238806.8336911,
+    "ast_hash": "d84a0c9f18ed4fc7b65a42ceda4a231a",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-045.webp": {
+    "mtime": 1790238806.8526914,
+    "ast_hash": "83bc138aae925c8faa9597eeef6e1c4a",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-046.webp": {
+    "mtime": 1790238806.8706915,
+    "ast_hash": "3e4ad380ebe2da5411bb725faf3037d0",
+    "semantic_hash": ""
+  },
+  "public/media/drop-sequence/frame-047.webp": {
+    "mtime": 1790238806.8887002,
+    "ast_hash": "91b5e8137ce88db3886516317835c171",
     "semantic_hash": ""
   }
 }

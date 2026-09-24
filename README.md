@@ -19,7 +19,7 @@ read only page stores no visitor data and needs no migrations.
 - `npm run build` builds the Cloudflare Worker output.
 - `npm run start` starts the built Worker locally with Wrangler.
 - `npm run deploy` deploys the Cloudflare Worker.
-- `npm test` runs the offline Seedance integration check.
+- `npm test` runs the offline Seedance and scroll-motion checks.
 - `npm run higgsfield:video -- "prompt"` generates a design video with Seedance 2.0.
 
 ## Higgsfield Seedance 2.0
@@ -40,9 +40,10 @@ identical prompt and settings reuse the completed request unless `--force` is se
 The request ID is saved before polling, so rerunning the same command can resume
 an interrupted request. `--force` sends a new billable request.
 
-The hero uses a silent Higgsfield Seedance 2.0 video stored locally in
-`public/media/`, with a still poster for reduced motion. Collection stills and
-their generation records are in the same directory. Site visitors never call
-the Higgsfield API; credentials are only used by the local generation script.
+The scroll scene uses 48 small WebP frames derived from a silent Higgsfield
+Seedance 2.0 video in `public/media/`. Scroll controls the falling drop and its
+landing in the draft YAT logo. Reduced motion uses a still poster. Collection
+stills and generation records are in the same directory. Site visitors never
+call the Higgsfield API; credentials are only used by the local generation script.
 
 Design context lives in `PRODUCT.md`, `DESIGN.md`, and `.impeccable/`.

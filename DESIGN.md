@@ -62,7 +62,7 @@ The hero display size is `clamp(3.4rem, 5.35vw, 5.65rem)` on desktop. Section he
 
 ## Layout
 
-The fixed header is 82px high on desktop and 96px on small screens. Main content uses horizontal padding of `clamp(1.25rem, 4.5vw, 4.75rem)`. Desktop compositions pair a readable text field with a larger media field. Below 1000px, navigation becomes a native disclosure. Below 680px, the portrait film leads, copy overlaps its dark lower edge, and the three collection links form a compact row.
+The fixed header is 82px high on desktop and 96px on small screens. Main content uses horizontal padding of `clamp(1.25rem, 4.5vw, 4.75rem)`. Desktop compositions pair a readable text field with a larger media field. Below 1000px, navigation becomes a native disclosure. Below 680px, the portrait pipette remains central while the story copy stays below the falling drop.
 
 The first viewport gives visitors a headline, a plain description, direct collection and story links, launch status, and the pipette. The story can be bypassed through the navigation and anchors.
 
@@ -90,7 +90,7 @@ Three contact sheet frames pair a local image with a collection name, short desc
 
 ### Signature Media
 
-The hero uses a landscape Higgsfield film on desktop and a portrait Higgsfield film on phones. The story keeps the film in a sticky frame and seeks through the falling drop as the visitor scrolls. The film resolves into the user-supplied draft YAT logo, with the gold drop inside the A. This is a provisional logo treatment, not final brand approval. Reduced motion uses a still poster and the logo without scroll animation.
+One full-viewport stage carries the hero and story on every screen size. A scroll-controlled canvas draws a small WebP sequence derived from the portrait Higgsfield film, so the falling drop can stay in view without seeking a video on iOS. The sequence follows the drop into the gold drop inside the A of the user-supplied draft YAT logo. This is a provisional logo treatment, not final brand approval. Reduced motion uses the still poster and a static logo reveal.
 
 ## Do's and Don'ts
 
