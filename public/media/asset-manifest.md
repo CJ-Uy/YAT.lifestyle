@@ -2,6 +2,8 @@
 
 ## Ready now
 
+- `shop-first-edition-original.png` and `shop-first-edition.webp`: Shop-exclusive smoked-glass perfume concept, generated with Higgsfield SOUL Cinema on 2026-09-25, 1152×2048. The WebP is an optimized quality-86 derivative, with no retouching. Full prompt, settings and request ID are in `shop-first-edition.json`. It is labelled as a generated concept, not final packaging; the existing laboratory photograph remains on the homepage.
+
 - `hong-kong-harbour-afterimage.mp4`: Higgsfield Seedance 2.0 hero plate, 5 seconds, 720p, 16:9, silent.
 - `hong-kong-harbour-afterimage-poster.jpg`: reduced-motion poster extracted from the approved hero plate.
 - `hong-kong-drop-mobile.mp4`: Higgsfield Seedance 2.0 portrait pipette and falling drop, 5 seconds, 720p, 9:16, silent.

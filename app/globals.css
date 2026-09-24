@@ -192,7 +192,7 @@ footer > a:last-child { align-items: center; color: #d8c7a5; display: flex; just
 .shop-delivery { border-top: 1px solid var(--rule); color: var(--muted); font-size: .85rem; line-height: 1.8; margin: 4rem 0 0; max-width: 44ch; padding-top: 1.5rem; }
 .shop-contacts { display: flex; flex-wrap: wrap; gap: 1.5rem 2.5rem; margin-top: 2rem; }
 .shop-image { align-self: stretch; margin: 0; min-height: 600px; overflow: hidden; position: relative; }
-.shop-image img { height: 100%; object-fit: cover; object-position: 60%; position: absolute; width: 100%; }
+.shop-image img { height: 100%; object-fit: cover; object-position: 50% 70%; position: absolute; width: 100%; }
 .shop-image::after { background: linear-gradient(0deg, rgba(8,8,6,.94), transparent 30%), linear-gradient(90deg, var(--ink), transparent 30%); content: ""; inset: 0; position: absolute; }
 .shop-image figcaption { bottom: 2rem; color: var(--warm); font-size: .7rem; left: 2rem; line-height: 1.6; position: absolute; right: 2rem; z-index: 1; }
 .shop-footer { display: flex; justify-content: space-between; min-height: 94px; padding: 1.5rem 6vw; }

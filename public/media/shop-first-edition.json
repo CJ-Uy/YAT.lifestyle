@@ -1,0 +1,20 @@
+{
+  "synthetic": true,
+  "placement": "Shop coming-soon editorial image only",
+  "provider": "Higgsfield",
+  "model": "higgsfield-ai/soul/cinema",
+  "request_id": "458ef56b-6fc5-4804-b73a-de62c35a35ec",
+  "created_at": "2026-09-25",
+  "original": "shop-first-edition-original.png",
+  "web_asset": "shop-first-edition.webp",
+  "width": 1152,
+  "height": 2048,
+  "input": {
+    "prompt": "Create a meticulously art-directed luxury perfume editorial photograph for the coming-soon shop of YAT.lifestyle, an independent Hong Kong fragrance brand. This is an atmospheric concept, NOT a finished product catalogue photograph. Vertical portrait composition. One single closed, unlabelled perfume bottle of heavy smoked amber glass stands on a charcoal-black honed stone surface. The bottle has simple architectural proportions, softly rounded shoulders, a solid matte black cylindrical cap and a very thin brushed champagne-gold collar. No dropper, no pipette, no test tubes, no laboratory equipment. A narrow blade of late-afternoon amber sunlight crosses the bottle from high camera right, revealing the thickness of the glass and a small pool of pale gold liquid. Light refracts into one restrained, elegant golden caustic on the stone in the foreground. The bottle remains deep translucent brown-black, not bright yellow. Reflections are precise and physically plausible: a thin warm edge highlight, one broad very soft highlight, dark clean gradients in the glass, subtle real imperfections in the stone. The background is an almost-black seamless studio wall with a soft warm falloff, not a city skyline. The feeling is quiet anticipation: an edition still under wraps, understated and tactile, ready to be discovered. Place the entire bottle within the central 38 percent of the image width, cap around 30 percent down the image, bottle base around 70 percent down. Leave generous negative space above and on both sides. Camera level with the bottle, an 85mm product photography lens, sharp bottle and stone texture, controlled depth of field, no extreme blur, no exaggerated bloom. Black, warm ivory highlights and restrained champagne gold only. High-end real studio photograph, natural optical reflections, subtle contrast, not a glossy CGI render. One bottle only. No flowers, ribbons, floating particles, hands, people, decorative spheres, pedestal, packaging boxes, lettering, labels, logos, watermark, collage or border. No text anywhere. The bottle should remain fully visible when the image is cropped to its central portrait region.",
+    "resolution": "1080p",
+    "aspect_ratio": "9:16",
+    "enhance_prompt": false,
+    "batch_size": 1,
+    "seed": 925026
+  }
+}

@@ -115,8 +115,8 @@
     "semantic_hash": ""
   },
   "public/media/asset-manifest.md": {
-    "mtime": 1790261888.81082,
-    "ast_hash": "827a7e264d486104eb80eeb622d3f422",
+    "mtime": 1790271103.5019262,
+    "ast_hash": "978804b9abca5311d18cfe1e57cc2f54",
     "semantic_hash": ""
   },
   ".impeccable/mocks/home-a.png": {
@@ -590,8 +590,8 @@
     "semantic_hash": ""
   },
   "app/shop/shop-experience.tsx": {
-    "mtime": 1790263331.9247172,
-    "ast_hash": "18701066ffa0c5f5c7d6eff505c17d28",
+    "mtime": 1790271103.4979212,
+    "ast_hash": "f542c80880998f8cd07d793f7d9cdffd",
     "semantic_hash": ""
   },
   "app/site-header.tsx": {
@@ -657,6 +657,21 @@
   "scripts/check-newsletter.js": {
     "mtime": 1790263938.6556716,
     "ast_hash": "69ff30a008844f5ef26e9e81eb3acf34",
+    "semantic_hash": ""
+  },
+  "public/media/shop-first-edition.json": {
+    "mtime": 1790271103.5009272,
+    "ast_hash": "8725266b4ce7a4b065c1dd6dc48169e4",
+    "semantic_hash": ""
+  },
+  "public/media/shop-first-edition-original.png": {
+    "mtime": 1790271021.9364417,
+    "ast_hash": "d4ee53dd9297bb3f3930c54692a34a3f",
+    "semantic_hash": ""
+  },
+  "public/media/shop-first-edition.webp": {
+    "mtime": 1790271102.9235384,
+    "ast_hash": "9a2757ef57448e3db7b6a192ce8fabe6",
     "semantic_hash": ""
   }
 }

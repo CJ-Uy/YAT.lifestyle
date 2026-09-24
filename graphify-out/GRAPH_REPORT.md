@@ -1,7 +1,7 @@
-# Graph Report - YAT.lifestyle  (2026-09-24)
+# Graph Report - YAT.lifestyle  (2026-09-25)
 
 ## Corpus Check
-- 45 files · ~812,463 words
+- 46 files · ~867,161 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `770c6ac3`
+- Built from commit: `b27f61a6`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 

@@ -1877,7 +1877,7 @@
       "label": "Produce later as image-native media",
       "file_type": "document",
       "source_file": "public/media/asset-manifest.md",
-      "source_location": "L18",
+      "source_location": "L20",
       "_origin": "ast",
       "id": "media_asset_manifest_produce_later_as_image_native_media",
       "community": 15,
@@ -1887,7 +1887,7 @@
       "label": "Build without generated imagery",
       "file_type": "document",
       "source_file": "public/media/asset-manifest.md",
-      "source_location": "L26",
+      "source_location": "L28",
       "_origin": "ast",
       "id": "media_asset_manifest_build_without_generated_imagery",
       "community": 15,
@@ -1902,9 +1902,9 @@
       "source_file": "app/api/newsletter/route.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "newsletter_route",
-      "target": "lib_newsletter_server",
-      "confidence_score": 1.0
+      "target": "lib_newsletter_server"
     },
     {
       "relation": "imports",
@@ -1913,9 +1913,9 @@
       "source_file": "app/api/newsletter/route.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "newsletter_route",
-      "target": "lib_newsletter_server_subscribe",
-      "confidence_score": 1.0
+      "target": "lib_newsletter_server_subscribe"
     },
     {
       "relation": "contains",
@@ -1923,9 +1923,9 @@
       "source_file": "app/api/newsletter/route.ts",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "newsletter_route",
-      "target": "newsletter_route_post",
-      "confidence_score": 1.0
+      "target": "newsletter_route_post"
     },
     {
       "relation": "calls",
@@ -2092,9 +2092,9 @@
       "source_file": "app/privacy/page.tsx",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "privacy_page",
-      "target": "privacy_page_metadata",
-      "confidence_score": 1.0
+      "target": "privacy_page_metadata"
     },
     {
       "relation": "contains",
@@ -2102,9 +2102,9 @@
       "source_file": "app/privacy/page.tsx",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "privacy_page",
-      "target": "privacy_page_privacypage",
-      "confidence_score": 1.0
+      "target": "privacy_page_privacypage"
     },
     {
       "relation": "imports_from",
@@ -2113,9 +2113,9 @@
       "source_file": "app/privacy/page.tsx",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "privacy_page",
-      "target": "privacy_privacy_content",
-      "confidence_score": 1.0
+      "target": "privacy_privacy_content"
     },
     {
       "relation": "imports",
@@ -2124,9 +2124,9 @@
       "source_file": "app/privacy/page.tsx",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "privacy_page",
-      "target": "privacy_privacy_content_privacycontent",
-      "confidence_score": 1.0
+      "target": "privacy_privacy_content_privacycontent"
     },
     {
       "relation": "imports_from",
@@ -2135,9 +2135,9 @@
       "source_file": "app/privacy/privacy-content.tsx",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "privacy_privacy_content",
-      "target": "app_site_header",
-      "confidence_score": 1.0
+      "target": "app_site_header"
     },
     {
       "relation": "imports",
@@ -2146,9 +2146,9 @@
       "source_file": "app/privacy/privacy-content.tsx",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "privacy_privacy_content",
-      "target": "app_site_header_siteheader",
-      "confidence_score": 1.0
+      "target": "app_site_header_siteheader"
     },
     {
       "relation": "imports",
@@ -2157,9 +2157,9 @@
       "source_file": "app/privacy/privacy-content.tsx",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "privacy_privacy_content",
-      "target": "app_site_header_uselocale",
-      "confidence_score": 1.0
+      "target": "app_site_header_uselocale"
     },
     {
       "relation": "imports_from",
@@ -2168,9 +2168,9 @@
       "source_file": "app/privacy/privacy-content.tsx",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "privacy_privacy_content",
-      "target": "lib_newsletter",
-      "confidence_score": 1.0
+      "target": "lib_newsletter"
     },
     {
       "relation": "imports",
@@ -2179,9 +2179,9 @@
       "source_file": "app/privacy/privacy-content.tsx",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "privacy_privacy_content",
-      "target": "lib_newsletter_newslettercopy",
-      "confidence_score": 1.0
+      "target": "lib_newsletter_newslettercopy"
     },
     {
       "relation": "contains",
@@ -2189,9 +2189,9 @@
       "source_file": "app/privacy/privacy-content.tsx",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "privacy_privacy_content",
-      "target": "privacy_privacy_content_copy",
-      "confidence_score": 1.0
+      "target": "privacy_privacy_content_copy"
     },
     {
       "relation": "contains",
@@ -2199,9 +2199,9 @@
       "source_file": "app/privacy/privacy-content.tsx",
       "source_location": "L48",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "privacy_privacy_content",
-      "target": "privacy_privacy_content_privacycontent",
-      "confidence_score": 1.0
+      "target": "privacy_privacy_content_privacycontent"
     },
     {
       "relation": "calls",
@@ -2221,9 +2221,9 @@
       "source_file": "app/shop/newsletter-form.tsx",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shop_newsletter_form",
-      "target": "app_site_header",
-      "confidence_score": 1.0
+      "target": "app_site_header"
     },
     {
       "relation": "imports",
@@ -2232,9 +2232,9 @@
       "source_file": "app/shop/newsletter-form.tsx",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shop_newsletter_form",
-      "target": "app_site_header_locale",
-      "confidence_score": 1.0
+      "target": "app_site_header_locale"
     },
     {
       "relation": "imports_from",
@@ -2243,9 +2243,9 @@
       "source_file": "app/shop/newsletter-form.tsx",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shop_newsletter_form",
-      "target": "lib_newsletter",
-      "confidence_score": 1.0
+      "target": "lib_newsletter"
     },
     {
       "relation": "imports",
@@ -2254,9 +2254,9 @@
       "source_file": "app/shop/newsletter-form.tsx",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shop_newsletter_form",
-      "target": "lib_newsletter_newslettercopy",
-      "confidence_score": 1.0
+      "target": "lib_newsletter_newslettercopy"
     },
     {
       "relation": "contains",
@@ -2264,9 +2264,9 @@
       "source_file": "app/shop/newsletter-form.tsx",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shop_newsletter_form",
-      "target": "shop_newsletter_form_newsletterform",
-      "confidence_score": 1.0
+      "target": "shop_newsletter_form_newsletterform"
     },
     {
       "relation": "imports_from",
@@ -2275,9 +2275,9 @@
       "source_file": "app/shop/shop-experience.tsx",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shop_shop_experience",
-      "target": "shop_newsletter_form",
-      "confidence_score": 1.0
+      "target": "shop_newsletter_form"
     },
     {
       "relation": "contains",
@@ -2361,9 +2361,9 @@
       "source_file": "app/shop/shop-experience.tsx",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shop_shop_experience",
-      "target": "lib_newsletter",
-      "confidence_score": 1.0
+      "target": "lib_newsletter"
     },
     {
       "relation": "imports",
@@ -2372,9 +2372,9 @@
       "source_file": "app/shop/shop-experience.tsx",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shop_shop_experience",
-      "target": "lib_newsletter_newslettercopy",
-      "confidence_score": 1.0
+      "target": "lib_newsletter_newslettercopy"
     },
     {
       "relation": "contains",
@@ -2474,9 +2474,9 @@
       "source_file": "lib/newsletter.server.ts",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_newsletter_server",
-      "target": "lib_newsletter",
-      "confidence_score": 1.0
+      "target": "lib_newsletter"
     },
     {
       "relation": "imports",
@@ -2485,9 +2485,9 @@
       "source_file": "lib/newsletter.server.ts",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_newsletter_server",
-      "target": "lib_newsletter_newslettercopy",
-      "confidence_score": 1.0
+      "target": "lib_newsletter_newslettercopy"
     },
     {
       "relation": "contains",
@@ -2495,9 +2495,9 @@
       "source_file": "lib/newsletter.server.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_newsletter_server",
-      "target": "lib_newsletter_server_newsletterenv",
-      "confidence_score": 1.0
+      "target": "lib_newsletter_server_newsletterenv"
     },
     {
       "relation": "contains",
@@ -2505,9 +2505,9 @@
       "source_file": "lib/newsletter.server.ts",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_newsletter_server",
-      "target": "lib_newsletter_server_response",
-      "confidence_score": 1.0
+      "target": "lib_newsletter_server_response"
     },
     {
       "relation": "contains",
@@ -2515,9 +2515,9 @@
       "source_file": "lib/newsletter.server.ts",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_newsletter_server",
-      "target": "lib_newsletter_server_subscribe",
-      "confidence_score": 1.0
+      "target": "lib_newsletter_server_subscribe"
     },
     {
       "relation": "imports_from",
@@ -2526,9 +2526,9 @@
       "source_file": "lib/newsletter.test.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_newsletter_test",
-      "target": "lib_newsletter_server",
-      "confidence_score": 1.0
+      "target": "lib_newsletter_server"
     },
     {
       "relation": "imports",
@@ -2537,9 +2537,9 @@
       "source_file": "lib/newsletter.test.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_newsletter_test",
-      "target": "lib_newsletter_server_newsletterenv",
-      "confidence_score": 1.0
+      "target": "lib_newsletter_server_newsletterenv"
     },
     {
       "relation": "calls",
@@ -2548,9 +2548,9 @@
       "source_file": "lib/newsletter.server.ts",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_newsletter_server_subscribe",
-      "target": "lib_newsletter_server_response",
-      "confidence_score": 1.0
+      "target": "lib_newsletter_server_response"
     },
     {
       "relation": "imports",
@@ -2559,9 +2559,9 @@
       "source_file": "lib/newsletter.test.ts",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_newsletter_test",
-      "target": "lib_newsletter_server_subscribe",
-      "confidence_score": 1.0
+      "target": "lib_newsletter_server_subscribe"
     },
     {
       "relation": "imports_from",
@@ -2570,9 +2570,9 @@
       "source_file": "lib/newsletter.test.ts",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_newsletter_test",
-      "target": "lib_newsletter",
-      "confidence_score": 1.0
+      "target": "lib_newsletter"
     },
     {
       "relation": "imports",
@@ -2581,9 +2581,9 @@
       "source_file": "lib/newsletter.test.ts",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_newsletter_test",
-      "target": "lib_newsletter_newslettercopy",
-      "confidence_score": 1.0
+      "target": "lib_newsletter_newslettercopy"
     },
     {
       "relation": "contains",
@@ -2591,9 +2591,9 @@
       "source_file": "lib/newsletter.test.ts",
       "source_location": "L60",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_newsletter_test",
-      "target": "lib_newsletter_test_prepare",
-      "confidence_score": 1.0
+      "target": "lib_newsletter_test_prepare"
     },
     {
       "relation": "contains",
@@ -2601,9 +2601,9 @@
       "source_file": "lib/newsletter.ts",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "lib_newsletter",
-      "target": "lib_newsletter_newslettercopy",
-      "confidence_score": 1.0
+      "target": "lib_newsletter_newslettercopy"
     },
     {
       "relation": "contains",
@@ -4126,9 +4126,9 @@
       "source_file": "README.md",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "readme_yat_lifestyle",
-      "target": "readme_newsletter_and_privacy",
-      "confidence_score": 1.0
+      "target": "readme_newsletter_and_privacy"
     },
     {
       "relation": "contains",
@@ -4172,5 +4172,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "770c6ac3ecfeebbb9c5d7a77328b06c88feeb4b7"
+  "built_at_commit": "b27f61a664f7aaf6085d2ed77fa9e6e1b9f5e81c"
 }
