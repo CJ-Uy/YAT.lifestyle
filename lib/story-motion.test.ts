@@ -26,6 +26,7 @@ test("the drop falls before resolving into the YAT logo", () => {
     const motion = storyMotion(-step * 40, 4800, 800, 520);
     assert.ok(Math.abs(motion.filmOpacity + motion.vectorOpacity - 1) < 1e-10);
     assert.ok(Number.isFinite(motion.focusY));
+    assert.ok(motion.zoom >= 1 && motion.zoom <= 1.04, "Avoid enlarging the filmed drop beyond the restrained zoom range");
     assert.ok(motion.scenes.every((scene) => scene.opacity >= 0 && scene.opacity <= 1));
   }
   for (const [index, progress] of [0, .22, .4, .58, .75].entries()) {

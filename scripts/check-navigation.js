@@ -39,8 +39,11 @@ async (page) => {
     await page.setViewportSize({ width, height: 844 });
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `Home overflows at ${width}`);
     const emblem = await page.locator(".wordmark").boundingBox();
-    const viewport = await page.evaluate(() => document.documentElement.clientWidth);
-    assert(Math.abs(emblem.x + emblem.width / 2 - viewport / 2) < 2, `Emblem is not centered at ${width}`);
+    const inset = await page.locator(".site-header").evaluate(el => parseFloat(getComputedStyle(el).paddingLeft));
+    assert(Math.abs(emblem.x - inset) < 2, `Emblem is not left-aligned at ${width}`);
+    const heading = await page.locator(".scene-intro h2").boundingBox();
+    const paragraph = await page.locator(".scene-intro p").boundingBox();
+    assert(Math.abs(heading.x + heading.width / 2 - paragraph.x - paragraph.width / 2) < 2, `Story subtext is not centered at ${width}`);
     await page.locator(".language-select summary").click();
     const dropdown = await page.locator(".language-options").boundingBox();
     assert(dropdown.x >= 0 && dropdown.x + dropdown.width <= width, `Language menu overflows at ${width}`);
@@ -49,5 +52,5 @@ async (page) => {
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `Shop overflows at ${width}`);
     await page.goto("http://localhost:3000");
   }
-  return "PASS: centered emblem, no hero action, accessible language disclosure, language persistence, four responsive widths";
+  return "PASS: left-aligned emblem, centered story subtext, accessible language disclosure, language persistence, four responsive widths";
 }

@@ -125,7 +125,9 @@ export default function HomeExperience() {
       if (canvas.width !== width || canvas.height !== height) { canvas.width = width; canvas.height = height; }
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
       context.clearRect(0, 0, rect.width, rect.height);
-      const filmWidth = rect.width > 900 ? Math.min(rect.width * 0.58, 800) : rect.width;
+      const filmWidth = rect.width > 900 ? Math.min(rect.width * 0.5, 720) : rect.width;
+      // Motion tracking stays in the original 540 x 960 coordinate space;
+      // source images retain the film's full 720 x 1280 detail.
       const scale = Math.max(filmWidth / 540, rect.height / 960) * motion.zoom;
       const settle = reducedMotion ? reveal : motion.settle;
       const morph = reducedMotion ? 1 : motion.dropMorph;
@@ -146,6 +148,7 @@ export default function HomeExperience() {
           context.beginPath();
           context.rect((rect.width - filmWidth) / 2, 0, filmWidth, rect.height);
           context.clip();
+          context.imageSmoothingQuality = "high";
           context.drawImage(image, (rect.width - 540 * scale) / 2, motion.focusY - motion.dropY * scale, 540 * scale, 960 * scale);
           // Feather the portrait plate into the full-width photographic scene.
           context.globalCompositeOperation = "destination-in";
@@ -164,7 +167,7 @@ export default function HomeExperience() {
     frames.forEach((image, index) => {
       image.decoding = "async";
       image.onload = schedule;
-      image.src = `/media/drop-sequence/frame-${String(reducedMotion ? 38 : index).padStart(3, "0")}.webp`;
+      image.src = `/media/drop-sequence/frame-${String(reducedMotion ? 38 : index).padStart(3, "0")}.webp?v=2`;
     });
     schedule();
     window.addEventListener("scroll", schedule, { passive: true });

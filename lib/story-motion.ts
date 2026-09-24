@@ -33,6 +33,6 @@ export function storyMotion(top: number, height: number, viewport: number, landi
     signatureReveal: ease((progress - 0.95) / 0.05),
     atmosphereOpacity: 1 - ease((progress - 0.78) / 0.12),
     scenes,
-    zoom: 1 + film * 0.12,
+    zoom: 1 + film * 0.04,
   };
 }

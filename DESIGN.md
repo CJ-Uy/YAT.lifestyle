@@ -81,7 +81,7 @@ Actions have square corners, a 56px minimum height, a fine border, and serif tex
 
 ### Navigation
 
-The fixed header centers the curved gold dropper emblem alone, with section links on the left and language plus Shop on the right. Mobile keeps the same single-row arrangement with a native `details` navigation menu. All touch targets are at least 44px. The language disclosure uses a dark panel, full language names and a gold check for the current choice; its mobile trigger is abbreviated. It supports Tab, Escape, outside-click dismissal and remembers the choice across pages. Shop leads to a localized, read-only coming-soon page using existing lab imagery and the Hong Kong delivery notice.
+The fixed header places the curved gold dropper emblem alone on the left, with section links, language and Shop grouped on the right so the center stays clear above the cinematic pipette. Mobile keeps the same single-row arrangement with a native `details` navigation menu. All touch targets are at least 44px. The language disclosure uses a dark panel, full language names and a gold check for the current choice; its mobile trigger is abbreviated. It supports Tab, Escape, outside-click dismissal and remembers the choice across pages. Shop leads to a localized, read-only coming-soon page using existing lab imagery and the Hong Kong delivery notice.
 
 ### Collection Frames
 

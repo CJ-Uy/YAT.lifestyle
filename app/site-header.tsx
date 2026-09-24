@@ -42,10 +42,10 @@ export default function SiteHeader({ locale, onLocaleChange, shop = false }: { l
   const home = shop ? "/" : "";
   const links = [["top", t.home], ["collections", t.collections], ["process", t.process], ["about", t.about]];
   return <header className="site-header">
-    <nav aria-label="Primary navigation" className="primary-nav">{links.filter(([id]) => id !== "top").map(([id, label]) => <a href={`${home}#${id}`} key={id}>{label}</a>)}</nav>
     <a className="wordmark" href={`${home}#top`} aria-label={`YAT.lifestyle · ${t.home}`}>
       <img className="brand-drop" src="/brand-emblem.svg" alt="" width="64" height="100" />
     </a>
+    <nav aria-label="Primary navigation" className="primary-nav">{links.filter(([id]) => id !== "top").map(([id, label]) => <a href={`${home}#${id}`} key={id}>{label}</a>)}</nav>
     <details className="mobile-nav">
       <summary>{t.menu}<svg aria-hidden="true" width="16" height="12" viewBox="0 0 16 12"><path d="M1 2h14M1 10h14" stroke="currentColor" /></svg></summary>
       <nav aria-label="Mobile navigation">{links.map(([id, label]) => <a href={`${home}#${id}`} key={id} onClick={(event) => event.currentTarget.closest("details")?.removeAttribute("open")}>{label}</a>)}</nav>
