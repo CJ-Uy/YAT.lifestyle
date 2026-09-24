@@ -29,7 +29,7 @@ export function useLocale() {
   return [locale, changeLocale] as const;
 }
 
-export default function SiteHeader({ locale, onLocaleChange, shop = false }: { locale: Locale; onLocaleChange: (locale: Locale) => void; shop?: boolean }) {
+export default function SiteHeader({ locale, onLocaleChange, shop = false, subpage = false }: { locale: Locale; onLocaleChange: (locale: Locale) => void; shop?: boolean; subpage?: boolean }) {
   const languageRef = useRef<HTMLDetailsElement>(null);
   useEffect(() => {
     const dismiss = (event: PointerEvent) => {
@@ -39,7 +39,7 @@ export default function SiteHeader({ locale, onLocaleChange, shop = false }: { l
     return () => document.removeEventListener("pointerdown", dismiss);
   }, []);
   const t = navigation[locale];
-  const home = shop ? "/" : "";
+  const home = shop || subpage ? "/" : "";
   const links = [["top", t.home], ["collections", t.collections], ["process", t.process], ["about", t.about]];
   return <header className="site-header">
     <a className="wordmark" href={`${home}#top`} aria-label={`YAT.lifestyle · ${t.home}`}>

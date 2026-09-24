@@ -4,13 +4,33 @@
   "graph": {},
   "nodes": [
     {
+      "label": "route.ts",
+      "file_type": "code",
+      "source_file": "app/api/newsletter/route.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "newsletter_route",
+      "community": 18,
+      "norm_label": "route.ts"
+    },
+    {
+      "label": "POST()",
+      "file_type": "code",
+      "source_file": "app/api/newsletter/route.ts",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "newsletter_route_post",
+      "community": 18,
+      "norm_label": "post()"
+    },
+    {
       "label": "home-experience.tsx",
       "file_type": "code",
       "source_file": "app/home-experience.tsx",
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_home_experience",
-      "community": 8,
+      "community": 4,
       "norm_label": "home-experience.tsx"
     },
     {
@@ -20,7 +40,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "app_home_experience_copy",
-      "community": 8,
+      "community": 4,
       "norm_label": "copy"
     },
     {
@@ -30,7 +50,7 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "app_home_experience_collectionimages",
-      "community": 8,
+      "community": 4,
       "norm_label": "collectionimages"
     },
     {
@@ -40,7 +60,7 @@
       "source_location": "L67",
       "_origin": "ast",
       "id": "app_home_experience_homeexperience",
-      "community": 8,
+      "community": 4,
       "norm_label": "homeexperience()"
     },
     {
@@ -80,7 +100,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_page",
-      "community": 8,
+      "community": 4,
       "norm_label": "page.tsx"
     },
     {
@@ -90,8 +110,88 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "app_page_home",
-      "community": 8,
+      "community": 4,
       "norm_label": "home()"
+    },
+    {
+      "label": "page.tsx",
+      "file_type": "code",
+      "source_file": "app/privacy/page.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "privacy_page",
+      "community": 8,
+      "norm_label": "page.tsx"
+    },
+    {
+      "label": "metadata",
+      "file_type": "code",
+      "source_file": "app/privacy/page.tsx",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "privacy_page_metadata",
+      "community": 8,
+      "norm_label": "metadata"
+    },
+    {
+      "label": "PrivacyPage()",
+      "file_type": "code",
+      "source_file": "app/privacy/page.tsx",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "privacy_page_privacypage",
+      "community": 8,
+      "norm_label": "privacypage()"
+    },
+    {
+      "label": "privacy-content.tsx",
+      "file_type": "code",
+      "source_file": "app/privacy/privacy-content.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "privacy_privacy_content",
+      "community": 8,
+      "norm_label": "privacy-content.tsx"
+    },
+    {
+      "label": "copy",
+      "file_type": "code",
+      "source_file": "app/privacy/privacy-content.tsx",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "privacy_privacy_content_copy",
+      "community": 8,
+      "norm_label": "copy"
+    },
+    {
+      "label": "PrivacyContent()",
+      "file_type": "code",
+      "source_file": "app/privacy/privacy-content.tsx",
+      "source_location": "L48",
+      "_origin": "ast",
+      "id": "privacy_privacy_content_privacycontent",
+      "community": 8,
+      "norm_label": "privacycontent()"
+    },
+    {
+      "label": "newsletter-form.tsx",
+      "file_type": "code",
+      "source_file": "app/shop/newsletter-form.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "shop_newsletter_form",
+      "community": 8,
+      "norm_label": "newsletter-form.tsx"
+    },
+    {
+      "label": "NewsletterForm()",
+      "file_type": "code",
+      "source_file": "app/shop/newsletter-form.tsx",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "shop_newsletter_form_newsletterform",
+      "community": 8,
+      "norm_label": "newsletterform()"
     },
     {
       "label": "page.tsx",
@@ -137,7 +237,7 @@
       "label": "copy",
       "file_type": "code",
       "source_file": "app/shop/shop-experience.tsx",
-      "source_location": "L5",
+      "source_location": "L7",
       "_origin": "ast",
       "id": "shop_shop_experience_copy",
       "community": 8,
@@ -147,7 +247,7 @@
       "label": "contactCopy",
       "file_type": "code",
       "source_file": "app/shop/shop-experience.tsx",
-      "source_location": "L11",
+      "source_location": "L13",
       "_origin": "ast",
       "id": "shop_shop_experience_contactcopy",
       "community": 8,
@@ -157,7 +257,7 @@
       "label": "ShopExperience()",
       "file_type": "code",
       "source_file": "app/shop/shop-experience.tsx",
-      "source_location": "L17",
+      "source_location": "L19",
       "_origin": "ast",
       "id": "shop_shop_experience_shopexperience",
       "community": 8,
@@ -222,6 +322,96 @@
       "id": "app_site_header_siteheader",
       "community": 8,
       "norm_label": "siteheader()"
+    },
+    {
+      "label": "cloudflare-env.d.ts",
+      "file_type": "code",
+      "source_file": "cloudflare-env.d.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "cloudflare_env_d",
+      "community": 19,
+      "norm_label": "cloudflare-env.d.ts"
+    },
+    {
+      "label": "newsletter.server.ts",
+      "file_type": "code",
+      "source_file": "lib/newsletter.server.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "lib_newsletter_server",
+      "community": 18,
+      "norm_label": "newsletter.server.ts"
+    },
+    {
+      "label": "NewsletterEnv",
+      "file_type": "code",
+      "source_file": "lib/newsletter.server.ts",
+      "source_location": "L3",
+      "_origin": "ast",
+      "id": "lib_newsletter_server_newsletterenv",
+      "community": 18,
+      "norm_label": "newsletterenv"
+    },
+    {
+      "label": "response()",
+      "file_type": "code",
+      "source_file": "lib/newsletter.server.ts",
+      "source_location": "L8",
+      "_origin": "ast",
+      "id": "lib_newsletter_server_response",
+      "community": 18,
+      "norm_label": "response()"
+    },
+    {
+      "label": "subscribe()",
+      "file_type": "code",
+      "source_file": "lib/newsletter.server.ts",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "lib_newsletter_server_subscribe",
+      "community": 18,
+      "norm_label": "subscribe()"
+    },
+    {
+      "label": "newsletter.test.ts",
+      "file_type": "code",
+      "source_file": "lib/newsletter.test.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "lib_newsletter_test",
+      "community": 18,
+      "norm_label": "newsletter.test.ts"
+    },
+    {
+      "label": "prepare()",
+      "file_type": "code",
+      "source_file": "lib/newsletter.test.ts",
+      "source_location": "L60",
+      "_origin": "ast",
+      "id": "lib_newsletter_test_prepare",
+      "community": 18,
+      "norm_label": "prepare()"
+    },
+    {
+      "label": "newsletter.ts",
+      "file_type": "code",
+      "source_file": "lib/newsletter.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "lib_newsletter",
+      "community": 8,
+      "norm_label": "newsletter.ts"
+    },
+    {
+      "label": "newsletterCopy",
+      "file_type": "code",
+      "source_file": "lib/newsletter.ts",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "lib_newsletter_newslettercopy",
+      "community": 8,
+      "norm_label": "newslettercopy"
     },
     {
       "label": "seedance.server.ts",
@@ -792,6 +982,16 @@
       "id": "scripts_check_navigation",
       "community": 11,
       "norm_label": "check-navigation.js"
+    },
+    {
+      "label": "check-newsletter.js",
+      "file_type": "code",
+      "source_file": "scripts/check-newsletter.js",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "scripts_check_newsletter",
+      "community": 20,
+      "norm_label": "check-newsletter.js"
     },
     {
       "label": "higgsfield-video.ts",
@@ -1604,10 +1804,20 @@
       "norm_label": "yat.lifestyle"
     },
     {
+      "label": "Newsletter and privacy",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L15",
+      "_origin": "ast",
+      "id": "readme_newsletter_and_privacy",
+      "community": 6,
+      "norm_label": "newsletter and privacy"
+    },
+    {
       "label": "Contact email setup",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L16",
+      "source_location": "L61",
       "_origin": "ast",
       "id": "readme_contact_email_setup",
       "community": 6,
@@ -1617,7 +1827,7 @@
       "label": "Development scripts",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L34",
+      "source_location": "L79",
       "_origin": "ast",
       "id": "readme_development_scripts",
       "community": 6,
@@ -1627,7 +1837,7 @@
       "label": "Higgsfield Seedance 2.0",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L43",
+      "source_location": "L88",
       "_origin": "ast",
       "id": "readme_higgsfield_seedance_2_0",
       "community": 6,
@@ -1685,6 +1895,49 @@
     }
   ],
   "links": [
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/api/newsletter/route.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "newsletter_route",
+      "target": "lib_newsletter_server",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/api/newsletter/route.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "newsletter_route",
+      "target": "lib_newsletter_server_subscribe",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/api/newsletter/route.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "newsletter_route",
+      "target": "newsletter_route_post",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/api/newsletter/route.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "newsletter_route_post",
+      "target": "lib_newsletter_server_subscribe"
+    },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
@@ -1836,6 +2089,199 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "app/privacy/page.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "privacy_page",
+      "target": "privacy_page_metadata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/privacy/page.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "privacy_page",
+      "target": "privacy_page_privacypage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/privacy/page.tsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "privacy_page",
+      "target": "privacy_privacy_content",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/privacy/page.tsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "privacy_page",
+      "target": "privacy_privacy_content_privacycontent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/privacy/privacy-content.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "privacy_privacy_content",
+      "target": "app_site_header",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/privacy/privacy-content.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "privacy_privacy_content",
+      "target": "app_site_header_siteheader",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/privacy/privacy-content.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "privacy_privacy_content",
+      "target": "app_site_header_uselocale",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/privacy/privacy-content.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "privacy_privacy_content",
+      "target": "lib_newsletter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/privacy/privacy-content.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "privacy_privacy_content",
+      "target": "lib_newsletter_newslettercopy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/privacy/privacy-content.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "privacy_privacy_content",
+      "target": "privacy_privacy_content_copy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/privacy/privacy-content.tsx",
+      "source_location": "L48",
+      "weight": 1.0,
+      "source": "privacy_privacy_content",
+      "target": "privacy_privacy_content_privacycontent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/privacy/privacy-content.tsx",
+      "source_location": "L49",
+      "weight": 1.0,
+      "source": "privacy_privacy_content_privacycontent",
+      "target": "app_site_header_uselocale"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/shop/newsletter-form.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "shop_newsletter_form",
+      "target": "app_site_header",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/shop/newsletter-form.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "shop_newsletter_form",
+      "target": "app_site_header_locale",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/shop/newsletter-form.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "shop_newsletter_form",
+      "target": "lib_newsletter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/shop/newsletter-form.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "shop_newsletter_form",
+      "target": "lib_newsletter_newslettercopy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/shop/newsletter-form.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "shop_newsletter_form",
+      "target": "shop_newsletter_form_newsletterform",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/shop/shop-experience.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "shop_shop_experience",
+      "target": "shop_newsletter_form",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "app/shop/page.tsx",
       "source_location": "L4",
       "weight": 1.0,
@@ -1909,14 +2355,36 @@
       "target": "app_site_header_uselocale"
     },
     {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/shop/shop-experience.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "shop_shop_experience",
+      "target": "lib_newsletter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/shop/shop-experience.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "shop_shop_experience",
+      "target": "lib_newsletter_newslettercopy",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app/shop/shop-experience.tsx",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "shop_shop_experience",
-      "target": "shop_shop_experience_contactcopy",
-      "confidence_score": 1.0
+      "target": "shop_shop_experience_contactcopy"
     },
     {
       "relation": "contains",
@@ -1998,6 +2466,144 @@
       "confidence_score": 1.0,
       "source": "app_site_header",
       "target": "app_site_header_uselocale"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/newsletter.server.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "lib_newsletter_server",
+      "target": "lib_newsletter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/newsletter.server.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "lib_newsletter_server",
+      "target": "lib_newsletter_newslettercopy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/newsletter.server.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "lib_newsletter_server",
+      "target": "lib_newsletter_server_newsletterenv",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/newsletter.server.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "lib_newsletter_server",
+      "target": "lib_newsletter_server_response",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/newsletter.server.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "lib_newsletter_server",
+      "target": "lib_newsletter_server_subscribe",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/newsletter.test.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "lib_newsletter_test",
+      "target": "lib_newsletter_server",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/newsletter.test.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "lib_newsletter_test",
+      "target": "lib_newsletter_server_newsletterenv",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/newsletter.server.ts",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "lib_newsletter_server_subscribe",
+      "target": "lib_newsletter_server_response",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/newsletter.test.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "lib_newsletter_test",
+      "target": "lib_newsletter_server_subscribe",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/newsletter.test.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "lib_newsletter_test",
+      "target": "lib_newsletter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/newsletter.test.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "lib_newsletter_test",
+      "target": "lib_newsletter_newslettercopy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/newsletter.test.ts",
+      "source_location": "L60",
+      "weight": 1.0,
+      "source": "lib_newsletter_test",
+      "target": "lib_newsletter_test_prepare",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/newsletter.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "lib_newsletter",
+      "target": "lib_newsletter_newslettercopy",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3490,9 +4096,9 @@
       "source_file": "README.md",
       "source_location": "L16",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "readme_yat_lifestyle",
-      "target": "readme_contact_email_setup",
-      "confidence_score": 1.0
+      "target": "readme_contact_email_setup"
     },
     {
       "relation": "contains",
@@ -3500,9 +4106,9 @@
       "source_file": "README.md",
       "source_location": "L34",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "readme_yat_lifestyle",
-      "target": "readme_development_scripts",
-      "confidence_score": 1.0
+      "target": "readme_development_scripts"
     },
     {
       "relation": "contains",
@@ -3513,6 +4119,16 @@
       "confidence_score": 1.0,
       "source": "readme_yat_lifestyle",
       "target": "readme_higgsfield_seedance_2_0"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "readme_yat_lifestyle",
+      "target": "readme_newsletter_and_privacy",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3556,5 +4172,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "1151882d43af8b8c869fa1a9f1cda06cb7c450b4"
+  "built_at_commit": "770c6ac3ecfeebbb9c5d7a77328b06c88feeb4b7"
 }

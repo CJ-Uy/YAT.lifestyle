@@ -30,7 +30,7 @@
     "build": "vinext build",
     "start": "wrangler dev --config dist/server/wrangler.json",
     "deploy": "vinext-cloudflare deploy --config dist/server/wrangler.json",
-    "test": "node --test lib/seedance.test.ts lib/story-motion.test.ts",
+    "test": "node --test lib/seedance.test.ts lib/story-motion.test.ts lib/newsletter.test.ts",
     "higgsfield:video": "node --env-file=.env.local --experimental-strip-types scripts/higgsfield-video.ts"
   }
 }

@@ -1,6 +1,8 @@
 "use client";
 
 import SiteHeader, { useLocale } from "../site-header";
+import NewsletterForm from "./newsletter-form";
+import { newsletterCopy } from "../../lib/newsletter";
 
 const copy = {
   en: { title: "Still in the making.", status: "Coming soon", body: "Our first fragrances are taking shape. We're not accepting orders yet, but you can explore the ideas behind them.", delivery: "When the shop opens, delivery will initially be available to Hong Kong addresses.", explore: "Explore the collections", story: "Our beginning", caption: "Glass, light, and a little curiosity. Generated illustration.", home: "Back to home", skip: "Skip to content" },
@@ -26,6 +28,7 @@ export default function ShopExperience() {
         <h1>{t.title}</h1>
         <p className="shop-status">{t.status}</p>
         <p className="shop-intro">{t.body}</p>
+        <NewsletterForm locale={locale} />
         <div className="shop-actions"><a className="action action-primary" href="/#collections">{t.explore}</a><a className="shop-story" href="/#about">{t.story}</a></div>
         <p className="shop-delivery">{t.delivery}</p>
         <div className="shop-contacts">
@@ -35,6 +38,6 @@ export default function ShopExperience() {
       </div>
       <figure className="shop-image"><img src="/media/element-lab.webp" alt="" /><figcaption>{t.caption}</figcaption></figure>
     </main>
-    <footer className="shop-footer"><span>YAT.lifestyle</span><a className="email-link" href="mailto:hello@yatlifestyle.com"><span>{contact.general}</span><span>hello@yatlifestyle.com</span></a><a href="/">{t.home}</a></footer>
+    <footer className="shop-footer"><span>YAT.lifestyle</span><a className="email-link" href="mailto:hello@yatlifestyle.com"><span>{contact.general}</span><span>hello@yatlifestyle.com</span></a><a href="/privacy">{newsletterCopy[locale].privacy}</a><a href="/">{t.home}</a></footer>
   </>;
 }

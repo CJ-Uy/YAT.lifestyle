@@ -9,9 +9,54 @@ The site currently introduces Hours, Afterimage, and Element in English,
 Traditional Chinese, and Simplified Chinese. Ordering is not available.
 When ordering opens, delivery will initially be limited to Hong Kong addresses.
 
-The Worker has D1 (`yat-lifestyle-prod-db`) and R2
-(`yat-lifestyle-prod-assets`) bindings ready for later features. The current
-read only page stores no visitor data and needs no migrations.
+The Worker uses D1 (`yat-lifestyle-prod-db`) for optional newsletter signups.
+R2 (`yat-lifestyle-prod-assets`) is also bound. Shopping remains unavailable.
+
+## Newsletter and privacy
+
+`/shop` collects email addresses with separate, unchecked marketing consent and
+privacy acknowledgement. `/privacy` contains the collection statement and starter
+privacy policy in all three languages. Records include language, consent wording,
+policy version, timestamp, source and `unverified` status. Addresses are normalized
+and unique; duplicates do not overwrite consent or reactivate withdrawn signups.
+There is no public list/export endpoint. No email is sent by this feature.
+
+Apply the additive migration before running or deploying the signup:
+
+```powershell
+npx wrangler d1 migrations apply yat-lifestyle-prod-db --local
+npx wrangler d1 migrations apply yat-lifestyle-prod-db --remote
+```
+
+`POST /api/newsletter` requires a same-origin JSON request, a valid address,
+supported language, both consent flags and the current policy version. It bounds
+the request to 4 KB, uses parameterized SQL, and returns the same success response
+for new/duplicate addresses. It never logs submitted addresses. A honeypot and a
+Cloudflare rate limiter (10 attempts per minute per IP per location, namespace
+92624001) reduce simple abuse. This is not bot-proof or a global quota; shared IPs
+may be temporarily limited. Add Turnstile if abuse becomes material.
+
+Owner checklist before collecting real signups:
+
+- Activate and monitor `hello@yatlifestyle.com` for privacy and opt-out requests.
+- Review `/privacy` against your actual legal identity, providers, retention and
+  practices. It is a starter policy, not a guarantee of legal compliance.
+- Restrict Cloudflare account/database access to authorised people. Do not paste
+  subscriber lists into chat, logs, source control or public files.
+
+Before sending any campaigns, connect a mailing provider, verify address ownership
+(double opt-in is recommended), support an unsubscribe link in every message,
+review stale signups and update the policy for that provider. Never treat the
+current `unverified` rows as a verified mailing list.
+
+Privacy requests are handled manually by the owner through the monitored inbox.
+For opt-out, verify the requester's address, set that row's status to
+`unsubscribed`, and minimise other fields no longer needed. Keep the address only
+where needed to honour suppression. For deletion, remove the exact verified row
+and any copies held by mail providers, subject to justified legal retention.
+Never export a list merely to process one person's request. Review retained data
+before every campaign. Changes to consent require a new version in
+`lib/newsletter.ts`; preserve historical wording in Git and existing rows.
 
 ## Contact email setup
 
@@ -37,7 +82,7 @@ change does not configure DNS, forwarding, mailboxes, or automated sending.
 - `npm run build` builds the Cloudflare Worker output.
 - `npm run start` starts the built Worker locally with Wrangler.
 - `npm run deploy` deploys the Cloudflare Worker.
-- `npm test` runs the offline Seedance and scroll-motion checks.
+- `npm test` runs offline Seedance, scroll-motion and newsletter checks.
 - `npm run higgsfield:video -- "prompt"` generates a design video with Seedance 2.0.
 
 ## Higgsfield Seedance 2.0

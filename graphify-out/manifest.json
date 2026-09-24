@@ -30,8 +30,8 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1790230748.371121,
-    "ast_hash": "d678a084ee1426b54a857c531e2b48d8",
+    "mtime": 1790263452.870221,
+    "ast_hash": "1ade2d48d60d056c04888ac028d35af1",
     "semantic_hash": ""
   },
   "postcss.config.mjs": {
@@ -70,8 +70,8 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1790262430.462299,
-    "ast_hash": "1a27e00d2a79f847910d73a039cfc03f",
+    "mtime": 1790263548.8360682,
+    "ast_hash": "79ebfcb27d67c9f6f8cb1930b8ea41a0",
     "semantic_hash": ""
   },
   ".impeccable/direction-options.json": {
@@ -590,13 +590,13 @@
     "semantic_hash": ""
   },
   "app/shop/shop-experience.tsx": {
-    "mtime": 1790262390.293408,
-    "ast_hash": "156dfd97280f6ac3a6bbc5aa7fdfdf88",
+    "mtime": 1790263331.9247172,
+    "ast_hash": "18701066ffa0c5f5c7d6eff505c17d28",
     "semantic_hash": ""
   },
   "app/site-header.tsx": {
-    "mtime": 1790261727.8874133,
-    "ast_hash": "bc41957bf10173319bbc9f7d5a6f698e",
+    "mtime": 1790263331.9262216,
+    "ast_hash": "9fd4e07d9b67d522b4b78df2e3cf027d",
     "semantic_hash": ""
   },
   "scripts/check-navigation.js": {
@@ -607,6 +607,56 @@
   "public/brand-emblem.svg": {
     "mtime": 1790257860.4912515,
     "ast_hash": "6575ee4a0737f6576dc773b7cf1862aa",
+    "semantic_hash": ""
+  },
+  "app/api/newsletter/route.ts": {
+    "mtime": 1790263331.9247172,
+    "ast_hash": "0f31ccd0ab8cb78ebd125aa33a9bc945",
+    "semantic_hash": ""
+  },
+  "app/privacy/page.tsx": {
+    "mtime": 1790263452.869217,
+    "ast_hash": "931a8270ecf1557de54c8cd464d9c322",
+    "semantic_hash": ""
+  },
+  "app/privacy/privacy-content.tsx": {
+    "mtime": 1790263452.869217,
+    "ast_hash": "00115e794311af08c5a82803cb6a8b7d",
+    "semantic_hash": ""
+  },
+  "app/shop/newsletter-form.tsx": {
+    "mtime": 1790263705.075577,
+    "ast_hash": "69a0201f50ba158c67d056a2db3d2a72",
+    "semantic_hash": ""
+  },
+  "cloudflare-env.d.ts": {
+    "mtime": 1790263331.9242127,
+    "ast_hash": "658025e219ccc8c42edfba14e3d55868",
+    "semantic_hash": ""
+  },
+  "lib/newsletter.server.ts": {
+    "mtime": 1790263331.9236722,
+    "ast_hash": "cd1f3a42864c93a1ebfe57ca41b7124d",
+    "semantic_hash": ""
+  },
+  "lib/newsletter.test.ts": {
+    "mtime": 1790263548.8360682,
+    "ast_hash": "245c6a67ee03b32d61ac730a5c53a711",
+    "semantic_hash": ""
+  },
+  "lib/newsletter.ts": {
+    "mtime": 1790263331.921703,
+    "ast_hash": "b9acbd3f22bfe3ae1d154e1edb530977",
+    "semantic_hash": ""
+  },
+  "migrations/0001_newsletter.sql": {
+    "mtime": 1790263331.9232073,
+    "ast_hash": "498b050d60d897a448993281e69b3314",
+    "semantic_hash": ""
+  },
+  "scripts/check-newsletter.js": {
+    "mtime": 1790263938.6556716,
+    "ast_hash": "69ff30a008844f5ef26e9e81eb3acf34",
     "semantic_hash": ""
   }
 }
