@@ -34,6 +34,8 @@ The original generated images have adjacent JSON sidecars and embedded prompt me
 
 ## Build without generated imagery
 
+- Drop release repair: frames 36-39 contain a blunt neck in the source footage. The browser caches a tiny tapered neck texture per affected frame, preserving photographed highlights and the dark backing while leaving the liquid body, pipette, and original files untouched. The geometry is tied to the 720 x 1280 sequence; update it if the footage changes. No generation request or Higgsfield credit used.
+
 - Opening light: a soft champagne-gold backlight pulses behind only the drop. A small CSS radial gradient sits below the filmed canvas, with no tracing lines or pipette-wide overlay. Animation pauses offscreen, when the tab is hidden, or with the pause control. Reduced motion disables it. It fades out before the first scroll-frame change. No new video or API request.
 
 - CSS: contact-sheet rails, hairline rules, focus states, and projection masks.

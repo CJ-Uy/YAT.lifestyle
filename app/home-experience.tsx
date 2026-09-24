@@ -1,7 +1,7 @@
 "use client";
 
 import { type CSSProperties, useEffect, useRef, useState } from "react";
-import { STORY_FRAMES, storyMotion } from "../lib/story-motion";
+import { STORY_FRAMES, dropTipGeometry, storyMotion } from "../lib/story-motion";
 import SiteHeader, { useLocale } from "./site-header";
 
 const copy = {
@@ -94,6 +94,7 @@ export default function HomeExperience() {
     if (!journey || !stage || !dropTarget || !canvas || !context) return;
     const scenes = stage.querySelectorAll<HTMLElement>(".journey-scene");
     const frames = Array.from({ length: reducedMotion ? 1 : STORY_FRAMES }, () => new Image());
+    const tips: (HTMLCanvasElement | null)[] = [];
     let active = true;
     let frame = 0;
     const draw = () => {
@@ -147,8 +148,9 @@ export default function HomeExperience() {
       stage.style.setProperty("--drop-height", `${136 * scale + (target.width * 1.45 - 136 * scale) * settle}px`);
       stage.style.setProperty("--drop-opacity", String(reducedMotion ? reveal : motion.vectorOpacity));
       if (!reducedMotion && filmOpacity > 0) {
-        let image = frames[motion.frame];
-        if (!image.naturalWidth) image = frames.slice(0, motion.frame).reverse().find((candidate) => candidate.naturalWidth) ?? frames[0];
+        let imageIndex = motion.frame;
+        while (imageIndex > 0 && !frames[imageIndex].naturalWidth) imageIndex--;
+        const image = frames[imageIndex];
         if (image.naturalWidth) {
           context.save();
           context.globalAlpha = filmOpacity;
@@ -157,6 +159,17 @@ export default function HomeExperience() {
           context.clip();
           context.imageSmoothingQuality = "high";
           context.drawImage(image, (rect.width - 540 * scale) / 2, motion.focusY - motion.dropY * scale, 540 * scale, 960 * scale);
+          const tip = tips[imageIndex];
+          const region = tip && dropTipGeometry(imageIndex);
+          if (tip && region) {
+            // Replace only the blunt neck, preserving the source reflections and body.
+            context.save();
+            context.translate((rect.width - 540 * scale) / 2, motion.focusY - motion.dropY * scale);
+            context.scale(scale * .75, scale * .75);
+            context.clearRect(region.x, region.y, region.width, tip.height);
+            context.drawImage(tip, region.x, region.y);
+            context.restore();
+          }
           // Feather the portrait plate into the full-width photographic scene.
           context.globalCompositeOperation = "destination-in";
           const mask = context.createLinearGradient((rect.width - filmWidth) / 2, 0, (rect.width + filmWidth) / 2, 0);
@@ -181,7 +194,26 @@ export default function HomeExperience() {
     };
     frames.forEach((image, index) => {
       image.decoding = "async";
-      image.onload = schedule;
+      image.onload = () => {
+        const region = !reducedMotion && dropTipGeometry(index);
+        if (region) {
+          // Cache a tiny tapered texture once, not a per-scroll pixel operation.
+          const tip = document.createElement("canvas");
+          tip.width = region.width;
+          tip.height = region.widths.length;
+          const tipContext = tip.getContext("2d");
+          if (tipContext) {
+            region.widths.forEach((width, row) => {
+              // Retain the film's dark backing instead of leaving a transparent box.
+              tipContext.drawImage(image, region.x, region.y + row, 1, 1, 0, row, region.width, 1);
+              tipContext.drawImage(image, region.x, region.y + row, region.width, 1,
+                (region.width - width) / 2, row, width, 1);
+            });
+            tips[index] = tip;
+          }
+        }
+        schedule();
+      };
       image.src = `/media/drop-sequence/frame-${String(reducedMotion ? 38 : index).padStart(3, "0")}.webp?v=2`;
     });
     schedule();

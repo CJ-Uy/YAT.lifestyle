@@ -10,7 +10,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "newsletter_route",
-      "community": 18,
+      "community": 8,
       "norm_label": "route.ts"
     },
     {
@@ -20,7 +20,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "newsletter_route_post",
-      "community": 18,
+      "community": 8,
       "norm_label": "post()"
     },
     {
@@ -310,7 +310,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "app_site_header_uselocale",
-      "community": 8,
+      "community": 4,
       "norm_label": "uselocale()"
     },
     {
@@ -340,7 +340,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "lib_newsletter_server",
-      "community": 18,
+      "community": 8,
       "norm_label": "newsletter.server.ts"
     },
     {
@@ -350,7 +350,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "lib_newsletter_server_newsletterenv",
-      "community": 18,
+      "community": 8,
       "norm_label": "newsletterenv"
     },
     {
@@ -360,7 +360,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "lib_newsletter_server_response",
-      "community": 18,
+      "community": 8,
       "norm_label": "response()"
     },
     {
@@ -370,7 +370,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "lib_newsletter_server_subscribe",
-      "community": 18,
+      "community": 8,
       "norm_label": "subscribe()"
     },
     {
@@ -380,7 +380,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "lib_newsletter_test",
-      "community": 18,
+      "community": 8,
       "norm_label": "newsletter.test.ts"
     },
     {
@@ -390,7 +390,7 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "lib_newsletter_test_prepare",
-      "community": 18,
+      "community": 8,
       "norm_label": "prepare()"
     },
     {
@@ -604,10 +604,20 @@
       "norm_label": "ease()"
     },
     {
+      "label": "dropTipGeometry()",
+      "file_type": "code",
+      "source_file": "lib/story-motion.ts",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "lib_story_motion_droptipgeometry",
+      "community": 4,
+      "norm_label": "droptipgeometry()"
+    },
+    {
       "label": "storyMotion()",
       "file_type": "code",
       "source_file": "lib/story-motion.ts",
-      "source_location": "L6",
+      "source_location": "L15",
       "_origin": "ast",
       "id": "lib_story_motion_storymotion",
       "community": 4,
@@ -2029,6 +2039,17 @@
       "source_file": "app/home-experience.tsx",
       "source_location": "L4",
       "weight": 1.0,
+      "source": "app_home_experience",
+      "target": "lib_story_motion_droptipgeometry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/home-experience.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
       "confidence_score": 1.0,
       "source": "app_home_experience",
       "target": "lib_story_motion_storymotion"
@@ -2983,6 +3004,17 @@
       "source_file": "lib/story-motion.test.ts",
       "source_location": "L3",
       "weight": 1.0,
+      "source": "lib_story_motion_test",
+      "target": "lib_story_motion_droptipgeometry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/story-motion.test.ts",
+      "source_location": "L3",
+      "weight": 1.0,
       "confidence_score": 1.0,
       "source": "lib_story_motion_test",
       "target": "lib_story_motion_storymotion"
@@ -2996,6 +3028,16 @@
       "confidence_score": 1.0,
       "source": "lib_story_motion",
       "target": "lib_story_motion_clamp"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/story-motion.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "lib_story_motion",
+      "target": "lib_story_motion_droptipgeometry",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -4182,5 +4224,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "de1ae4b517edd8df0b9b7ec6698f1cc87321162f"
+  "built_at_commit": "7de7ecbfbb85a3e294d80f693c1a0e3a63ecbeec"
 }

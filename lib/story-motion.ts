@@ -3,6 +3,15 @@ const ease = (value: number) => { const t = clamp(value); return t * t * (3 - 2 
 
 export const STORY_FRAMES = 48;
 
+// Native 720px source coordinates. Only the four detached-neck frames need repair.
+export function dropTipGeometry(frame: number) {
+  const bounds = [[564, 74], [589, 65], [635, 61], [679, 53]][frame - 36];
+  if (!bounds) return null;
+  const [y, height] = bounds;
+  return { x: 312, y, width: 96, widths: Array.from({ length: height }, (_, row) =>
+    96 * (.035 + .965 * Math.pow(row / (height - 1), .72))) };
+}
+
 export function storyMotion(top: number, height: number, viewport: number, landingY: number) {
   const progress = clamp(-top / Math.max(1, height - viewport));
   const film = clamp(progress / 0.84);

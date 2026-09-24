@@ -1,6 +1,18 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { STORY_FRAMES, storyMotion } from "./story-motion.ts";
+import { STORY_FRAMES, dropTipGeometry, storyMotion } from "./story-motion.ts";
+
+test("tip repair is confined to detached necks and rejoins the untouched body", () => {
+  for (let frame = 0; frame < STORY_FRAMES; frame++) {
+    const tip = dropTipGeometry(frame);
+    if (frame < 36 || frame > 39) { assert.equal(tip, null); continue; }
+    assert.ok(tip);
+    assert.ok(tip.y > 500 && tip.y + tip.widths.length < 735);
+    assert.ok(tip.widths[0] < 4, "The cap must converge to a narrow tip");
+    assert.equal(tip.widths.at(-1), tip.width, "No seam at the unmodified body");
+    assert.ok(tip.widths.every((width, row) => Number.isFinite(width) && width > 0 && width <= tip.width && (!row || width >= tip.widths[row - 1])));
+  }
+});
 
 test("the drop falls before resolving into the YAT logo", () => {
   const start = storyMotion(0, 4800, 800, 520);

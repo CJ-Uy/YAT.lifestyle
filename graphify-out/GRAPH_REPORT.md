@@ -1,16 +1,16 @@
 # Graph Report - YAT.lifestyle  (2026-09-25)
 
 ## Corpus Check
-- 51 files · ~1,218,631 words
+- 51 files · ~1,219,012 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 190 nodes · 221 edges · 22 communities (18 shown, 4 thin omitted)
+- 191 nodes · 224 edges · 21 communities (17 shown, 4 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `de1ae4b5`
+- Built from commit: `7de7ecbf`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -31,7 +31,6 @@
 - [[_COMMUNITY_Community 15|Community 15]]
 - [[_COMMUNITY_Community 16|Community 16]]
 - [[_COMMUNITY_Community 17|Community 17]]
-- [[_COMMUNITY_Community 18|Community 18]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `compilerOptions` - 17 edges
@@ -48,17 +47,17 @@
 ## Surprising Connections (you probably didn't know these)
 - `POST()` --calls--> `subscribe()`  [EXTRACTED]
   app/api/newsletter/route.ts → lib/newsletter.server.ts
-- `HomeExperience()` --calls--> `useLocale()`  [EXTRACTED]
-  app/home-experience.tsx → app/site-header.tsx
 - `PrivacyContent()` --calls--> `useLocale()`  [EXTRACTED]
   app/privacy/privacy-content.tsx → app/site-header.tsx
 - `ShopExperience()` --calls--> `useLocale()`  [EXTRACTED]
   app/shop/shop-experience.tsx → app/site-header.tsx
+- `HomeExperience()` --calls--> `useLocale()`  [EXTRACTED]
+  app/home-experience.tsx → app/site-header.tsx
 
 ## Import Cycles
 - None detected.
 
-## Communities (22 total, 4 thin omitted)
+## Communities (21 total, 4 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.10
@@ -77,8 +76,8 @@ Cohesion: 0.10
 Nodes (19): dependencies, @fontsource/bodoni-moda, react, react-dom, react-server-dom-webpack, vinext, @vinext/cloudflare, name (+11 more)
 
 ### Community 4 - "Community 4"
-Cohesion: 0.29
-Nodes (6): collectionImages, copy, HomeExperience(), clamp(), ease(), storyMotion()
+Cohesion: 0.27
+Nodes (8): collectionImages, copy, HomeExperience(), useLocale(), clamp(), dropTipGeometry(), ease(), storyMotion()
 
 ### Community 5 - "Community 5"
 Cohesion: 0.18
@@ -89,8 +88,8 @@ Cohesion: 0.33
 Nodes (5): Contact email setup, Development scripts, Higgsfield Seedance 2.0, Newsletter and privacy, YAT.lifestyle
 
 ### Community 8 - "Community 8"
-Cohesion: 0.15
-Nodes (13): languages, Locale, navigation, SiteHeader(), useLocale(), newsletterCopy, metadata, copy (+5 more)
+Cohesion: 0.11
+Nodes (16): languages, Locale, navigation, SiteHeader(), newsletterCopy, NewsletterEnv, response(), subscribe() (+8 more)
 
 ### Community 9 - "Community 9"
 Cohesion: 0.18
@@ -108,10 +107,6 @@ Nodes (4): Approved home composition asset manifest, Build without generated ima
 Cohesion: 0.12
 Nodes (15): Actions, Collection Frames, Colors, Components, Design System: YAT.lifestyle, Do:, Do's and Don'ts, Don't: (+7 more)
 
-### Community 18 - "Community 18"
-Cohesion: 0.43
-Nodes (4): NewsletterEnv, response(), subscribe(), POST()
-
 ## Knowledge Gaps
 - **114 isolated node(s):** `copy`, `collectionImages`, `metadata`, `metadata`, `copy` (+109 more)
   These have ≤1 connection - possible missing edges or undocumented components.
@@ -122,6 +117,8 @@ _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `devDependencies` connect `Community 2` to `Community 3`?**
   _High betweenness centrality (0.015) - this node is a cross-community bridge._
+- **Why does `useLocale()` connect `Community 4` to `Community 8`?**
+  _High betweenness centrality (0.009) - this node is a cross-community bridge._
 - **What connects `copy`, `collectionImages`, `metadata` to the rest of the system?**
   _114 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
@@ -129,6 +126,6 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `Community 3` be split into smaller, more focused modules?**
   _Cohesion score 0.1 - nodes in this community are weakly interconnected._
 - **Should `Community 8` be split into smaller, more focused modules?**
-  _Cohesion score 0.14624505928853754 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.1103448275862069 - nodes in this community are weakly interconnected._
 - **Should `Community 17` be split into smaller, more focused modules?**
   _Cohesion score 0.125 - nodes in this community are weakly interconnected._
