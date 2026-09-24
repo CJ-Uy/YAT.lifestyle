@@ -1,0 +1,14 @@
+{
+  "synthetic": true,
+  "provider": "Higgsfield",
+  "model": "bytedance/seedance-2.0/text-to-video",
+  "request_id": "cc93e649-768e-4f3e-8007-e6777767b751",
+  "placement": "Home hero cinematic background",
+  "prompt": "A cinematic macro tracking shot for a Hong Kong luxury perfume house. A monumental clear glass laboratory pipette hangs over dark harbour water at blue hour. One warm gold perfume droplet slowly gathers, falls, and creates a precise circular ripple. Distant Hong Kong skyline lights appear only as soft abstract reflections. Obsidian black, restrained warm gold, real optical glass, subtle 35mm grain, quiet scientific precision, premium editorial fragrance film. Locked composition with clear negative space on the left for website text. No people, no hands, no bottles, no words, no logo, no neon, no camera shake.",
+  "specification": {
+    "duration_seconds": 5,
+    "resolution": "720p",
+    "aspect_ratio": "16:9",
+    "audio": false
+  }
+}

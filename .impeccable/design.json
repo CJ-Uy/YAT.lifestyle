@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-24T00:00:00Z",
+  "title": "Design System: YAT.lifestyle",
+  "extensions": {
+    "colorMeta": {
+      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "#080806", "tonalRamp": ["#080806", "#22221d", "#414138", "#626257", "#858579", "#aaa99e", "#d0cfc6", "#f3f2ed"] },
+      "carbon": { "role": "neutral", "displayName": "Carbon", "canonical": "#0d0d0b", "tonalRamp": ["#0d0d0b", "#272721", "#47473e", "#68685c", "#8b8b7e", "#afafa3", "#d3d3ca", "#f3f3ef"] },
+      "warm-white": { "role": "neutral", "displayName": "Warm White", "canonical": "#f1eadc", "tonalRamp": ["#252119", "#443d2f", "#645947", "#867965", "#a99b84", "#c9bca8", "#e3d8c8", "#f1eadc"] },
+      "muted": { "role": "neutral", "displayName": "Muted Gray", "canonical": "#aaa499", "tonalRamp": ["#201e1b", "#3e3a34", "#5c574e", "#7b7469", "#aaa499", "#c2bdb4", "#ddd9d1", "#f3f1ed"] },
+      "liquid-gold": { "role": "primary", "displayName": "Liquid Gold", "canonical": "#d8a443", "tonalRamp": ["#271a05", "#48300a", "#6c4911", "#906319", "#b58127", "#d8a443", "#e9c586", "#f7ead0"] },
+      "paper": { "role": "neutral", "displayName": "Paper", "canonical": "#ece5d8", "tonalRamp": ["#242119", "#403a2f", "#605747", "#807462", "#a29681", "#c3b8a6", "#ddd3c4", "#ece5d8"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Wordmark, headings, navigation, and prominent actions." },
+      "body": { "displayName": "Body", "purpose": "Paragraphs and controls across all three languages." },
+      "label": { "displayName": "Label", "purpose": "Small indices, status, and contact sheet notes." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "control-transition", "value": "180ms ease", "purpose": "Hover color and border changes." },
+      { "name": "scroll-progress", "value": "0 to 1", "purpose": "Pipette and story stage position; fixed under reduced motion." }
+    ],
+    "breakpoints": [
+      { "name": "tablet", "value": "1000px" },
+      { "name": "mobile", "value": "680px" }
+    ]
+  },
+  "components": [
+    { "name": "Primary Action", "kind": "button", "refersTo": "button-primary", "description": "Main collection link.", "html": "<a class=\"ds-action-primary\" href=\"#collections\">Explore collections</a>", "css": ".ds-action-primary{display:inline-flex;align-items:center;justify-content:center;min-height:56px;padding:.8rem 1.85rem;background:#080806;color:#f0ca7c;border:1px solid #d8a443;font-family:Georgia,serif;text-decoration:none}.ds-action-primary:hover{background:#f1eadc;color:#080806;border-color:#f1eadc}.ds-action-primary:focus-visible{outline:2px solid #d8a443;outline-offset:5px}" },
+    { "name": "Secondary Action", "kind": "button", "refersTo": "button-secondary", "description": "Story link.", "html": "<a class=\"ds-action-secondary\" href=\"#story\">Experience the story</a>", "css": ".ds-action-secondary{display:inline-flex;align-items:center;justify-content:center;min-height:56px;padding:.8rem 1.85rem;background:#080806;color:#f1eadc;border:1px solid rgba(241,234,220,.28);font-family:Georgia,serif;text-decoration:none}.ds-action-secondary:hover{background:#f1eadc;color:#080806}.ds-action-secondary:focus-visible{outline:2px solid #d8a443;outline-offset:5px}" },
+    { "name": "Language Control", "kind": "button", "description": "Equal sized locale target.", "html": "<button class=\"ds-locale\" type=\"button\">繁</button>", "css": ".ds-locale{min-width:44px;min-height:44px;background:transparent;border:0;color:#f1eadc;font-family:Georgia,serif;cursor:pointer}.ds-locale:hover{color:#d8a443}.ds-locale:focus-visible{outline:2px solid #d8a443;outline-offset:5px}" },
+    { "name": "Collection Frame", "kind": "card", "description": "Contact sheet item for a fragrance direction.", "html": "<article class=\"ds-frame\"><span>01</span><h3>Hours</h3><p>A city in motion</p></article>", "css": ".ds-frame{min-height:180px;padding:32px;background:#0d0d0b;border-left:1px solid rgba(241,234,220,.28);color:#f1eadc}.ds-frame span{color:#d8a443;font:12px Georgia,serif}.ds-frame h3{margin:16px 0;font:32px Georgia,serif}.ds-frame p{color:#aaa499;font-size:14px;font-family:'Trebuchet MS',sans-serif;letter-spacing:.16em;text-transform:uppercase}" },
+    { "name": "Header Navigation", "kind": "nav", "description": "Fixed section navigation.", "html": "<nav class=\"ds-nav\"><a href=\"#top\">Home</a><a href=\"#collections\">Collections</a></nav>", "css": ".ds-nav{display:flex;gap:32px;padding:16px 24px;background:#080806;border-bottom:1px solid rgba(241,234,220,.28)}.ds-nav a{display:inline-flex;align-items:center;min-height:44px;color:#f1eadc;font:16px Georgia,serif;text-decoration:none;border-bottom:1px solid transparent}.ds-nav a:hover{color:#d8a443;border-color:#d8a443}.ds-nav a:focus-visible{outline:2px solid #d8a443;outline-offset:5px}" }
+  ],
+  "narrative": {
+    "northStar": "Afterimage Hong Kong",
+    "overview": "The site feels like a quiet fragrance film viewed through laboratory glass. Carbon black holds the frame, warm white carries the story, and gold marks a few deliberate points of attention. Hong Kong appears through specific light, transit, water, and memory. Motion follows the drop and the visitor's scroll. It never hides navigation or the meaning of a collection. The dropper remains the signature form while the final brand logo is unresolved.",
+    "keyCharacteristics": ["restrained gold", "optical glass", "film grain", "hairline rules", "generous type", "specific Hong Kong imagery"],
+    "rules": [
+      { "name": "The Rare Gold Rule", "body": "Reserve gold for the wordmark, key actions, section indices, focus, and small optical details. Large gold fields belong only to deliberate chapter changes.", "section": "colors" },
+      { "name": "The Readable Frame Rule", "body": "Keep text clear against every video frame and still image. Never place essential words inside generated media.", "section": "typography" }
+    ],
+    "dos": ["Do use specific Hong Kong sensory details and real product facts.", "Do keep launch and purchase availability clear.", "Do preserve keyboard focus, reduced motion, and full language coverage."],
+    "donts": ["Don't imply that unlaunched fragrances can be ordered.", "Don't invent laboratory methods, scent accuracy, or personalization outcomes.", "Don't use generated text or imagery as a substitute for readable page content."]
+  }
+}

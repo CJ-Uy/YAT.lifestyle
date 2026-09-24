@@ -1,0 +1,76 @@
+{
+  "title": "Choose the visual world for YAT.lifestyle",
+  "question": "Which world should shape the homepage, identity system, and dropper-led hero?",
+  "options": [
+    {
+      "id": "assigned",
+      "label": "Afterimage Hong Kong",
+      "kicker": "ASSIGNED DIRECTION",
+      "lineage": "Hong Kong cinema film leaders, contact sheets, subtitle cards, and projection light",
+      "thesis": "Each fragrance is a frame where time, place, and personal chemistry develop into scent.",
+      "palette": ["#080808", "#F2EFE7", "#D4A63A", "#B77A22"],
+      "materials": ["35mm film", "glass dropper", "projection light", "photographic grain"],
+      "viewport": "A monumental dropper suspends a Hong Kong afterimage inside one droplet while a contact sheet previews time, place, and laboratory ritual.",
+      "risk": "Film nostalgia must not overpower fragrance clarity or turn Hong Kong into a cinematic cliché.",
+      "sketch": ".impeccable/sketches/assigned.png"
+    },
+    {
+      "id": "challenger-transit",
+      "label": "Scent Line Map",
+      "kicker": "CHALLENGER",
+      "lineage": "Metropolitan rail diagrams and Hong Kong wayfinding discipline",
+      "thesis": "The three fragrance lines become routes converging at one dropper-shaped interchange.",
+      "palette": ["#071827", "#F4F1E8", "#E0B44F", "#8CCBC5", "#E68C96"],
+      "materials": ["midnight enamel", "porcelain labels", "route ink", "station ticks"],
+      "viewport": "A city-scale scent network traces time, Hong Kong memory, and Element toward one central droplet.",
+      "case": "Immediately Hong Kong and easy to navigate, but risks making perfume feel like public transport rather than desire.",
+      "risk": "It must avoid copying MTR trade dress or reducing the brand to a map gimmick.",
+      "sketch": ".impeccable/sketches/challenger-transit.png",
+      "hero": "https://impeccable.style/worlds/cards/wayfinding-cartography-signage-midnight-transit-diagram-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/wayfinding-cartography-signage-midnight-transit-diagram.webp"
+    },
+    {
+      "id": "challenger-time",
+      "label": "Time Signal",
+      "kicker": "CHALLENGER",
+      "lineage": "Seven-segment clocks, scoreboards, and instrument displays",
+      "thesis": "A fixed time display ignites into a droplet, making each hour a fragrance state.",
+      "palette": ["#090908", "#E5B85B", "#F0ECE2", "#3A352B"],
+      "materials": ["matte instrument black", "amber segments", "ghost cells", "etched glass"],
+      "viewport": "A giant 06:00 readout changes state around a suspended amber droplet.",
+      "case": "Makes the Time collection unforgettable, but identifies weakly with Hong Kong and leaves Element secondary.",
+      "risk": "The clock can become the brand instead of supporting the complete fragrance house.",
+      "sketch": ".impeccable/sketches/challenger-time.png",
+      "hero": "https://impeccable.style/worlds/cards/signals-instruments-seven-segment-alarm-clock-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/signals-instruments-seven-segment-alarm-clock.webp"
+    },
+    {
+      "id": "challenger-element",
+      "label": "Element Stack",
+      "kicker": "CHALLENGER",
+      "lineage": "Cathode numeral stacks, bronze instrument gauze, and laboratory readouts",
+      "thesis": "Every possible scent state remains visible while the customer's Element is struck into focus.",
+      "palette": ["#061521", "#D67535", "#E8E0D1", "#8C5A37"],
+      "materials": ["bronze gauze", "ink-blue bench felt", "cathode glow", "laboratory glass"],
+      "viewport": "A laboratory dropper floats above layered ghost states with Element illuminated as the active result.",
+      "case": "Explains scientific personalization clearly, but has the weakest Hong Kong identification of the viable directions.",
+      "risk": "Too much instrument language would make the brand feel technical rather than sensorial.",
+      "sketch": ".impeccable/sketches/challenger-element.png",
+      "hero": "https://impeccable.style/worlds/cards/operate-b-struck-cathode-gauze-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/operate-b-struck-cathode-gauze.webp"
+    }
+  ],
+  "reroll": true,
+  "steer": true,
+  "canon": true,
+  "canonCard": {
+    "label": "Quiet Luxury Atelier",
+    "lineage": "The conventional luxury perfume editorial site",
+    "thesis": "An ivory gallery, centered vessel, black serif wordmark, and restrained gold details.",
+    "palette": ["#F7F1E5", "#11100E", "#B38A37"],
+    "materials": ["ivory paper", "gold foil", "clear glass", "editorial ink"],
+    "viewport": "A centered fragrance vessel and generous editorial headline lead to a coming-soon action.",
+    "risk": "It is clear and polished but could belong to almost any premium fragrance brand.",
+    "sketch": ".impeccable/sketches/canon.png"
+  }
+}

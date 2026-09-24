@@ -1,0 +1,217 @@
+{
+  ".codex/hooks.json": {
+    "mtime": 1790086041.6672406,
+    "ast_hash": "cea1b2898510771dd6936d28c0f35d4d",
+    "semantic_hash": ""
+  },
+  "app/layout.tsx": {
+    "mtime": 1790091704.9251835,
+    "ast_hash": "9a22a9e105c5e3e103b135698e2fed8d",
+    "semantic_hash": ""
+  },
+  "app/page.tsx": {
+    "mtime": 1790091110.757865,
+    "ast_hash": "707c82f274c128f1a0c6d0d3b517a2c1",
+    "semantic_hash": ""
+  },
+  "lib/seedance.server.ts": {
+    "mtime": 1790091483.883965,
+    "ast_hash": "628f90e9d7e74c5137e9fa4240e7c669",
+    "semantic_hash": ""
+  },
+  "lib/seedance.test.ts": {
+    "mtime": 1790091432.19718,
+    "ast_hash": "4d8f53258bd6ac3edf0131e878fa1dc7",
+    "semantic_hash": ""
+  },
+  "next.config.ts": {
+    "mtime": 1790084115.2181478,
+    "ast_hash": "daad32b4de0b92afe04301ebf0a6cc76",
+    "semantic_hash": ""
+  },
+  "package.json": {
+    "mtime": 1790093015.2694106,
+    "ast_hash": "dcddadb7756d59306ccedcacea3d730d",
+    "semantic_hash": ""
+  },
+  "postcss.config.mjs": {
+    "mtime": 1790084115.219323,
+    "ast_hash": "239f3ebf717465dc636818a1a619398d",
+    "semantic_hash": ""
+  },
+  "scripts/higgsfield-video.ts": {
+    "mtime": 1790091432.1961887,
+    "ast_hash": "9381f4086d113718341930a79674b7b0",
+    "semantic_hash": ""
+  },
+  "tsconfig.json": {
+    "mtime": 1790085224.7240756,
+    "ast_hash": "717ee1c978f488eb239a54ca0e825c16",
+    "semantic_hash": ""
+  },
+  "vite.config.ts": {
+    "mtime": 1790084115.252746,
+    "ast_hash": "59346da42e1b69e8df71574e5f84f300",
+    "semantic_hash": ""
+  },
+  ".serena/project.local.yml": {
+    "mtime": 1790083691.1945808,
+    "ast_hash": "f136e7d47205d9a758913615074760e5",
+    "semantic_hash": ""
+  },
+  ".serena/project.yml": {
+    "mtime": 1790083691.2507033,
+    "ast_hash": "0bbda169b6871522fa6eb7c2f877e5e2",
+    "semantic_hash": ""
+  },
+  "AGENTS.md": {
+    "mtime": 1790086041.6575613,
+    "ast_hash": "752aa83aa64361ac32860f882dcff932",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1790228941.630054,
+    "ast_hash": "1fee9446a20a24a1729ae54fb3309de2",
+    "semantic_hash": ""
+  },
+  ".impeccable/direction-options.json": {
+    "mtime": 1790088190.1541717,
+    "ast_hash": "a30307f77f0decb40fa8e2a07c257d05",
+    "semantic_hash": ""
+  },
+  ".impeccable/mocks/home-a.json": {
+    "mtime": 1790090382.628792,
+    "ast_hash": "4f767353f3b87d8d3a06240c95ae920a",
+    "semantic_hash": ""
+  },
+  ".impeccable/mocks/home-b.json": {
+    "mtime": 1790090382.628792,
+    "ast_hash": "5bbb2c8c3a358b8f7390abb9eed002cb",
+    "semantic_hash": ""
+  },
+  ".impeccable/mocks/home-c.json": {
+    "mtime": 1790090382.6300657,
+    "ast_hash": "22a142573af6a8c5bfba5210f36387e6",
+    "semantic_hash": ""
+  },
+  "app/home-experience.tsx": {
+    "mtime": 1790093854.8619282,
+    "ast_hash": "9b071ce09bce4a12a20abc23e24aaf84",
+    "semantic_hash": ""
+  },
+  ".impeccable/home-build-brief.md": {
+    "mtime": 1790090382.6310651,
+    "ast_hash": "c3e93be723e2e7ffd1a2b97dc7ad2a31",
+    "semantic_hash": ""
+  },
+  ".impeccable/surfaces/app-page-tsx.md": {
+    "mtime": 1790090410.2192125,
+    "ast_hash": "6ed5bbdaf30c4257aeb9ca74b50b9c9d",
+    "semantic_hash": ""
+  },
+  "PRODUCT.md": {
+    "mtime": 1790087764.0397906,
+    "ast_hash": "eeb680c070529146cb8dd7a05d2bf633",
+    "semantic_hash": ""
+  },
+  "public/media/asset-manifest.md": {
+    "mtime": 1790093758.0196862,
+    "ast_hash": "541bbe9e734b67e30d7fd47a101b135a",
+    "semantic_hash": ""
+  },
+  ".impeccable/mocks/home-a.png": {
+    "mtime": 1790090404.2556512,
+    "ast_hash": "076440f746f0fad362ee93c4e2e94335",
+    "semantic_hash": ""
+  },
+  ".impeccable/mocks/home-b.png": {
+    "mtime": 1790090406.1602764,
+    "ast_hash": "7157832eb46ac897d749f60990d38fc9",
+    "semantic_hash": ""
+  },
+  ".impeccable/mocks/home-c.png": {
+    "mtime": 1790090407.534485,
+    "ast_hash": "313cbfdf8b95e7aa2e5a252d85cf8b68",
+    "semantic_hash": ""
+  },
+  ".impeccable/sketches/assigned.png": {
+    "mtime": 1790087930.1155448,
+    "ast_hash": "785026e476bf96f975b47233c214320c",
+    "semantic_hash": ""
+  },
+  ".impeccable/sketches/canon.png": {
+    "mtime": 1790088095.1971414,
+    "ast_hash": "b38e7d5e8aae1e8e2759a90848c0b9a6",
+    "semantic_hash": ""
+  },
+  ".impeccable/sketches/challenger-element.png": {
+    "mtime": 1790088062.889203,
+    "ast_hash": "b54395c0b2eacfa979b9251da90e2681",
+    "semantic_hash": ""
+  },
+  ".impeccable/sketches/challenger-time.png": {
+    "mtime": 1790088023.3717701,
+    "ast_hash": "d5bc8f7a53a3d1fc8e8ecd13ad78e1b6",
+    "semantic_hash": ""
+  },
+  ".impeccable/sketches/challenger-transit.png": {
+    "mtime": 1790087984.18366,
+    "ast_hash": "4e536fb90c76d8b6c595f8753c62a03e",
+    "semantic_hash": ""
+  },
+  "public/media/afterimage-tram.json": {
+    "mtime": 1790092964.7828555,
+    "ast_hash": "bbf1a17d0082c96e21be3983322f8ed8",
+    "semantic_hash": ""
+  },
+  "public/media/element-lab.json": {
+    "mtime": 1790092964.7828555,
+    "ast_hash": "7c5edd1c551027e3c46777ffb0a43520",
+    "semantic_hash": ""
+  },
+  "public/media/hours-dawn.json": {
+    "mtime": 1790092964.781811,
+    "ast_hash": "24ce251419e3396b9e74561384150fbf",
+    "semantic_hash": ""
+  },
+  "public/media/afterimage-tram.png": {
+    "mtime": 1790092985.2794573,
+    "ast_hash": "aafd75b2677a9af2b277d2a7f5834c65",
+    "semantic_hash": ""
+  },
+  "public/media/element-lab.png": {
+    "mtime": 1790092985.4004145,
+    "ast_hash": "75e9203a331e631fc1148d57fdff9c40",
+    "semantic_hash": ""
+  },
+  "public/media/hours-dawn.png": {
+    "mtime": 1790092985.1563516,
+    "ast_hash": "2cbc574a73be5b11e5251bddcf375b00",
+    "semantic_hash": ""
+  },
+  "public/media/hong-kong-harbour-afterimage.mp4": {
+    "mtime": 1790093664.461896,
+    "ast_hash": "e816f9c37efdd56ce758fd80f3dba3a0",
+    "semantic_hash": ""
+  },
+  ".impeccable/design.json": {
+    "mtime": 1790228717.041589,
+    "ast_hash": "42564942d6d9d471ca827cf9b57425bf",
+    "semantic_hash": ""
+  },
+  "public/media/hong-kong-harbour-afterimage.json": {
+    "mtime": 1790093758.018684,
+    "ast_hash": "fa5bf304f5cf0baf7f52fbb6efd3d744",
+    "semantic_hash": ""
+  },
+  "DESIGN.md": {
+    "mtime": 1790228671.8537526,
+    "ast_hash": "18f45f08ce052a8d08f46a0cd1054b9a",
+    "semantic_hash": ""
+  },
+  "public/media/hong-kong-harbour-afterimage-poster.jpg": {
+    "mtime": 1790093682.058073,
+    "ast_hash": "f7962baeb7d19adb1dfe5017f4ae8452",
+    "semantic_hash": ""
+  }
+}
