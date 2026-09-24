@@ -1,0 +1,12 @@
+{
+  "generator": "OpenAI built-in image generation",
+  "generatedAt": "2026-09-25",
+  "original": "hours-clock-tower-original.png",
+  "web": "hours-clock-tower.webp",
+  "width": 1024,
+  "height": 1536,
+  "derivative": "WebP quality 86, compression level 6. No retouching.",
+  "purpose": "Hours collection and scroll chapter, separate from the harbour background.",
+  "conceptualIllustration": true,
+  "prompt": "Use case: photorealistic-natural. Asset: an editorial mood photograph for Hours, the time-of-day perfume collection of YAT.lifestyle, Hong Kong. Create one high-quality 2:3 portrait image focused on the real Tsim Sha Tsui Clock Tower, the surviving Former Kowloon-Canton Railway Clock Tower in Hong Kong. Preserve its recognizable real-world Edwardian red-brick and pale granite architecture, square tower proportions, round white clock faces with dark hands and Roman numerals, its characteristic upper pavilion and roof. NOT Big Ben, not a European church, not an invented clock tower. A close architectural portrait from below at a modest three-quarter angle, filling most of the frame with the upper clock tower, clock faces as the clear focal point around the central third. Show the complete top with breathing room, and a substantial length of the red-brick shaft extending out of the bottom of the frame. Clock hands show approximately six o'clock. Warm first morning sunlight grazes one face of the masonry, the other face remains in rich cool shadow. Minimal pale warm-grey dawn sky, no broad harbour skyline. Finely resolved aged brick, stone joints and clock-face detail, honest photographic texture, controlled highlights, restrained champagne-gold light. A premium fragrance editorial about passing time, with documentary-style architectural credibility rather than CGI or fantasy. Leave the clock faces comfortably within the central 60 percent of image height, so both portrait and square crops show them. No captions, overlay numbers, logos, watermark, perfume bottles, pipettes, people, banners, flowers or decorative effects. Show the landmark in its familiar unobstructed condition without temporary maintenance scaffolding; this is explicitly a generated conceptual illustration, not a claim about its current maintenance status. No border or collage."
+}

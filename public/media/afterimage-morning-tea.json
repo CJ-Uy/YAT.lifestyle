@@ -1,0 +1,12 @@
+{
+  "generator": "OpenAI built-in image generation",
+  "generatedAt": "2026-09-25",
+  "original": "afterimage-morning-tea-original.png",
+  "web": "afterimage-morning-tea.webp",
+  "width": 1024,
+  "height": 1536,
+  "derivative": "WebP quality 86, compression level 6. No retouching.",
+  "purpose": "Reassigned to Afterimage at the user's request. Replaces the tram image, which remains saved.",
+  "conceptualIllustration": true,
+  "prompt": "Use case: photorealistic-natural. Asset: portrait editorial photograph for Hours, the time-of-day perfume collection of YAT.lifestyle, a small Hong Kong brand. Generate a new 2:3 portrait photograph, not a collage or webpage. Theme: 06:00, the quiet beginning of a Hong Kong day. Low early sunlight passes through an old Hong Kong apartment's steel casement window, casting long angular bands of light and shadow across a worn warm-ivory tiled window ledge. A small unmarked white porcelain cup holding amber tea sits near the lower centre, its faint steam visible only in the sidelight. The light and its long shadows are the main subject, expressing time passing. Beyond the partially open window are softly defocused dense Hong Kong residential facades, muted blue-grey in the morning, not a harbour panorama or landmark skyline. Close, intimate view photographed with a 50mm lens, believable surface wear and glazing, natural reflections, crisp focal detail, restrained contrast and delicate depth of field. Dark window framing, warm ivory tiles, narrow honey-gold sunlight, neutral shadows. Calm and refined, everyday Hong Kong seen with attention, not a generic luxury hotel. Keep the cup and strongest sunlight within the central half of the frame so the image also crops well horizontally. No perfume bottles, pipettes, lab equipment, books, notebooks, plants, flower arrangements, people, hands, clocks, readable lettering, logos, watermarks, decorative gold dust or artificial haze. A mood illustration, not a photograph of the founder's premises. No text, border, or graphic overlay."
+}

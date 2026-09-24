@@ -2,6 +2,9 @@
 
 ## Ready now
 
+- `hours-clock-tower-original.png` and `hours-clock-tower.webp`: generated architectural study of the Tsim Sha Tsui Clock Tower for Hours, replacing the harbour image in the collection and scroll chapter. Landmark reference: https://www.discoverhongkong.com/eng/place-to-go/travel.guide-clock-tower.html. Conceptual unobstructed view, not documentation of current maintenance conditions.
+- `afterimage-morning-tea-original.png` and `afterimage-morning-tea.webp`: generated Hong Kong windowsill, tea and morning light for Afterimage, as requested by the user. Both new assets use built-in OpenAI generation, 1024 x 1536, with quality-86 WebP derivatives and full prompts in adjacent JSON files. No Higgsfield credits used.
+
 - `hong-kong-beginning-original.png` and `hong-kong-beginning.webp`: About-exclusive Hong Kong workspace at dusk, generated with the built-in OpenAI image tool on 2026-09-25. A conceptual illustration, not the founder's real premises. The quality-86 WebP retains the original composition; full prompt and provenance are in `hong-kong-beginning.json`.
 
 - `shop-first-edition-original.png` and `shop-first-edition.webp`: Shop-exclusive smoked-glass perfume concept, generated with Higgsfield SOUL Cinema on 2026-09-25, 1152×2048. The WebP is an optimized quality-86 derivative, with no retouching. Full prompt, settings and request ID are in `shop-first-edition.json`. It is labelled as a generated concept, not final packaging; the existing laboratory photograph remains on the homepage.
@@ -12,10 +15,10 @@
 - `hong-kong-drop-mobile-poster.jpg`: reduced-motion poster from the portrait film.
 - `drop-sequence/frame-000.webp` through `frame-047.webp`: 48 scroll-controlled frames derived from the first four seconds of `hong-kong-drop-mobile.mp4` at 12 fps, native 720×1280, WebP quality 90. A mild luminance-only unsharp filter restores edge definition without AI upscaling. No additional API request was made for these frames. Rebuild with `ffmpeg -i public/media/hong-kong-drop-mobile.mp4 -vf "fps=12,unsharp=5:5:0.35:3:3:0" -frames:v 48 -start_number 0 -c:v libwebp -quality 90 -compression_level 6 public/media/drop-sequence/frame-%03d.webp` (add `-y` to replace existing derivatives). The source MP4 is preserved.
 - `yat-logo-reference.jpg`: user-supplied logo reference. The page builds the dark lockup as SVG, with a gold-gradient vector drop handed off from the filmed drop. The reference image is not rendered.
-- `hours-dawn.png`: synthetic Hong Kong harbour at first light for Hours.
-- `afterimage-tram.png`: synthetic vintage tram interior for Afterimage.
+- `hours-dawn.png`: synthetic Hong Kong harbour at first light, retained as the landing background only.
+- `afterimage-tram.png`: synthetic vintage tram interior, retained with its WebP for possible future use; no longer displayed in Afterimage.
 - `element-lab.png`: synthetic pipette and sample-tube still life for Element.
-- `hours-dawn.webp`, `afterimage-tram.webp`, `element-lab.webp`: optimized derivatives of the corresponding PNG originals, used in the story and collections. All three total approximately 565 KiB. About now uses its own workspace illustration.
+- `hours-dawn.webp`, `afterimage-tram.webp`, `element-lab.webp`: preserved optimized derivatives of the corresponding PNG originals. The harbour remains the landing background, the tram is saved but unused, and Element retains its laboratory illustration. About has its own workspace illustration.
 
 The original generated images have adjacent JSON sidecars and embedded prompt metadata. The derived scroll frames inherit the portrait film's provenance.
 
@@ -29,7 +32,7 @@ The original generated images have adjacent JSON sidecars and embedded prompt me
 
 ## Build without generated imagery
 
-- Opening light: two narrow SVG highlights travel down the filmed glass edges, with a small blurred bloom and no fill over the glass interior. CSS animation pauses offscreen, when the tab is hidden, or with the pause control. Reduced motion disables it. It fades out before the first scroll-frame change. No new video or API request.
+- Opening light: a soft champagne-gold backlight pulses behind only the drop. A small CSS radial gradient sits below the filmed canvas, with no tracing lines or pipette-wide overlay. Animation pauses offscreen, when the tab is hidden, or with the pause control. Reduced motion disables it. It fades out before the first scroll-frame change. No new video or API request.
 
 - CSS: contact-sheet rails, hairline rules, focus states, and projection masks.
 - Semantic HTML: navigation, locale controls, collection chapters, labels, copy, calls to action, availability, and footer.
