@@ -21,6 +21,8 @@ export function storyMotion(top: number, height: number, viewport: number, landi
   });
   return {
     progress,
+    // Retire the opening reflection before the film advances beyond frame zero.
+    idleLightOpacity: 1 - ease(progress / 0.003),
     frame: Math.min(STORY_FRAMES - 1, Math.round(seconds * 12)),
     dropY,
     focusY: startY + (landingY - startY) * settle,

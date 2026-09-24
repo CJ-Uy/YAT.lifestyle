@@ -1,16 +1,16 @@
 # Graph Report - YAT.lifestyle  (2026-09-25)
 
 ## Corpus Check
-- 46 files · ~867,161 words
+- 48 files · ~952,485 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 189 nodes · 221 edges · 21 communities (17 shown, 4 thin omitted)
+- 190 nodes · 221 edges · 22 communities (18 shown, 4 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `b27f61a6`
+- Built from commit: `a172157b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -58,7 +58,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (21 total, 4 thin omitted)
+## Communities (22 total, 4 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.10
@@ -121,7 +121,7 @@ Nodes (4): NewsletterEnv, response(), subscribe(), POST()
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `devDependencies` connect `Community 2` to `Community 3`?**
-  _High betweenness centrality (0.016) - this node is a cross-community bridge._
+  _High betweenness centrality (0.015) - this node is a cross-community bridge._
 - **What connects `copy`, `collectionImages`, `metadata` to the rest of the system?**
   _114 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**

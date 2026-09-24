@@ -95,8 +95,8 @@
     "semantic_hash": ""
   },
   "app/home-experience.tsx": {
-    "mtime": 1790262390.2914057,
-    "ast_hash": "f4a325c7725d1498a8665b3e92ffb6a2",
+    "mtime": 1790272346.335866,
+    "ast_hash": "d70f9522cab9c69d6e932c98866c69e4",
     "semantic_hash": ""
   },
   ".impeccable/home-build-brief.md": {
@@ -115,8 +115,8 @@
     "semantic_hash": ""
   },
   "public/media/asset-manifest.md": {
-    "mtime": 1790271103.5019262,
-    "ast_hash": "978804b9abca5311d18cfe1e57cc2f54",
+    "mtime": 1790272425.5747783,
+    "ast_hash": "c44dbd443a57c95d4c922b5e8b92cab1",
     "semantic_hash": ""
   },
   ".impeccable/mocks/home-a.png": {
@@ -215,13 +215,13 @@
     "semantic_hash": ""
   },
   "lib/story-motion.test.ts": {
-    "mtime": 1790261888.81082,
-    "ast_hash": "ff45fbdc47959ff5fc045dbdecfac5b5",
+    "mtime": 1790271866.4183328,
+    "ast_hash": "32db51e2cd8b28c81b1ebca576318fdc",
     "semantic_hash": ""
   },
   "lib/story-motion.ts": {
-    "mtime": 1790261888.807834,
-    "ast_hash": "8a03dc86e606a3a21b031dfd8402a16f",
+    "mtime": 1790271866.4163332,
+    "ast_hash": "404513ae8a633b1ef03314032c5d287d",
     "semantic_hash": ""
   },
   "public/media/hong-kong-drop-mobile.json": {
@@ -672,6 +672,26 @@
   "public/media/shop-first-edition.webp": {
     "mtime": 1790271102.9235384,
     "ast_hash": "9a2757ef57448e3db7b6a192ce8fabe6",
+    "semantic_hash": ""
+  },
+  "public/media/hong-kong-beginning.json": {
+    "mtime": 1790272264.9073086,
+    "ast_hash": "3170a7c86be4122ed167e8e4c1227b2b",
+    "semantic_hash": ""
+  },
+  "scripts/check-hero-motion.js": {
+    "mtime": 1790272425.5747783,
+    "ast_hash": "ee680fe82e79bb74fac7b5b62b766ca0",
+    "semantic_hash": ""
+  },
+  "public/media/hong-kong-beginning-original.png": {
+    "mtime": 1790271945.795192,
+    "ast_hash": "459731c2c1ed87f0fe9d3f065a41b80b",
+    "semantic_hash": ""
+  },
+  "public/media/hong-kong-beginning.webp": {
+    "mtime": 1790272154.8258786,
+    "ast_hash": "1747851b300b2d79c58aa35bfe702c36",
     "semantic_hash": ""
   }
 }

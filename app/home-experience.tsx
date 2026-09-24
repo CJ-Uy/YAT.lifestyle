@@ -68,6 +68,7 @@ export default function HomeExperience() {
   const [locale, setLocale] = useLocale();
   const [reducedMotion, setReducedMotion] = useState(true);
   const [activePanel, setActivePanel] = useState(0);
+  const [ambientPaused, setAmbientPaused] = useState(false);
   const activePanelRef = useRef(0);
   const journeyRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -98,6 +99,8 @@ export default function HomeExperience() {
     const draw = () => {
       frame = 0;
       if (!active) return;
+      stage.dataset.idle = "false";
+      if (document.hidden) return;
       const bounds = journey.getBoundingClientRect();
       if (bounds.bottom < 0 || bounds.top > window.innerHeight) return;
       const rect = stage.getBoundingClientRect();
@@ -132,6 +135,10 @@ export default function HomeExperience() {
       // Motion tracking stays in the original 540 x 960 coordinate space;
       // source images retain the film's full 720 x 1280 detail.
       const scale = Math.max(filmWidth / 540, rect.height / 960) * motion.zoom;
+      stage.style.setProperty("--idle-opacity", String(reducedMotion ? 0 : motion.idleLightOpacity));
+      stage.style.setProperty("--idle-width", `${540 * scale}px`);
+      stage.style.setProperty("--idle-height", `${960 * scale}px`);
+      stage.style.setProperty("--idle-top", `${motion.focusY - motion.dropY * scale}px`);
       const settle = reducedMotion ? reveal : motion.settle;
       const morph = reducedMotion ? 1 : motion.dropMorph;
       const mix = (from: number, to: number) => from + (to - from) * morph;
@@ -163,10 +170,18 @@ export default function HomeExperience() {
           context.fillRect(0, 0, rect.width, rect.height);
           context.restore();
           stage.style.setProperty("--poster-opacity", "0");
+          stage.dataset.idle = String(motion.idleLightOpacity > 0);
         }
       }
     };
     const schedule = () => { if (active && !frame) frame = requestAnimationFrame(draw); };
+    const visibility = () => {
+      if (document.hidden) {
+        stage.dataset.idle = "false";
+        cancelAnimationFrame(frame);
+        frame = 0;
+      } else schedule();
+    };
     frames.forEach((image, index) => {
       image.decoding = "async";
       image.onload = schedule;
@@ -175,11 +190,13 @@ export default function HomeExperience() {
     schedule();
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule);
+    document.addEventListener("visibilitychange", visibility);
     return () => {
       active = false;
       frames.forEach((image) => { image.onload = null; });
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
+      document.removeEventListener("visibilitychange", visibility);
       cancelAnimationFrame(frame);
     };
   }, [reducedMotion]);
@@ -188,17 +205,39 @@ export default function HomeExperience() {
     <SiteHeader locale={locale} onLocaleChange={setLocale} />
     <main>
       <section aria-labelledby="hero-heading" className="journey" id="top" ref={journeyRef}>
-        <div className={`journey-stage${reducedMotion ? " is-still" : ""}`} ref={stageRef}>
+        <div className={`journey-stage${reducedMotion ? " is-still" : ""}${ambientPaused ? " is-ambient-paused" : ""}`} ref={stageRef}>
           <div aria-hidden="true" className="journey-media">
             <img alt="" className="journey-atmosphere" src="/media/hours-dawn.webp" />
             {collectionImages.map((src, index) => <div className={`scene-photograph scene-photo-${index + 1}`} key={src}><img alt="" src={src} /><span>{index === 0 ? "06:00" : index === 1 ? "HONG KONG" : "YAT.E"}</span></div>)}
             <img alt="" className="journey-poster" src="/media/hong-kong-drop-mobile-poster.jpg" />
             <canvas className="journey-canvas" ref={canvasRef} />
+            <svg className="hero-ambient" viewBox="0 0 540 960" aria-hidden="true">
+              <defs>
+                {/* Trace frame-zero edges, leaving the photographed glass interior untouched. */}
+                <path id="opening-edge-left" pathLength="100" d="M202 0C198 100 230 165 227 270L227 339C227 365 210 382 210 408C209 443 233 472 270 472" />
+                <path id="opening-edge-right" pathLength="100" d="M340 0C341 100 310 167 313 270L314 339C312 365 331 382 331 408C331 443 307 472 270 472" />
+                <linearGradient id="opening-edge-light" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="472"><stop stopColor="#fffdf2" /><stop offset=".66" stopColor="#fff3cd" /><stop offset="1" stopColor="#f3c45f" /></linearGradient>
+                <filter id="opening-edge-bloom" x="-50%" y="-10%" width="200%" height="120%"><feGaussianBlur stdDeviation="2.5" /></filter>
+              </defs>
+              <g fill="none" stroke="url(#opening-edge-light)" strokeLinecap="round">
+                <g className="hero-edge-trace" strokeDasharray="14 110">
+                  <use href="#opening-edge-left" strokeWidth="6" opacity=".5" filter="url(#opening-edge-bloom)" />
+                  <use href="#opening-edge-left" strokeWidth="1.2" />
+                </g>
+                <g className="hero-edge-trace hero-edge-trace-right" strokeDasharray="11 110">
+                  <use href="#opening-edge-right" strokeWidth="5" opacity=".4" filter="url(#opening-edge-bloom)" />
+                  <use href="#opening-edge-right" strokeWidth=".9" opacity=".7" />
+                </g>
+              </g>
+            </svg>
             <div className="journey-shade" />
           </div>
           <div className="journey-scene scene-hero" style={{ "--scene-opacity": 1 } as CSSProperties} inert={activePanel !== 0}>
             <div className="journey-copy"><div aria-hidden="true"><h1>{t.hero.title}</h1><p>{t.hero.intro}</p></div></div>
           </div>
+          {!reducedMotion && activePanel === 0 && <button className="ambient-control" type="button" onClick={() => setAmbientPaused(!ambientPaused)} aria-label={locale === "en" ? (ambientPaused ? "Resume ambient motion" : "Pause ambient motion") : locale === "zh-Hant" ? (ambientPaused ? "繼續背景動態" : "暫停背景動態") : (ambientPaused ? "继续背景动画" : "暂停背景动画")}>
+            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">{ambientPaused ? <path d="m5 3 8 5-8 5Z" fill="currentColor" /> : <path d="M5 3v10M11 3v10" stroke="currentColor" strokeWidth="1.5" />}</svg>
+          </button>}
           <div aria-hidden="true" className="journey-scene scene-intro">
             <div className="journey-copy"><h2>{t.story.heading}</h2><p>{t.story.intro}</p></div>
             <div className="story-axis">{t.story.stage.map((word) => <span key={word}>{word}</span>)}</div>
@@ -253,7 +292,7 @@ export default function HomeExperience() {
         <div className="contact-sheet">{collectionItems.map((item, index) => <article id={`collection-${index + 1}`} key={item.title}><div className={`contact-image contact-image-${index + 1}`}><img alt={item.imageAlt} loading="lazy" src={collectionImages[index]} /><span aria-hidden="true" className="contact-time">{index === 0 ? "06:00" : index === 1 ? "18:42" : "YAT.E"}</span></div><div className="contact-copy"><span>{String(index + 1).padStart(2, "0")}</span><h3>{item.title}</h3><p>{item.body}</p><small>{item.line}</small>{index === 2 && <a className="email-link" href="mailto:element@yatlifestyle.com"><span>{t.contact.element}</span><span>element@yatlifestyle.com</span></a>}</div></article>)}</div>
       </section>
       <section aria-labelledby="process-heading" className="process" id="process"><header><h2 id="process-heading">{t.process.title}</h2><p>{t.process.intro}</p></header><ol>{t.process.steps.map(([title, body], index) => <li key={title}><span>{String(index + 1).padStart(2, "0")}</span><h3>{title}</h3><p>{body}</p></li>)}</ol><p className="process-note">{t.process.note}</p></section>
-      <section aria-labelledby="about-heading" className="about" id="about"><figure className="about-frame"><img alt={t.collections.element.imageAlt} loading="lazy" src="/media/element-lab.webp" /><figcaption>{locale === "en" ? "A study in glass and light. Generated illustration." : locale === "zh-Hant" ? "玻璃與光的習作。生成概念圖。" : "玻璃与光的习作。生成概念图。"}</figcaption></figure><div className="about-copy"><h2 id="about-heading">{t.about.title}</h2><p>{t.about.body}</p><blockquote>{t.about.quote}</blockquote><a className="email-link" href="mailto:press@yatlifestyle.com"><span>{t.contact.press}</span><span>press@yatlifestyle.com</span></a></div></section>
+      <section aria-labelledby="about-heading" className="about" id="about"><figure className="about-frame"><img alt={locale === "en" ? "Notebook, scent blotters and amber glass beside a Hong Kong window at dusk" : locale === "zh-Hant" ? "香港黃昏窗旁的筆記本、試香紙與琥珀色玻璃瓶" : "香港黄昏窗旁的笔记本、试香纸与琥珀色玻璃瓶"} loading="lazy" width="1536" height="1024" src="/media/hong-kong-beginning.webp" /><figcaption>{locale === "en" ? "An imagined Hong Kong workspace. Generated illustration." : locale === "zh-Hant" ? "想像中的香港工作室。生成概念圖。" : "想象中的香港工作室。生成概念图。"}</figcaption></figure><div className="about-copy"><h2 id="about-heading">{t.about.title}</h2><p>{t.about.body}</p><blockquote>{t.about.quote}</blockquote><a className="email-link" href="mailto:press@yatlifestyle.com"><span>{t.contact.press}</span><span>press@yatlifestyle.com</span></a></div></section>
       <section aria-labelledby="soon-heading" className="soon"><div><span className="soon-status">{t.soon.status}</span><h2 id="soon-heading">{t.soon.title}</h2><p>{t.soon.body}</p></div><p className="availability">{t.soon.availability}</p></section>
     </main>
     <footer><a className="footer-wordmark" href="#top">YAT.lifestyle</a><div className="footer-contact"><p>{t.footer.note}</p><a className="email-link" href="mailto:hello@yatlifestyle.com"><span>{t.contact.general}</span><span>hello@yatlifestyle.com</span></a></div><a href="#top">{t.footer.top}</a></footer>

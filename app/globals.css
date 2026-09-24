@@ -84,6 +84,14 @@ button { border: 0; }
 .logo-tagline { color: #b8ab92; font-size: clamp(.58rem, 1vw, .72rem); letter-spacing: .28em; margin-top: 1.5rem; opacity: var(--signature-reveal, 0); }
 .signature-drop { height: var(--drop-height, 58px); left: var(--drop-x, 50%); opacity: var(--drop-opacity, 0); position: absolute; top: var(--drop-y, 50%); transform: translate(-50%, -50%); width: var(--drop-width, 40px); }
 .journey-canvas { height: 100%; inset: 0; mix-blend-mode: screen; position: absolute; width: 100%; }
+.hero-ambient { height: var(--idle-height); left: 50%; mix-blend-mode: screen; opacity: var(--idle-opacity, 0); overflow: hidden; pointer-events: none; position: absolute; top: var(--idle-top, 0); transform: translateX(-50%); width: var(--idle-width); }
+.hero-edge-trace { animation: opening-edge-trace 6.8s linear -1s infinite; animation-play-state: paused; }
+.hero-edge-trace-right { animation-delay: -.45s; }
+.journey-stage[data-idle="true"]:not(.is-ambient-paused) .hero-edge-trace { animation-play-state: running; }
+@keyframes opening-edge-trace { 0% { stroke-dashoffset: 15; opacity: 0; } 12% { opacity: 1; } 74% { opacity: 1; } 90%, 100% { stroke-dashoffset: -101; opacity: 0; } }
+.ambient-control { align-items: center; background: transparent; border: 1px solid var(--rule); border-radius: 50%; bottom: 1.25rem; color: var(--warm); cursor: pointer; display: flex; height: 44px; justify-content: center; position: absolute; right: 1.25rem; width: 44px; z-index: 3; }
+.ambient-control:hover { border-color: var(--gold); color: var(--gold); }
+.is-still .hero-ambient { display: none; }
 .journey-shade { background: linear-gradient(0deg, #080806 0, rgba(8,8,6,.8) 18%, transparent 62%), linear-gradient(90deg, rgba(8,8,6,.65), transparent 42%, transparent 65%, rgba(8,8,6,.4)); inset: 0; opacity: var(--film-opacity, 1); position: absolute; }
 .journey-scene { --scene-opacity: 0; --scene-offset: 0px; inset: 0; opacity: var(--scene-opacity); padding: 110px 6vw 7vh; pointer-events: none; position: absolute; }
 .journey-scene a { pointer-events: auto; }
@@ -326,6 +334,7 @@ footer > a:last-child { align-items: center; color: #d8c7a5; display: flex; just
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .hero-ambient, .ambient-control { display: none; }
   :root { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }

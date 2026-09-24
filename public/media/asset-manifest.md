@@ -2,6 +2,8 @@
 
 ## Ready now
 
+- `hong-kong-beginning-original.png` and `hong-kong-beginning.webp`: About-exclusive Hong Kong workspace at dusk, generated with the built-in OpenAI image tool on 2026-09-25. A conceptual illustration, not the founder's real premises. The quality-86 WebP retains the original composition; full prompt and provenance are in `hong-kong-beginning.json`.
+
 - `shop-first-edition-original.png` and `shop-first-edition.webp`: Shop-exclusive smoked-glass perfume concept, generated with Higgsfield SOUL Cinema on 2026-09-25, 1152×2048. The WebP is an optimized quality-86 derivative, with no retouching. Full prompt, settings and request ID are in `shop-first-edition.json`. It is labelled as a generated concept, not final packaging; the existing laboratory photograph remains on the homepage.
 
 - `hong-kong-harbour-afterimage.mp4`: Higgsfield Seedance 2.0 hero plate, 5 seconds, 720p, 16:9, silent.
@@ -13,7 +15,7 @@
 - `hours-dawn.png`: synthetic Hong Kong harbour at first light for Hours.
 - `afterimage-tram.png`: synthetic vintage tram interior for Afterimage.
 - `element-lab.png`: synthetic pipette and sample-tube still life for Element.
-- `hours-dawn.webp`, `afterimage-tram.webp`, `element-lab.webp`: optimized derivatives of the corresponding PNG originals, used in the story, collections, and About section. All three total approximately 565 KiB. No new generation request was made for this refinement.
+- `hours-dawn.webp`, `afterimage-tram.webp`, `element-lab.webp`: optimized derivatives of the corresponding PNG originals, used in the story and collections. All three total approximately 565 KiB. About now uses its own workspace illustration.
 
 The original generated images have adjacent JSON sidecars and embedded prompt metadata. The derived scroll frames inherit the portrait film's provenance.
 
@@ -26,6 +28,8 @@ The original generated images have adjacent JSON sidecars and embedded prompt me
 - Subtle 35mm grain and edge light-leak textures, bounded away from body copy.
 
 ## Build without generated imagery
+
+- Opening light: two narrow SVG highlights travel down the filmed glass edges, with a small blurred bloom and no fill over the glass interior. CSS animation pauses offscreen, when the tab is hidden, or with the pause control. Reduced motion disables it. It fades out before the first scroll-frame change. No new video or API request.
 
 - CSS: contact-sheet rails, hairline rules, focus states, and projection masks.
 - Semantic HTML: navigation, locale controls, collection chapters, labels, copy, calls to action, availability, and footer.

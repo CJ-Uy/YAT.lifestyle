@@ -974,6 +974,16 @@
       "norm_label": "config"
     },
     {
+      "label": "check-hero-motion.js",
+      "file_type": "code",
+      "source_file": "scripts/check-hero-motion.js",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "scripts_check_hero_motion",
+      "community": 21,
+      "norm_label": "check-hero-motion.js"
+    },
+    {
       "label": "check-navigation.js",
       "file_type": "code",
       "source_file": "scripts/check-navigation.js",
@@ -1877,7 +1887,7 @@
       "label": "Produce later as image-native media",
       "file_type": "document",
       "source_file": "public/media/asset-manifest.md",
-      "source_location": "L20",
+      "source_location": "L22",
       "_origin": "ast",
       "id": "media_asset_manifest_produce_later_as_image_native_media",
       "community": 15,
@@ -1887,7 +1897,7 @@
       "label": "Build without generated imagery",
       "file_type": "document",
       "source_file": "public/media/asset-manifest.md",
-      "source_location": "L28",
+      "source_location": "L30",
       "_origin": "ast",
       "id": "media_asset_manifest_build_without_generated_imagery",
       "community": 15,
@@ -4172,5 +4182,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "b27f61a664f7aaf6085d2ed77fa9e6e1b9f5e81c"
+  "built_at_commit": "a172157b068726712bc2586c58dfb3d99d0806f8"
 }
