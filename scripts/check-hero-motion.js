@@ -35,12 +35,13 @@ async (page) => {
     await photo.evaluate(img => img.decode());
     assert((await photo.getAttribute("src")).includes("hong-kong-beginning"), "About must have its own image");
     assert(await photo.evaluate(img => img.naturalWidth > 0), "About image must load");
-    for (const [index, asset] of ["hours-clock-tower", "afterimage-morning-tea"].entries()) {
+    for (const [index, asset] of ["hours-clock-tower", "afterimage-morning-tea", "element-daylight-lab"].entries()) {
       const source = `/media/${asset}.webp`;
       assert(await page.locator(`#collection-${index + 1} img`).getAttribute("src") === source, "Collection must use its dedicated image");
       assert(await page.locator(`.scene-photo-${index + 1} img`).getAttribute("src") === source, "Scroll chapter must match its collection");
       assert(await page.locator(".journey-atmosphere").getAttribute("src") !== source, "Collection must not repeat the landing background");
     }
+    assert(await page.locator(".scene-photo-1 img").evaluate(img => getComputedStyle(img).objectPosition) === "50% 100%", "Hours crop must raise the clock face above the lower fade");
     await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
     await page.waitForSelector('.journey-stage[data-idle="true"]');
     // Simulate the browser visibility event without relying on a headed tab switch.

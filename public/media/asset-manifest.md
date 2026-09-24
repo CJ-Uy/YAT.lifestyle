@@ -2,6 +2,8 @@
 
 ## Ready now
 
+- `element-daylight-lab-original.png` and `element-daylight-lab.webp`: Element's new daylight laboratory still life, generated with the built-in OpenAI image tool on 2026-09-25, 1024 x 1536. Warm ivory bench, amber liquid and restrained glassware align with Hours and Afterimage. Quality-86 WebP derivative; full prompt in `element-daylight-lab.json`. A conceptual illustration, not the actual founder's laboratory.
+
 - `hours-clock-tower-original.png` and `hours-clock-tower.webp`: generated architectural study of the Tsim Sha Tsui Clock Tower for Hours, replacing the harbour image in the collection and scroll chapter. Landmark reference: https://www.discoverhongkong.com/eng/place-to-go/travel.guide-clock-tower.html. Conceptual unobstructed view, not documentation of current maintenance conditions.
 - `afterimage-morning-tea-original.png` and `afterimage-morning-tea.webp`: generated Hong Kong windowsill, tea and morning light for Afterimage, as requested by the user. Both new assets use built-in OpenAI generation, 1024 x 1536, with quality-86 WebP derivatives and full prompts in adjacent JSON files. No Higgsfield credits used.
 
@@ -17,8 +19,8 @@
 - `yat-logo-reference.jpg`: user-supplied logo reference. The page builds the dark lockup as SVG, with a gold-gradient vector drop handed off from the filmed drop. The reference image is not rendered.
 - `hours-dawn.png`: synthetic Hong Kong harbour at first light, retained as the landing background only.
 - `afterimage-tram.png`: synthetic vintage tram interior, retained with its WebP for possible future use; no longer displayed in Afterimage.
-- `element-lab.png`: synthetic pipette and sample-tube still life for Element.
-- `hours-dawn.webp`, `afterimage-tram.webp`, `element-lab.webp`: preserved optimized derivatives of the corresponding PNG originals. The harbour remains the landing background, the tram is saved but unused, and Element retains its laboratory illustration. About has its own workspace illustration.
+- `element-lab.png`: original dark pipette and sample-tube still life, preserved but no longer displayed.
+- `hours-dawn.webp`, `afterimage-tram.webp`, `element-lab.webp`: preserved optimized derivatives of the corresponding PNG originals. The harbour remains the landing background; the tram and dark laboratory images are saved but unused. About has its own workspace illustration.
 
 The original generated images have adjacent JSON sidecars and embedded prompt metadata. The derived scroll frames inherit the portrait film's provenance.
 

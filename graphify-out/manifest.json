@@ -95,8 +95,8 @@
     "semantic_hash": ""
   },
   "app/home-experience.tsx": {
-    "mtime": 1790273159.1991594,
-    "ast_hash": "630dc42020f46f70438e3bb9fd568813",
+    "mtime": 1790273437.673913,
+    "ast_hash": "4f639177454f5e62d339a88cd0cc5fa5",
     "semantic_hash": ""
   },
   ".impeccable/home-build-brief.md": {
@@ -115,8 +115,8 @@
     "semantic_hash": ""
   },
   "public/media/asset-manifest.md": {
-    "mtime": 1790273106.061684,
-    "ast_hash": "1da5ded3facf931c1226040194978f26",
+    "mtime": 1790273438.2174022,
+    "ast_hash": "84f394a72416dcbe0f522b531be5d4b9",
     "semantic_hash": ""
   },
   ".impeccable/mocks/home-a.png": {
@@ -680,8 +680,8 @@
     "semantic_hash": ""
   },
   "scripts/check-hero-motion.js": {
-    "mtime": 1790273159.1991594,
-    "ast_hash": "c61b4df02bb7874a9a6b466d918f17ad",
+    "mtime": 1790273438.2174022,
+    "ast_hash": "99659fbf24555bbbc77380cc517837b5",
     "semantic_hash": ""
   },
   "public/media/hong-kong-beginning-original.png": {
@@ -722,6 +722,21 @@
   "public/media/hours-clock-tower.webp": {
     "mtime": 1790273017.1365526,
     "ast_hash": "724646caf3f203660e12982647774877",
+    "semantic_hash": ""
+  },
+  "public/media/element-daylight-lab.json": {
+    "mtime": 1790273389.6758375,
+    "ast_hash": "f0c53605def68652ea9d8ae398d3715d",
+    "semantic_hash": ""
+  },
+  "public/media/element-daylight-lab-original.png": {
+    "mtime": 1790273356.41176,
+    "ast_hash": "af2357c2ab0f283dbafbf52e3b5d606b",
+    "semantic_hash": ""
+  },
+  "public/media/element-daylight-lab.webp": {
+    "mtime": 1790273387.6987371,
+    "ast_hash": "7985d8d9554f0ce98b09541080ae7f7a",
     "semantic_hash": ""
   }
 }
