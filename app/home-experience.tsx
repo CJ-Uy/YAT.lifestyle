@@ -79,6 +79,7 @@ export default function HomeExperience() {
   const journeyRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const dropTargetRef = useRef<HTMLSpanElement>(null);
   const t = copy[locale];
   const collectionItems = [t.collections.hours, t.collections.afterimage, t.collections.element];
   const storyItems = [t.story.hours, t.story.afterimage, t.story.element];
@@ -94,9 +95,10 @@ export default function HomeExperience() {
     const journey = journeyRef.current;
     const stage = stageRef.current;
     const canvas = canvasRef.current;
+    const dropTarget = dropTargetRef.current;
     const context = canvas?.getContext("2d");
-    if (!journey || !stage) return;
-    const frames = reducedMotion ? [] : Array.from({ length: STORY_FRAMES }, () => new Image());
+    if (!journey || !stage || !dropTarget || !canvas || !context) return;
+    const frames = Array.from({ length: reducedMotion ? 1 : STORY_FRAMES }, () => new Image());
     let active = true;
     let frame = 0;
     const draw = () => {
@@ -105,38 +107,65 @@ export default function HomeExperience() {
       const bounds = journey.getBoundingClientRect();
       if (bounds.bottom < 0 || bounds.top > window.innerHeight) return;
       const rect = stage.getBoundingClientRect();
-      const motion = storyMotion(bounds.top, journey.offsetHeight, window.innerHeight, rect.width);
+      const target = dropTarget.getBoundingClientRect();
+      const targetX = target.left - rect.left + target.width / 2;
+      const targetY = target.top - rect.top + target.height / 2;
+      const motion = storyMotion(bounds.top, journey.offsetHeight, window.innerHeight, targetY);
+      const reveal = reducedMotion ? Number(motion.progress >= 0.9) : motion.logoReveal;
+      const filmOpacity = reducedMotion ? 1 - reveal : motion.filmOpacity;
+      const dropIsolation = reducedMotion ? reveal : motion.dropIsolation;
       const panel = Math.min(5, Math.round(motion.progress * 5));
       if (panel !== activePanelRef.current) { activePanelRef.current = panel; setActivePanel(panel); }
-      stage.style.setProperty("--logo-reveal", String(reducedMotion ? Number(motion.progress >= 0.9) : motion.logoReveal));
-      stage.style.setProperty("--landing-y", `${motion.landingY}px`);
+      stage.style.setProperty("--logo-reveal", String(reveal));
+      stage.style.setProperty("--film-opacity", String(filmOpacity));
       stage.style.setProperty("--narration-opacity", String(motion.narrationOpacity));
-      if (reducedMotion || !canvas || !context) return;
       const ratio = Math.min(window.devicePixelRatio || 1, 2);
       const width = Math.max(1, Math.round(rect.width * ratio));
       const height = Math.max(1, Math.round(rect.height * ratio));
       if (canvas.width !== width || canvas.height !== height) { canvas.width = width; canvas.height = height; }
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
       context.clearRect(0, 0, rect.width, rect.height);
-      let image = frames[motion.frame];
-      if (!image.naturalWidth) image = frames.slice(0, motion.frame).reverse().find((candidate) => candidate.naturalWidth) ?? frames[0];
-      if (!image.naturalWidth) return;
-      context.fillStyle = "#080806";
-      context.fillRect(0, 0, rect.width, rect.height);
       const filmWidth = rect.width > 900 ? Math.min(rect.width * 0.48, 640) : rect.width;
       const scale = Math.max(filmWidth / 540, rect.height / 960) * motion.zoom;
-      context.save();
-      context.beginPath();
-      context.rect((rect.width - filmWidth) / 2, 0, filmWidth, rect.height);
-      context.clip();
-      context.drawImage(image, (rect.width - 540 * scale) / 2, motion.focusY - motion.dropY * scale, 540 * scale, 960 * scale);
-      context.restore();
+      if (!reducedMotion && filmOpacity > 0) {
+        let image = frames[motion.frame];
+        if (!image.naturalWidth) image = frames.slice(0, motion.frame).reverse().find((candidate) => candidate.naturalWidth) ?? frames[0];
+        if (image.naturalWidth) {
+          context.save();
+          context.globalAlpha = filmOpacity;
+          context.beginPath();
+          context.rect((rect.width - filmWidth) / 2, 0, filmWidth, rect.height);
+          context.clip();
+          context.drawImage(image, (rect.width - 540 * scale) / 2, motion.focusY - motion.dropY * scale, 540 * scale, 960 * scale);
+          context.restore();
+        }
+      }
+      const dropImage = frames[reducedMotion ? 0 : 38];
+      if (dropIsolation > 0 && dropImage.naturalWidth) {
+        const settle = Math.min(1, reveal * 1.8);
+        const dropWidth = 144 * scale + (target.width - 144 * scale) * settle;
+        const dropHeight = dropWidth * 174 / 144;
+        context.save();
+        context.globalAlpha = dropIsolation;
+        context.beginPath();
+        context.ellipse(targetX, targetY, dropWidth * .49, dropHeight * .49, 0, 0, Math.PI * 2);
+        context.clip();
+        const glow = context.createRadialGradient(targetX - dropWidth * .16, targetY - dropHeight * .2, 0, targetX, targetY, dropWidth * .65);
+        glow.addColorStop(0, "rgba(229, 175, 82, .5)");
+        glow.addColorStop(.7, "rgba(134, 81, 29, .28)");
+        glow.addColorStop(1, "rgba(8, 8, 6, 0)");
+        context.fillStyle = glow;
+        context.fillRect(targetX - dropWidth / 2, targetY - dropHeight / 2, dropWidth, dropHeight);
+        context.globalCompositeOperation = "screen";
+        context.drawImage(dropImage, 198, 474, 144, 174, targetX - dropWidth / 2, targetY - dropHeight / 2, dropWidth, dropHeight);
+        context.restore();
+      }
     };
     const schedule = () => { if (active && !frame) frame = requestAnimationFrame(draw); };
     frames.forEach((image, index) => {
       image.decoding = "async";
       image.onload = schedule;
-      image.src = `/media/drop-sequence/frame-${String(index).padStart(3, "0")}.webp`;
+      image.src = `/media/drop-sequence/frame-${String(reducedMotion ? 38 : index).padStart(3, "0")}.webp`;
     });
     schedule();
     window.addEventListener("scroll", schedule, { passive: true });
@@ -165,9 +194,22 @@ export default function HomeExperience() {
         <div className="journey-stage" ref={stageRef}>
           <div aria-hidden="true" className="journey-media">
             <img alt="" className="journey-poster" src="/media/hong-kong-drop-mobile-poster.jpg" />
-            {!reducedMotion && <canvas className="journey-canvas" ref={canvasRef} />}
+            <div className="journey-logo">
+              <div className="logo-lockup">
+                <svg className="logo-pipette" viewBox="0 0 160 180" fill="none" aria-hidden="true">
+                  <path d="M71 39V17c0-12 4-16 9-16s9 4 9 16v22" fill="#11100e" stroke="#ba8d45" strokeWidth="1.5" />
+                  <path d="M66 39h28v24H66z" fill="#b8893d" stroke="#ebc978" strokeWidth="1.5" />
+                  <path d="M75 63v88m10-88v88" stroke="#d8a443" strokeWidth="2" />
+                  <path d="M66 67C73 85 36 90 24 119c-8 18 4 34 30 57M94 67c-7 18 30 23 42 52 8 18-4 34-30 57" stroke="#b8893d" strokeWidth="2" />
+                  <path d="M75 151 80 170l5-19" stroke="#e2ba6c" strokeWidth="2" />
+                </svg>
+                <div className="logo-letters"><span>Y</span><span className="logo-a"><svg viewBox="0 0 110 120" aria-hidden="true"><path d="M10 115 55 5l45 110M2 116h31m44 0h31" /></svg><span className="logo-drop-target" ref={dropTargetRef} /></span><span>T</span></div>
+                <div className="logo-name"><i />yatlife.style<i /></div>
+                <div className="logo-tagline">SCIENCE MEETS SCENT</div>
+              </div>
+            </div>
+            <canvas className="journey-canvas" ref={canvasRef} />
             <div className="journey-shade" />
-            <div className="journey-logo"><img alt="" src="/media/yat-logo-reference.jpg" /></div>
           </div>
           {activePanel < 5 && <div className={`journey-narration ${activePanel === 0 ? "journey-hero" : activePanel === 1 ? "journey-intro" : "journey-chapter"}`} key={activePanel}>
             {activePanel === 0 ? <div className="journey-copy"><div aria-hidden="true"><h1>{t.hero.title}</h1><p>{t.hero.intro}</p></div><div className="hero-actions"><a className="action action-primary" href="#collections">{t.hero.explore}</a><a className="action action-secondary" href="#story">{t.hero.story}</a></div></div>

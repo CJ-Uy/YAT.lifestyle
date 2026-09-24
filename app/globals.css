@@ -56,11 +56,21 @@ button { border: 0; }
 .journey { background: var(--ink); position: relative; }
 .journey-stage { background: var(--ink); height: 100dvh; overflow: hidden; position: sticky; top: 0; }
 .journey-media { inset: 0; pointer-events: none; position: absolute; }
-.journey-poster { height: 100%; left: 50%; object-fit: cover; position: absolute; transform: translateX(-50%); width: min(100%, 640px); }
+.journey-poster { height: 100%; left: 50%; object-fit: cover; opacity: var(--film-opacity, 1); position: absolute; transform: translateX(-50%); width: min(100%, 640px); }
+.journey-logo { align-items: center; display: flex; inset: 0; justify-content: center; opacity: var(--logo-reveal, 0); position: absolute; }
+.logo-lockup { align-items: center; display: flex; flex-direction: column; transform: translateY(5vh); width: min(94vw, 680px); }
+.logo-pipette { color: var(--gold); height: clamp(8rem, 30vw, 13rem); margin-bottom: -.8rem; width: clamp(7rem, 28vw, 12rem); }
+.logo-letters { align-items: end; color: #efe7d8; display: flex; font-family: var(--display); font-size: clamp(8.25rem, 40vw, 16rem); justify-content: center; letter-spacing: -.075em; line-height: .78; white-space: nowrap; }
+.logo-letters > span:not(.logo-a) { display: block; }
+.logo-a { display: block; height: .79em; position: relative; width: .68em; }
+.logo-a svg { display: block; height: 100%; width: 100%; }
+.logo-a path { fill: none; stroke: currentColor; stroke-linecap: square; stroke-width: 12; }
+.logo-drop-target { height: 36%; left: 50%; position: absolute; top: 72%; transform: translate(-50%, -50%); width: 38%; }
+.logo-name { align-items: center; color: #dfd3bf; display: flex; font-family: var(--display); font-size: clamp(.9rem, 2vw, 1.35rem); gap: clamp(.8rem, 3vw, 2rem); letter-spacing: .38em; margin-top: 1.15rem; white-space: nowrap; }
+.logo-name i { background: var(--gold); display: block; height: 1px; width: clamp(1.5rem, 9vw, 5rem); }
+.logo-tagline { color: #ad9570; font-size: clamp(.52rem, 1.5vw, .72rem); letter-spacing: .55em; margin-top: 1.8rem; white-space: nowrap; }
 .journey-canvas { height: 100%; inset: 0; position: absolute; width: 100%; }
-.journey-shade { background: linear-gradient(0deg, #080806 0, rgba(8,8,6,.78) 16%, transparent 52%), linear-gradient(90deg, #080806 0, rgba(8,8,6,.88) 23%, transparent 52%); inset: 0; pointer-events: none; position: absolute; }
-.journey-logo { align-items: center; background: #fff; clip-path: circle(calc(var(--logo-reveal, 0) * 150%) at 50% var(--landing-y, 60%)); display: flex; inset: 0; justify-content: center; position: absolute; }
-.journey-logo img { display: block; height: auto; max-width: none; width: min(140vw, 100dvh); }
+.journey-shade { background: linear-gradient(0deg, #080806 0, rgba(8,8,6,.78) 16%, transparent 52%), linear-gradient(90deg, #080806 0, rgba(8,8,6,.88) 23%, transparent 52%); inset: 0; opacity: var(--film-opacity, 1); pointer-events: none; position: absolute; }
 .journey-narration { align-items: end; display: flex; inset: 0; opacity: var(--narration-opacity, 1); padding: calc(82px + 2rem) clamp(1.25rem, 4.5vw, 4.75rem) clamp(3.5rem, 9vh, 7rem); pointer-events: none; position: absolute; }
 .journey-narration a { pointer-events: auto; }
 .journey-spacers > div { height: 100dvh; }
@@ -175,6 +185,9 @@ footer > a:last-child { align-items: center; color: #d8c7a5; display: flex; just
   .locale-switcher button + button::before { display: none; }
   .journey-poster { width: 100%; }
   .journey-shade { background: linear-gradient(0deg, #080806 0, rgba(8,8,6,.96) 18%, rgba(8,8,6,.42) 40%, transparent 62%); }
+  .logo-pipette { margin-bottom: -.35rem; }
+  .logo-name { letter-spacing: .27em; }
+  .logo-tagline { letter-spacing: .34em; margin-top: 1.3rem; }
   .journey-narration { padding: calc(96px + 1rem) 1.25rem calc(2.5rem + env(safe-area-inset-bottom)); }
   .journey-copy { max-width: 100%; }
   .journey-hero h1 { font-size: clamp(2.55rem, 10vw, 3.4rem); line-height: 1; margin-bottom: 1.1rem; max-width: 14ch; }
@@ -223,5 +236,4 @@ footer > a:last-child { align-items: center; color: #d8c7a5; display: flex; just
 @media (prefers-reduced-motion: reduce) {
   :root { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
-  .journey-logo { clip-path: none; opacity: var(--logo-reveal, 0); }
 }

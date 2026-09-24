@@ -7,7 +7,7 @@
 - `hong-kong-drop-mobile.mp4`: Higgsfield Seedance 2.0 portrait pipette and falling drop, 5 seconds, 720p, 9:16, silent.
 - `hong-kong-drop-mobile-poster.jpg`: reduced-motion poster from the portrait film.
 - `drop-sequence/frame-000.webp` through `frame-047.webp`: 48 scroll-controlled frames derived from the first four seconds of `hong-kong-drop-mobile.mp4` at 12 fps, 540×960. No additional API request was made for these frames.
-- `yat-logo-reference.jpg`: user-supplied YAT logo reference, used as the scroll story's final frame. The logo is not yet final.
+- `yat-logo-reference.jpg`: user-supplied logo reference. The page now builds the dark lockup in HTML/SVG and uses the filmed drop in its A. The reference image is not rendered.
 - `hours-dawn.png`: synthetic Hong Kong harbour at first light for Hours.
 - `afterimage-tram.png`: synthetic vintage tram interior for Afterimage.
 - `element-lab.png`: synthetic pipette and sample-tube still life for Element.

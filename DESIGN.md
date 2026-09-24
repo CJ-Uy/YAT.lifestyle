@@ -8,7 +8,6 @@ colors:
   muted: "#aaa499"
   liquid-gold: "#d8a443"
   paper: "#ece5d8"
-  logo-white: "#fff"
 typography:
   display:
     fontFamily: "Bodoni Moda, Bodoni 72, Didot, Georgia, serif"
@@ -90,7 +89,7 @@ Three contact sheet frames pair a local image with a collection name, short desc
 
 ### Signature Media
 
-One full-viewport stage carries the hero and story on every screen size. A scroll-controlled canvas draws a small WebP sequence derived from the portrait Higgsfield film, so the falling drop can stay in view without seeking a video on iOS. The sequence follows the drop into the gold drop inside the A of the user-supplied draft YAT logo. This is a provisional logo treatment, not final brand approval. Reduced motion uses the still poster and a static logo reveal.
+One full-viewport stage carries the hero and story on every screen size. A scroll-controlled canvas draws a small WebP sequence derived from the portrait Higgsfield film, so the falling drop can stay in view without seeking a video on iOS. The film fades to ink, then its actual drop settles inside a code-built YAT mark. The pipette is SVG, the letters and subline are page text, and the backdrop stays dark. The supplied logo image remains reference only. This is a provisional treatment, not final brand approval. Reduced motion uses the still poster and a static dark lockup.
 
 ## Do's and Don'ts
 

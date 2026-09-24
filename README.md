@@ -42,7 +42,8 @@ an interrupted request. `--force` sends a new billable request.
 
 The scroll scene uses 48 small WebP frames derived from a silent Higgsfield
 Seedance 2.0 video in `public/media/`. Scroll controls the falling drop and its
-landing in the draft YAT logo. Reduced motion uses a still poster. Collection
+landing inside a YAT mark built from page text and SVG, not the reference image.
+Reduced motion uses a still poster. Collection
 stills and generation records are in the same directory. Site visitors never
 call the Higgsfield API; credentials are only used by the local generation script.
 
