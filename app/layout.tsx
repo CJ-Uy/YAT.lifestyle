@@ -9,9 +9,9 @@ export const metadata: Metadata = {
 };
 
 const directionContract = `THESIS: Hong Kong memory held inside a laboratory drop, refusing the generic luxury bottle hero.
-OWN-WORLD: Carbon black projection field, warm white type, restrained liquid gold, square hairlines, film perforations, glass, and contact sheets.
+OWN-WORLD: Carbon black photographic field, warm white type, restrained liquid gold, glass, and staggered editorial images.
 STORY: Visitors meet the pipette, understand Hours, Afterimage, and Element, then learn the process, origin, and launch status.
-FIRST VIEWPORT: Fixed navigation above copy and direct actions; desktop pairs text with the harbour film, while mobile leads with a portrait pipette and keeps the headline in view.
+FIRST VIEWPORT: Fixed navigation above copy and direct actions; full-width Hong Kong atmosphere surrounds the pipette. Mobile keeps the drop above the readable introduction. Alternating chapters lead to a vector drop in YAT.
 FORM: Afterimage Hong Kong, approved Composition A, seed key 5d283ccf.
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md`;
 

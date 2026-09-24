@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { type CSSProperties, useEffect, useRef, useState } from "react";
 import { STORY_FRAMES, storyMotion } from "../lib/story-motion";
 
 type Locale = "en" | "zh-Hant" | "zh-Hans";
@@ -64,12 +64,10 @@ const localeLabels: { id: Locale; short: string; name: string }[] = [
 ];
 
 const collectionImages = [
-  "/media/hours-dawn.png",
-  "/media/afterimage-tram.png",
-  "/media/element-lab.png",
+  "/media/hours-dawn.webp",
+  "/media/afterimage-tram.webp",
+  "/media/element-lab.webp",
 ];
-
-function FilmEdge() { return <div aria-hidden="true" className="film-edge" />; }
 
 export default function HomeExperience() {
   const [locale, setLocale] = useState<Locale>("en");
@@ -80,6 +78,7 @@ export default function HomeExperience() {
   const stageRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const dropTargetRef = useRef<HTMLSpanElement>(null);
+  const dropPathRef = useRef<SVGPathElement>(null);
   const t = copy[locale];
   const collectionItems = [t.collections.hours, t.collections.afterimage, t.collections.element];
   const storyItems = [t.story.hours, t.story.afterimage, t.story.element];
@@ -98,6 +97,7 @@ export default function HomeExperience() {
     const dropTarget = dropTargetRef.current;
     const context = canvas?.getContext("2d");
     if (!journey || !stage || !dropTarget || !canvas || !context) return;
+    const scenes = stage.querySelectorAll<HTMLElement>(".journey-scene");
     const frames = Array.from({ length: reducedMotion ? 1 : STORY_FRAMES }, () => new Image());
     let active = true;
     let frame = 0;
@@ -110,23 +110,42 @@ export default function HomeExperience() {
       const target = dropTarget.getBoundingClientRect();
       const targetX = target.left - rect.left + target.width / 2;
       const targetY = target.top - rect.top + target.height / 2;
-      const motion = storyMotion(bounds.top, journey.offsetHeight, window.innerHeight, targetY);
+      const motion = storyMotion(bounds.top, journey.offsetHeight, rect.height, targetY);
       const reveal = reducedMotion ? Number(motion.progress >= 0.9) : motion.logoReveal;
       const filmOpacity = reducedMotion ? 1 - reveal : motion.filmOpacity;
-      const dropIsolation = reducedMotion ? reveal : motion.dropIsolation;
-      const panel = Math.min(5, Math.round(motion.progress * 5));
+      const panel = motion.scenes.findIndex((scene) => scene.opacity > .5);
       if (panel !== activePanelRef.current) { activePanelRef.current = panel; setActivePanel(panel); }
       stage.style.setProperty("--logo-reveal", String(reveal));
+      stage.style.setProperty("--signature-reveal", String(reducedMotion ? reveal : motion.signatureReveal));
       stage.style.setProperty("--film-opacity", String(filmOpacity));
-      stage.style.setProperty("--narration-opacity", String(motion.narrationOpacity));
+      stage.style.setProperty("--atmosphere-opacity", String(reducedMotion ? 1 - reveal : motion.atmosphereOpacity));
+      scenes.forEach((scene, index) => {
+        const opacity = String(reducedMotion ? Number(index === panel) : motion.scenes[index].opacity);
+        scene.style.setProperty("--scene-opacity", opacity);
+        scene.style.setProperty("--scene-offset", `${reducedMotion ? 0 : motion.scenes[index].offset}px`);
+        if (index >= 2) {
+          stage.style.setProperty(`--photo-${index - 1}-opacity`, opacity);
+          stage.style.setProperty(`--photo-${index - 1}-offset`, `${reducedMotion ? 0 : motion.scenes[index].offset * -1.6}px`);
+        }
+      });
       const ratio = Math.min(window.devicePixelRatio || 1, 2);
       const width = Math.max(1, Math.round(rect.width * ratio));
       const height = Math.max(1, Math.round(rect.height * ratio));
       if (canvas.width !== width || canvas.height !== height) { canvas.width = width; canvas.height = height; }
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
       context.clearRect(0, 0, rect.width, rect.height);
-      const filmWidth = rect.width > 900 ? Math.min(rect.width * 0.48, 640) : rect.width;
+      const filmWidth = rect.width > 900 ? Math.min(rect.width * 0.58, 800) : rect.width;
       const scale = Math.max(filmWidth / 540, rect.height / 960) * motion.zoom;
+      const settle = reducedMotion ? reveal : motion.settle;
+      const morph = reducedMotion ? 1 : motion.dropMorph;
+      const mix = (from: number, to: number) => from + (to - from) * morph;
+      // Match the filmed bulb first. Reshape only after its outline has faded.
+      dropPathRef.current?.setAttribute("d", `M50 3C${mix(22, 48)} ${mix(3, 41)} ${mix(4, 8)} ${mix(47, 73)} ${mix(4, 8)} ${mix(82, 103)}C${mix(4, 8)} ${mix(116, 128)} ${mix(23, 25)} 142 50 142C${mix(77, 75)} 142 ${mix(96, 92)} ${mix(116, 128)} ${mix(96, 92)} ${mix(82, 103)}C${mix(96, 92)} ${mix(47, 73)} ${mix(78, 52)} ${mix(3, 41)} 50 3Z`);
+      stage.style.setProperty("--drop-x", `${rect.width / 2 + (targetX - rect.width / 2) * settle}px`);
+      stage.style.setProperty("--drop-y", `${reducedMotion ? targetY : motion.focusY}px`);
+      stage.style.setProperty("--drop-width", `${140 * scale + (target.width - 140 * scale) * settle}px`);
+      stage.style.setProperty("--drop-height", `${136 * scale + (target.width * 1.45 - 136 * scale) * settle}px`);
+      stage.style.setProperty("--drop-opacity", String(reducedMotion ? reveal : motion.vectorOpacity));
       if (!reducedMotion && filmOpacity > 0) {
         let image = frames[motion.frame];
         if (!image.naturalWidth) image = frames.slice(0, motion.frame).reverse().find((candidate) => candidate.naturalWidth) ?? frames[0];
@@ -137,28 +156,17 @@ export default function HomeExperience() {
           context.rect((rect.width - filmWidth) / 2, 0, filmWidth, rect.height);
           context.clip();
           context.drawImage(image, (rect.width - 540 * scale) / 2, motion.focusY - motion.dropY * scale, 540 * scale, 960 * scale);
+          // Feather the portrait plate into the full-width photographic scene.
+          context.globalCompositeOperation = "destination-in";
+          const mask = context.createLinearGradient((rect.width - filmWidth) / 2, 0, (rect.width + filmWidth) / 2, 0);
+          mask.addColorStop(0, "transparent"); mask.addColorStop(.24, "black");
+          mask.addColorStop(.76, "black"); mask.addColorStop(1, "transparent");
+          context.globalAlpha = 1;
+          context.fillStyle = mask;
+          context.fillRect(0, 0, rect.width, rect.height);
           context.restore();
+          stage.style.setProperty("--poster-opacity", "0");
         }
-      }
-      const dropImage = frames[reducedMotion ? 0 : 38];
-      if (dropIsolation > 0 && dropImage.naturalWidth) {
-        const settle = Math.min(1, reveal * 1.8);
-        const dropWidth = 144 * scale + (target.width - 144 * scale) * settle;
-        const dropHeight = dropWidth * 174 / 144;
-        context.save();
-        context.globalAlpha = dropIsolation;
-        context.beginPath();
-        context.ellipse(targetX, targetY, dropWidth * .49, dropHeight * .49, 0, 0, Math.PI * 2);
-        context.clip();
-        const glow = context.createRadialGradient(targetX - dropWidth * .16, targetY - dropHeight * .2, 0, targetX, targetY, dropWidth * .65);
-        glow.addColorStop(0, "rgba(229, 175, 82, .5)");
-        glow.addColorStop(.7, "rgba(134, 81, 29, .28)");
-        glow.addColorStop(1, "rgba(8, 8, 6, 0)");
-        context.fillStyle = glow;
-        context.fillRect(targetX - dropWidth / 2, targetY - dropHeight / 2, dropWidth, dropHeight);
-        context.globalCompositeOperation = "screen";
-        context.drawImage(dropImage, 198, 474, 144, 174, targetX - dropWidth / 2, targetY - dropHeight / 2, dropWidth, dropHeight);
-        context.restore();
       }
     };
     const schedule = () => { if (active && !frame) frame = requestAnimationFrame(draw); };
@@ -191,31 +199,44 @@ export default function HomeExperience() {
     </header>
     <main>
       <section aria-labelledby="hero-heading" className="journey" id="top" ref={journeyRef}>
-        <div className="journey-stage" ref={stageRef}>
+        <div className={`journey-stage${reducedMotion ? " is-still" : ""}`} ref={stageRef}>
           <div aria-hidden="true" className="journey-media">
+            <img alt="" className="journey-atmosphere" src="/media/hours-dawn.webp" />
+            {collectionImages.map((src, index) => <div className={`scene-photograph scene-photo-${index + 1}`} key={src}><img alt="" src={src} /><span>{index === 0 ? "06:00" : index === 1 ? "HONG KONG" : "YAT.E"}</span></div>)}
             <img alt="" className="journey-poster" src="/media/hong-kong-drop-mobile-poster.jpg" />
-            <div className="journey-logo">
-              <div className="logo-lockup">
-                <svg className="logo-pipette" viewBox="0 0 160 180" fill="none" aria-hidden="true">
-                  <path d="M71 39V17c0-12 4-16 9-16s9 4 9 16v22" fill="#11100e" stroke="#ba8d45" strokeWidth="1.5" />
-                  <path d="M66 39h28v24H66z" fill="#b8893d" stroke="#ebc978" strokeWidth="1.5" />
-                  <path d="M75 63v88m10-88v88" stroke="#d8a443" strokeWidth="2" />
-                  <path d="M66 67C73 85 36 90 24 119c-8 18 4 34 30 57M94 67c-7 18 30 23 42 52 8 18-4 34-30 57" stroke="#b8893d" strokeWidth="2" />
-                  <path d="M75 151 80 170l5-19" stroke="#e2ba6c" strokeWidth="2" />
-                </svg>
-                <div className="logo-letters"><span>Y</span><span className="logo-a"><svg viewBox="0 0 110 120" aria-hidden="true"><path d="M10 115 55 5l45 110M2 116h31m44 0h31" /></svg><span className="logo-drop-target" ref={dropTargetRef} /></span><span>T</span></div>
-                <div className="logo-name"><i />yatlife.style<i /></div>
-                <div className="logo-tagline">SCIENCE MEETS SCENT</div>
-              </div>
-            </div>
             <canvas className="journey-canvas" ref={canvasRef} />
             <div className="journey-shade" />
           </div>
-          {activePanel < 5 && <div className={`journey-narration ${activePanel === 0 ? "journey-hero" : activePanel === 1 ? "journey-intro" : "journey-chapter"}`} key={activePanel}>
-            {activePanel === 0 ? <div className="journey-copy"><div aria-hidden="true"><h1>{t.hero.title}</h1><p>{t.hero.intro}</p></div><div className="hero-actions"><a className="action action-primary" href="#collections">{t.hero.explore}</a><a className="action action-secondary" href="#story">{t.hero.story}</a></div></div>
-              : activePanel === 1 ? <div aria-hidden="true" className="journey-copy"><h2>{t.story.heading}</h2><p>{t.story.intro}</p></div>
-              : <div aria-hidden="true" className="journey-copy"><span className="chapter-index">{String(activePanel - 1).padStart(2, "0")}</span><h3>{storyItems[activePanel - 2].title}</h3><p>{storyItems[activePanel - 2].body}</p></div>}
-          </div>}
+          <div className="journey-scene scene-hero" style={{ "--scene-opacity": 1 } as CSSProperties} inert={activePanel !== 0}>
+            <div className="journey-copy"><div aria-hidden="true"><h1>{t.hero.title}</h1><p>{t.hero.intro}</p></div><div className="hero-actions"><a className="action action-primary" href="#collections">{t.hero.explore}</a><a className="action action-secondary" href="#story">{t.hero.story}<svg aria-hidden="true" width="14" height="18" viewBox="0 0 14 18" fill="none"><path d="M7 1v15m-5-5 5 5 5-5" stroke="currentColor" /></svg></a></div></div>
+          </div>
+          <div aria-hidden="true" className="journey-scene scene-intro">
+            <div className="journey-copy"><h2>{t.story.heading}</h2><p>{t.story.intro}</p></div>
+            <div className="story-axis">{t.story.stage.map((word) => <span key={word}>{word}</span>)}</div>
+          </div>
+          {storyItems.map((item, index) => <div aria-hidden="true" className={`journey-scene scene-${index + 1}`} key={item.title}>
+            <div className="journey-copy"><h3><span className="chapter-index">{String(index + 1).padStart(2, "0")}</span>{item.title}</h3><p>{item.body}</p></div>
+          </div>)}
+          <div aria-hidden="true" className="journey-finale">
+            <div className="journey-logo">
+              <div className="logo-lockup">
+                <div className="logo-letters">
+                  <svg viewBox="0 0 640 240" fill="currentColor">
+                    <path d="M23 30H111V34H88L146 126L195 48Q202 34 181 34H173V30H231V34Q208 34 202 46L150 133V207H177V211H88V207H114V135L49 34H23Z" />
+                    <path d="M242 211V207H251Q263 207 269 191L331 25H339L407 207H424V211H344V207H369L322 76L279 191Q273 207 291 207H300V211Z" />
+                    <path d="M435 30H617L620 86H615Q607 34 570 34H545V207H573V211H481V207H509V34H484Q447 34 439 86H434Z" />
+                  </svg>
+                  <span className="logo-drop-target" ref={dropTargetRef} />
+                </div>
+                <div className="logo-name">YAT.lifestyle</div>
+                <div className="logo-tagline">SCIENCE MEETS SCENT</div>
+              </div>
+            </div>
+            <svg className="signature-drop" viewBox="0 0 100 145" preserveAspectRatio="none">
+              <defs><linearGradient id="signature-gold" x1="0" y1="0" x2="1" y2=".35"><stop stopColor="#8d6021" /><stop offset=".27" stopColor="#f8df99" /><stop offset=".53" stopColor="#d5ab51" /><stop offset="1" stopColor="#8a581c" /></linearGradient></defs>
+              <path ref={dropPathRef} d="M50 3C48 41 8 73 8 103C8 128 25 142 50 142C75 142 92 128 92 103C92 73 52 41 50 3Z" fill="url(#signature-gold)" />
+            </svg>
+          </div>
         </div>
         <div aria-hidden="true" className="journey-spacers"><div id="story" /><div /><div /><div /><div /></div>
         <div className="visually-hidden">
@@ -227,10 +248,10 @@ export default function HomeExperience() {
       </section>
       <section aria-labelledby="collections-heading" className="collections" id="collections">
         <header className="section-heading"><h2 id="collections-heading">{t.collections.title}</h2><p>{t.collections.intro}</p></header>
-        <div className="contact-sheet">{collectionItems.map((item, index) => <article id={`collection-${index + 1}`} key={item.title}><div className={`contact-image contact-image-${index + 1}`}><img alt={item.imageAlt} loading="lazy" src={collectionImages[index]} /><span aria-hidden="true" className="contact-time">{index === 0 ? "06:00" : index === 1 ? "18:42" : "YAT.E"}</span></div><div className="contact-copy"><span>{String(index + 1).padStart(2, "0")}</span><h3>{item.title}</h3><p>{item.body}</p><small>{item.line}</small></div></article>)}</div><FilmEdge />
+        <div className="contact-sheet">{collectionItems.map((item, index) => <article id={`collection-${index + 1}`} key={item.title}><div className={`contact-image contact-image-${index + 1}`}><img alt={item.imageAlt} loading="lazy" src={collectionImages[index]} /><span aria-hidden="true" className="contact-time">{index === 0 ? "06:00" : index === 1 ? "18:42" : "YAT.E"}</span></div><div className="contact-copy"><span>{String(index + 1).padStart(2, "0")}</span><h3>{item.title}</h3><p>{item.body}</p><small>{item.line}</small></div></article>)}</div>
       </section>
       <section aria-labelledby="process-heading" className="process" id="process"><header><h2 id="process-heading">{t.process.title}</h2><p>{t.process.intro}</p></header><ol>{t.process.steps.map(([title, body], index) => <li key={title}><span>{String(index + 1).padStart(2, "0")}</span><h3>{title}</h3><p>{body}</p></li>)}</ol><p className="process-note">{t.process.note}</p></section>
-      <section aria-labelledby="about-heading" className="about" id="about"><div className="about-frame" aria-hidden="true"><div className="bench-glass"><i /><i /><i /></div><span>HK · YAT · LAB</span></div><div className="about-copy"><h2 id="about-heading">{t.about.title}</h2><p>{t.about.body}</p><blockquote>{t.about.quote}</blockquote></div></section>
+      <section aria-labelledby="about-heading" className="about" id="about"><figure className="about-frame"><img alt={t.collections.element.imageAlt} loading="lazy" src="/media/element-lab.webp" /><figcaption>{locale === "en" ? "A study in glass and light. Generated illustration." : locale === "zh-Hant" ? "玻璃與光的習作。生成概念圖。" : "玻璃与光的习作。生成概念图。"}</figcaption></figure><div className="about-copy"><h2 id="about-heading">{t.about.title}</h2><p>{t.about.body}</p><blockquote>{t.about.quote}</blockquote></div></section>
       <section aria-labelledby="soon-heading" className="soon"><div><span className="soon-status">{t.soon.status}</span><h2 id="soon-heading">{t.soon.title}</h2><p>{t.soon.body}</p></div><p className="availability">{t.soon.availability}</p></section>
     </main>
     <footer><a className="footer-wordmark" href="#top">YAT.lifestyle</a><p>{t.footer.note}</p><a href="#top">{t.footer.top}</a></footer>

@@ -42,9 +42,12 @@ an interrupted request. `--force` sends a new billable request.
 
 The scroll scene uses 48 small WebP frames derived from a silent Higgsfield
 Seedance 2.0 video in `public/media/`. Scroll controls the falling drop and its
-landing inside a YAT mark built from page text and SVG, not the reference image.
-Reduced motion uses a still poster. Collection
-stills and generation records are in the same directory. Site visitors never
+handoff to a gold-gradient vector drop inside an SVG YAT mark, not the reference
+image. Chapters use alternating photographic compositions on desktop and
+portrait layouts on phones. Reduced motion uses a still poster and discrete
+chapter changes. Optimized WebP stills and generation records are in the same
+directory. The About photograph is explicitly labeled as a generated illustration.
+Site visitors never
 call the Higgsfield API; credentials are only used by the local generation script.
 
 Design context lives in `PRODUCT.md`, `DESIGN.md`, and `.impeccable/`.

@@ -1,16 +1,16 @@
 # Graph Report - YAT.lifestyle  (2026-09-24)
 
 ## Corpus Check
-- 31 files · ~763,931 words
+- 31 files · ~785,665 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 155 nodes · 162 edges · 17 communities (13 shown, 4 thin omitted)
+- 155 nodes · 164 edges · 17 communities (13 shown, 4 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a6be4d80`
+- Built from commit: `b1cc7e93`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -81,8 +81,8 @@ Cohesion: 0.50
 Nodes (3): Higgsfield Seedance 2.0, Scripts, YAT.lifestyle
 
 ### Community 8 - "Community 8"
-Cohesion: 0.21
-Nodes (7): collectionImages, copy, HomeExperience(), Locale, localeLabels, clamp(), storyMotion()
+Cohesion: 0.23
+Nodes (8): collectionImages, copy, HomeExperience(), Locale, localeLabels, clamp(), ease(), storyMotion()
 
 ### Community 9 - "Community 9"
 Cohesion: 0.18

@@ -85,11 +85,15 @@ The fixed header holds the wordmark, section links, language buttons, and launch
 
 ### Collection Frames
 
-Three contact sheet frames pair a local image with a collection name, short description, and status. Images may carry film treatment, but text remains HTML with useful localized alt text.
+Three staggered photographic frames pair a local image with a collection name and short description. Mobile stacks these vertically so every collection is discoverable without a horizontal swipe. Images may carry film treatment, but text remains HTML with useful localized alt text.
 
 ### Signature Media
 
-One full-viewport stage carries the hero and story on every screen size. A scroll-controlled canvas draws a small WebP sequence derived from the portrait Higgsfield film, so the falling drop can stay in view without seeking a video on iOS. The film fades to ink, then its actual drop settles inside a code-built YAT mark. The pipette is SVG, the letters and subline are page text, and the backdrop stays dark. The supplied logo image remains reference only. This is a provisional treatment, not final brand approval. Reduced motion uses the still poster and a static dark lockup.
+One full-viewport stage carries the hero and story on every screen size. A scroll-controlled canvas draws a small WebP sequence derived from the portrait Higgsfield film, so the falling drop stays in view without seeking a video on iOS. Full-width Hong Kong imagery surrounds the portrait plate. Hours pairs left copy with right imagery; Afterimage reverses it; Element brings laboratory glass forward. Scroll-linked photographic movement and overlapping copy fades connect the chapters.
+
+The filmed droplet hands off to a gold-gradient vector drop, which settles inside the A of a unified SVG wordmark. Letters appear after the drop begins settling; the name and tagline follow. No circular image crop, ornamental upper emblem, halo, or bounce. The supplied logo image remains reference only. This is a provisional treatment, not final brand approval. Reduced motion uses the still poster, discrete chapter changes, and a static dark lockup. Stable viewport units prevent mobile browser toolbar changes from stretching the story.
+
+The About section uses the existing generated laboratory still, with an explicit localized illustration caption. It must not imply a photograph of the founder's actual laboratory. Its grid columns can shrink and the text measure remains readable on intermediate widths.
 
 ## Do's and Don'ts
 

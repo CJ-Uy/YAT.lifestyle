@@ -14,10 +14,23 @@ test("the drop falls before resolving into the YAT logo", () => {
   assert.equal(end.frame, STORY_FRAMES - 1);
   assert.equal(end.logoReveal, 1);
   assert.equal(end.focusY, end.landingY);
-  const handoff = storyMotion(-3560, 4800, 800, 520);
+  const handoff = storyMotion(-3480, 4800, 800, 520);
   assert.equal(handoff.filmOpacity, 0);
-  assert.equal(handoff.dropIsolation, 1);
+  assert.equal(handoff.vectorOpacity, 1);
+  assert.equal(handoff.dropMorph, 0);
+  assert.equal(handoff.settle, 0);
   assert.ok(handoff.logoReveal < 1e-10);
   assert.ok(storyMotion(0, 6 * 568, 568, 370).focusY < 180);
-  assert.ok(storyMotion(-3360, 4800, 800, 520).narrationOpacity < 1e-10);
+  assert.ok(storyMotion(-3440, 4800, 800, 520).scenes.every((scene) => scene.opacity < 1e-10));
+  for (let step = 0; step <= 100; step++) {
+    const motion = storyMotion(-step * 40, 4800, 800, 520);
+    assert.ok(Math.abs(motion.filmOpacity + motion.vectorOpacity - 1) < 1e-10);
+    assert.ok(Number.isFinite(motion.focusY));
+    assert.ok(motion.scenes.every((scene) => scene.opacity >= 0 && scene.opacity <= 1));
+  }
+  for (const [index, progress] of [0, .22, .4, .58, .75].entries()) {
+    assert.equal(storyMotion(-progress * 4000, 4800, 800, 520).scenes[index].opacity, 1);
+  }
+  assert.equal(storyMotion(-5000, 4800, 800, 520).signatureReveal, 1);
+  assert.equal(storyMotion(100, 4800, 800, 520).progress, 0);
 });

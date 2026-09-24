@@ -54,20 +54,10 @@
       "norm_label": "collectionimages"
     },
     {
-      "label": "FilmEdge()",
-      "file_type": "code",
-      "source_file": "app/home-experience.tsx",
-      "source_location": "L72",
-      "_origin": "ast",
-      "id": "app_home_experience_filmedge",
-      "community": 8,
-      "norm_label": "filmedge()"
-    },
-    {
       "label": "HomeExperience()",
       "file_type": "code",
       "source_file": "app/home-experience.tsx",
-      "source_location": "L74",
+      "source_location": "L72",
       "_origin": "ast",
       "id": "app_home_experience_homeexperience",
       "community": 8,
@@ -304,10 +294,20 @@
       "norm_label": "clamp()"
     },
     {
+      "label": "ease()",
+      "file_type": "code",
+      "source_file": "lib/story-motion.ts",
+      "source_location": "L2",
+      "_origin": "ast",
+      "id": "lib_story_motion_ease",
+      "community": 8,
+      "norm_label": "ease()"
+    },
+    {
       "label": "storyMotion()",
       "file_type": "code",
       "source_file": "lib/story-motion.ts",
-      "source_location": "L5",
+      "source_location": "L6",
       "_origin": "ast",
       "id": "lib_story_motion_storymotion",
       "community": 8,
@@ -1327,7 +1327,7 @@
       "label": "Do's and Don'ts",
       "file_type": "document",
       "source_file": "DESIGN.md",
-      "source_location": "L94",
+      "source_location": "L98",
       "_origin": "ast",
       "id": "design_do_s_and_don_ts",
       "community": 17,
@@ -1337,7 +1337,7 @@
       "label": "Do:",
       "file_type": "document",
       "source_file": "DESIGN.md",
-      "source_location": "L96",
+      "source_location": "L100",
       "_origin": "ast",
       "id": "design_do",
       "community": 17,
@@ -1347,7 +1347,7 @@
       "label": "Don't:",
       "file_type": "document",
       "source_file": "DESIGN.md",
-      "source_location": "L102",
+      "source_location": "L106",
       "_origin": "ast",
       "id": "design_don_t",
       "community": 17,
@@ -1537,7 +1537,7 @@
       "label": "Produce later as image-native media",
       "file_type": "document",
       "source_file": "public/media/asset-manifest.md",
-      "source_location": "L17",
+      "source_location": "L18",
       "_origin": "ast",
       "id": "media_asset_manifest_produce_later_as_image_native_media",
       "community": 15,
@@ -1547,7 +1547,7 @@
       "label": "Build without generated imagery",
       "file_type": "document",
       "source_file": "public/media/asset-manifest.md",
-      "source_location": "L25",
+      "source_location": "L26",
       "_origin": "ast",
       "id": "media_asset_manifest_build_without_generated_imagery",
       "community": 15,
@@ -1574,16 +1574,6 @@
       "confidence_score": 1.0,
       "source": "app_home_experience",
       "target": "app_home_experience_copy"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app/home-experience.tsx",
-      "source_location": "L122",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "app_home_experience",
-      "target": "app_home_experience_filmedge"
     },
     {
       "relation": "contains",
@@ -2075,6 +2065,16 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "lib/story-motion.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "lib_story_motion",
+      "target": "lib_story_motion_ease",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/story-motion.ts",
       "source_location": "L3",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -2086,11 +2086,33 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "lib/story-motion.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "lib_story_motion_ease",
+      "target": "lib_story_motion_clamp",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/story-motion.ts",
       "source_location": "L4",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "lib_story_motion_storymotion",
       "target": "lib_story_motion_clamp"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "lib/story-motion.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "lib_story_motion_storymotion",
+      "target": "lib_story_motion_ease",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3204,5 +3226,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "a6be4d806fdde89f14cb2042257b31219be5e629"
+  "built_at_commit": "b1cc7e93d0524de416eb0bf58dd47a466be3fd8c"
 }

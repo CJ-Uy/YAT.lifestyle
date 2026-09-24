@@ -5,8 +5,8 @@
     "semantic_hash": ""
   },
   "app/layout.tsx": {
-    "mtime": 1790230894.0081134,
-    "ast_hash": "9420fefc22cdb8e58aedb5e82cbc2626",
+    "mtime": 1790256538.1347222,
+    "ast_hash": "e247b8662c5445553712e59cf915d4f5",
     "semantic_hash": ""
   },
   "app/page.tsx": {
@@ -70,8 +70,8 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1790242676.3016016,
-    "ast_hash": "a7188b90f1a9868a1f1539ef76979269",
+    "mtime": 1790256538.1324258,
+    "ast_hash": "1896b64ba230282c74a908c358c4308a",
     "semantic_hash": ""
   },
   ".impeccable/direction-options.json": {
@@ -95,8 +95,8 @@
     "semantic_hash": ""
   },
   "app/home-experience.tsx": {
-    "mtime": 1790242592.105222,
-    "ast_hash": "c77b67407801eb79136f09da2a83ff15",
+    "mtime": 1790256628.8842947,
+    "ast_hash": "7de1777b0f158e63600b0b0c7d704bc4",
     "semantic_hash": ""
   },
   ".impeccable/home-build-brief.md": {
@@ -115,8 +115,8 @@
     "semantic_hash": ""
   },
   "public/media/asset-manifest.md": {
-    "mtime": 1790242676.302602,
-    "ast_hash": "0db7f826a4cb45f09acd1726b432bf6f",
+    "mtime": 1790256538.1334872,
+    "ast_hash": "4beff8a57ab64713d52bbcc91f18b7b3",
     "semantic_hash": ""
   },
   ".impeccable/mocks/home-a.png": {
@@ -205,8 +205,8 @@
     "semantic_hash": ""
   },
   "DESIGN.md": {
-    "mtime": 1790242676.2996023,
-    "ast_hash": "b011401042174e8670dc60b649176f3f",
+    "mtime": 1790256538.1334872,
+    "ast_hash": "18e16b82dca845b0ca0f574c692f8d81",
     "semantic_hash": ""
   },
   "public/media/hong-kong-harbour-afterimage-poster.jpg": {
@@ -215,13 +215,13 @@
     "semantic_hash": ""
   },
   "lib/story-motion.test.ts": {
-    "mtime": 1790242683.7149236,
-    "ast_hash": "4a79e8f954a3cc48b99a00d624d618bd",
+    "mtime": 1790256628.8862932,
+    "ast_hash": "bcae9e1537b5ff9531ed480440677c4b",
     "semantic_hash": ""
   },
   "lib/story-motion.ts": {
-    "mtime": 1790242555.5485013,
-    "ast_hash": "1434fe83eceb49412b141413478b9877",
+    "mtime": 1790256628.8817813,
+    "ast_hash": "800ffabdfe82da2161a1037063396e33",
     "semantic_hash": ""
   },
   "public/media/hong-kong-drop-mobile.json": {
@@ -557,6 +557,21 @@
   "public/media/drop-sequence/frame-047.webp": {
     "mtime": 1790238806.8887002,
     "ast_hash": "91b5e8137ce88db3886516317835c171",
+    "semantic_hash": ""
+  },
+  "public/media/afterimage-tram.webp": {
+    "mtime": 1790256121.9670112,
+    "ast_hash": "e2551a8b5f9feb2e57b141ff3815361b",
+    "semantic_hash": ""
+  },
+  "public/media/element-lab.webp": {
+    "mtime": 1790256123.0966814,
+    "ast_hash": "c94cb2a54f5a717272b5211efec54c7e",
+    "semantic_hash": ""
+  },
+  "public/media/hours-dawn.webp": {
+    "mtime": 1790256120.782612,
+    "ast_hash": "dc08785c0280bd9986cb09d1f7f0a736",
     "semantic_hash": ""
   }
 }
