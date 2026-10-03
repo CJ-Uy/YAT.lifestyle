@@ -29,7 +29,7 @@ export function nextFromBank(state: SurveyState): Question | null {
 
 const SLUG = /^[a-z0-9-]{1,32}$/;
 // Applies to every locale: English and Chinese ban lists, plus no em dashes in copy.
-const clean = (s: string) => !s.includes("—") && !BANNED.some((b) => s.toLowerCase().includes(b)) && !BANNED_ZH.some((b) => s.includes(b));
+export const clean = (s: string) => !s.includes("—") && !BANNED.some((b) => s.toLowerCase().includes(b)) && !BANNED_ZH.some((b) => s.includes(b));
 
 export type AiChoice =
   | { kind: "bank"; question: Question }

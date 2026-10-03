@@ -1,5 +1,7 @@
 // Keep old consent wording in Git when this version changes.
 export const NEWSLETTER_POLICY_VERSION = "2026-09-24";
+// Where a signup came from. Element order and gift buttons link to /shop?source=element-order#newsletter.
+export const NEWSLETTER_SOURCES = ["shop", "element-order", "element-gift"] as const;
 
 export const newsletterCopy = {
   en: {
