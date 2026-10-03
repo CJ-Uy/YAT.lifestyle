@@ -17,20 +17,24 @@ function setup(ai: Deps["ai"]["run"] = async () => { throw new Error("AI down");
   const objects = new Map<string, Uint8Array<ArrayBuffer>>();
   const background: Promise<unknown>[] = [];
   const calls: { model: string; options: unknown }[] = [];
+  const limits = { allowed: true, keys: [] as string[] };
+  const upserts: { id: string; values: number[] }[][] = [];
   const deps: Deps = {
+    limiter: { limit: async ({ key }) => { limits.keys.push(key); return { success: limits.allowed }; } },
+    adminKey: "test-admin-key",
     ai: { run: async (model, input, options) => { calls.push({ model, options }); return ai(model, input, options); } },
     db: { prepare: (sql) => ({ bind: (...v) => ({
       run: async () => { db.prepare(sql).run(...v); return { success: true }; },
       first: async () => (db.prepare(sql).get(...v) ?? null) as never,
     }) }) },
     bucket: { put: async (key, value) => { objects.set(key, new Uint8Array(value as ArrayBuffer)); return {}; }, get: async (key) => (objects.has(key) ? { body: new Blob([objects.get(key)!]).stream() } : null) },
-    vectorize: { query: async () => ({ matches: [] }), upsert: async () => ({}) },
+    vectorize: { query: async () => ({ matches: [] }), upsert: async (v) => { upserts.push(v); return {}; } },
     now: () => Date.parse("2026-10-04T02:00:00Z"),
     inferNose: (likes) => ({ type: "fresh", name: { en: "Fresh-leaning", "zh-Hant": "清新型", "zh-Hans": "清新型" },
       filled: { citrus: 3, green: 3, water: 3, floral: 3, woody: 3, amber: 3, ...likes }, muskQuiet: false }),
     waitUntil: (p) => { background.push(p); },
   };
-  return { db, deps, objects, background, calls };
+  return { db, deps, objects, background, calls, limits, upserts };
 }
 
 const post = (action: string, body: unknown, headers: Record<string, string> = {}) => new Request(`${ORIGIN}/api/element/${action}`, {
@@ -46,6 +50,43 @@ test("element api: origin, size, content type and unknown actions fail fast", as
   assert.equal((await handle("nope", post("nope", {}), deps)).status, 404);
   assert.equal((await handle("session", post("session", { mode: "demo", locale: "en" }), deps)).status, 400, "consent is required");
   assert.equal((await handle("session", new Request(`${ORIGIN}/api/element/session`), deps)).status, 405);
+  assert.equal((await handle("constructor", post("constructor", {}), deps)).status, 404);
+  assert.equal((await handle("result", post("result", { locale: "en", base: "constructor", likes: {}, tags: [] }), deps)).status, 400);
+});
+
+test("element api: rate limited per IP right after the origin check", async () => {
+  const { deps, limits } = setup();
+  await handle("session", post("session", {}, { Origin: "https://attacker.example" }), deps);
+  assert.equal(limits.keys.length, 0, "cross-origin requests never reach the limiter");
+  limits.allowed = false;
+  const res = await handle("session", post("session", { mode: "demo", locale: "en", adult: true, consent: true }, { "cf-connecting-ip": "203.0.113.9" }), deps);
+  assert.equal(res.status, 429);
+  assert.equal(res.headers.get("Retry-After"), "60");
+  assert.deepEqual(limits.keys, ["yat-element:203.0.113.9"]);
+});
+
+test("element api: seed-tags needs the admin key and upserts every bank tag; voice with no matches returns no tags", async () => {
+  const embedAll = async (model: string, input: Record<string, unknown>) =>
+    model.includes("whisper") ? { text: "I walk by the harbour after work" } : { data: (input.text as string[]).map(() => [0.1, 0.2]) };
+  const { deps, upserts } = setup(embedAll);
+  const seed = (key?: string) => new Request(`${ORIGIN}/api/element/seed-tags`, { method: "POST", headers: key ? { "x-element-admin": key } : {} });
+  assert.equal((await handle("seed-tags", seed(), deps)).status, 403);
+  assert.equal((await handle("seed-tags", seed("wrong"), deps)).status, 403);
+  assert.equal((await handle("seed-tags", seed("test-admin-key"), { ...deps, adminKey: "" })).status, 403, "no key configured means no seeding");
+  const ok = await handle("seed-tags", seed("test-admin-key"), deps);
+  assert.equal(ok.status, 200);
+  const { seeded } = await ok.json();
+  assert.ok(seeded > 10);
+  assert.equal(upserts.flat().length, seeded);
+  assert.ok(upserts.flat().some((v) => v.id === "close-quarters"));
+
+  const form = new FormData();
+  form.set("locale", "en");
+  form.set("audio", new Blob([new Uint8Array([1, 2, 3])], { type: "audio/webm" }), "a.webm");
+  const before = upserts.length;
+  const voice = await handle("voice", new Request(`${ORIGIN}/api/element/voice`, { method: "POST", headers: { Origin: ORIGIN }, body: form }), deps);
+  assert.deepEqual((await voice.json()).tags, []);
+  assert.equal(upserts.length, before, "voice never seeds the index");
 });
 
 test("element api: result still explains every change with templates when the AI throws", async () => {
@@ -117,6 +158,18 @@ test("element api: survey falls back to the bank when the AI writes banned or in
   assert.equal(ai.by, "ai");
   assert.equal(ai.question.text.en, "Where do you walk after work?");
   assert.equal((await handle("survey", post("survey", { locale: "en", state: { answered: "x" } }), deps)).status, 400);
+
+  // The follow-up must be in the user's script: English text for zh users, or Chinese for en users, falls back.
+  const zhFollowup = { response: { followup: { text: "你下班後喜歡去哪裡散步？", chips: [{ id: "harbour", label: "海旁", tags: ["harbour-walk"] }, { id: "park", label: "公園", tags: ["trail-memory"] }] } } };
+  for (const [locale, reply, by] of [["zh-Hant", zhFollowup, "ai"], ["zh-Hans", zhFollowup, "ai"], ["en", zhFollowup, "bank"]] as const) {
+    const res = await (await handle("survey", post("survey", { locale, state }), setup(async () => reply).deps)).json();
+    assert.equal(res.by, by, `${locale} follow-up in Chinese`);
+  }
+  for (const locale of ["zh-Hant", "zh-Hans"]) {
+    const res = await (await handle("survey", post("survey", { locale, state }), deps)).json();
+    assert.equal(res.by, "bank", `${locale} follow-up in English`);
+    assert.equal(res.question.id, nextFromBank(state)!.id);
+  }
 });
 
 test("element api: photo route rejects non-JPEG and oversize files, stores good ones, survives a failed vision check", async () => {
@@ -130,8 +183,11 @@ test("element api: photo route rejects non-JPEG and oversize files, stores good 
     return new Request(`${ORIGIN}/api/element/photo`, { method: "POST", headers: { Origin: ORIGIN }, body: form });
   };
   assert.equal((await handle("photo", photo(new Uint8Array([0x89, 0x50, 0x4e, 0x47])), deps)).status, 415);
-  const big = new Uint8Array(2 * 1024 * 1024 + 1); big.set([0xff, 0xd8, 0xff]);
-  assert.equal((await handle("photo", photo(big), deps)).status, 413);
+  const big = new Uint8Array(1.5 * 1024 * 1024 + 1); big.set([0xff, 0xd8, 0xff]);
+  assert.equal((await handle("photo", photo(big), deps)).status, 413, "zone images are at most 1024 px, so over 1.5 MB is rejected");
+  for (const readings of ['{"oil": "0.4"}', '[0.4]', '{"oil": {"x": 1}}', '{"oil": 1e999}', JSON.stringify(Object.fromEntries(Array.from({ length: 21 }, (_, i) => [`k${i}`, i]))), "{", `{"oil": ${"1".repeat(5000)}}`]) {
+    assert.equal((await handle("photo", photo(jpeg, { readings }), deps)).status, 400, readings.slice(0, 40));
+  }
   assert.equal((await handle("photo", photo(jpeg, { sessionId: crypto.randomUUID() }), deps)).status, 404);
   assert.equal((await handle("photo", photo(jpeg, { zone: "face" }), deps)).status, 400);
   const res = await handle("photo", photo(jpeg), deps);

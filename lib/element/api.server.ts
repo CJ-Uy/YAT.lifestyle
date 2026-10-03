@@ -20,10 +20,13 @@ export type ElementEnv = {
     query(vector: number[], options: { topK: number; returnMetadata?: "all" | "indexed" | "none" }): Promise<{ matches: { id: string; score: number }[] }>;
     upsert(vectors: { id: string; values: number[] }[]): Promise<unknown>;
   };
+  ELEMENT_RATE_LIMITER: { limit(options: { key: string }): Promise<{ success: boolean }> };
+  ELEMENT_ADMIN_KEY?: string;
 };
 type Nose = { type: string; name: Localised; filled: Record<Family, number>; muskQuiet: boolean };
 export type Deps = {
   ai: ElementEnv["AI"]; db: ElementEnv["DB"]; bucket: ElementEnv["BUCKET"]; vectorize: ElementEnv["TAGS"];
+  limiter: ElementEnv["ELEMENT_RATE_LIMITER"]; adminKey?: string;
   now: () => number;
   inferNose: (likes: Partial<Record<Family, number>>, sensitivity: "high" | "medium" | "low" | "unknown") => Nose;
   waitUntil: (promise: Promise<unknown>) => void;
@@ -33,8 +36,9 @@ const MODELS = {
   text: "@cf/meta/llama-3.3-70b-instruct-fp8-fast", vision: "@cf/meta/llama-4-scout-17b-16e-instruct",
   voice: "@cf/openai/whisper-large-v3-turbo", embed: "@cf/baai/bge-m3", art: "@cf/black-forest-labs/flux-1-schnell",
 };
-const BUDGET = { vision: 4000, survey: 3000, voice: 6000, explain: 6000, art: 10000 };
-const JSON_LIMIT = 16 * 1024, FILE_LIMIT = 2 * 1024 * 1024;
+const BUDGET = { vision: 4000, survey: 3000, voice: 6000, explain: 6000, art: 10000, seed: 30000 };
+// The phone sends the straightened zone at most 1024 px on the long side, so 1.5 MB is generous and keeps the vision call fast.
+const JSON_LIMIT = 16 * 1024, PHOTO_LIMIT = 1.5 * 1024 * 1024, AUDIO_LIMIT = 2 * 1024 * 1024;
 const LOCALES: Locale[] = ["en", "zh-Hant", "zh-Hans"];
 const LANGUAGE: Record<Locale, string> = { en: "English", "zh-Hant": "Traditional Chinese (Hong Kong)", "zh-Hans": "Simplified Chinese" };
 const FAMILIES: Family[] = ["citrus", "green", "water", "floral", "woody", "amber"];
@@ -86,15 +90,15 @@ async function readJson(request: Request) {
   return body as Record<string, unknown>;
 }
 
-async function readForm(request: Request, fileField: string) {
+async function readForm(request: Request, fileField: string, limit: number) {
   const type = request.headers.get("content-type") ?? "";
   if (type.split(";")[0].trim() !== "multipart/form-data") throw new HttpError(415);
-  const bytes = await readBody(request, FILE_LIMIT + JSON_LIMIT);
+  const bytes = await readBody(request, limit + JSON_LIMIT);
   let form: FormData;
   try { form = await new Response(bytes, { headers: { "content-type": type } }).formData(); } catch { throw new HttpError(400); }
   const file = form.get(fileField);
   if (!file || typeof file === "string") throw new HttpError(400);
-  if (file.size > FILE_LIMIT) throw new HttpError(413);
+  if (file.size > limit) throw new HttpError(413);
   const text = (k: string) => { const v = form.get(k); return typeof v === "string" ? v : ""; };
   return { text, file: new Uint8Array(await file.arrayBuffer()) };
 }
@@ -138,12 +142,17 @@ async function visionCheck(deps: Deps, zone: "blot" | "ph", photo: Uint8Array) {
 }
 
 async function photo(request: Request, deps: Deps) {
-  const { text, file } = await readForm(request, "photo");
+  const { text, file } = await readForm(request, "photo", PHOTO_LIMIT);
   if (file.length < 3 || file[0] !== 0xff || file[1] !== 0xd8 || file[2] !== 0xff) throw new HttpError(415);
   const sessionId = text("sessionId"), zone = text("zone"), n = Number(text("n"));
+  const raw = text("readings") || "{}";
+  if (raw.length > 4096) throw new HttpError(400);
   let readings: unknown;
-  try { readings = JSON.parse(text("readings") || "{}"); } catch { throw new HttpError(400); }
-  if ((zone !== "blot" && zone !== "ph") || !Number.isInteger(n) || n < 1 || n > 9 || !readings || typeof readings !== "object" || text("readings").length > 4096) throw new HttpError(400);
+  try { readings = JSON.parse(raw); } catch { throw new HttpError(400); }
+  // Readings are a flat map of measured numbers (oil, ph, confidence...): nothing nested, no free text.
+  const flat = !!readings && typeof readings === "object" && !Array.isArray(readings) && Object.keys(readings).length <= 20
+    && Object.values(readings).every((v) => typeof v === "number" && Number.isFinite(v));
+  if ((zone !== "blot" && zone !== "ph") || !Number.isInteger(n) || n < 1 || n > 9 || !flat) throw new HttpError(400);
   if (!(await sessionExists(deps, sessionId))) throw new HttpError(404);
   const key = `element/${sessionId}/${zone}-${n}.jpg`;
   const [, check] = await Promise.all([deps.bucket.put(key, file, { httpMetadata: { contentType: "image/jpeg" } }), visionCheck(deps, zone, file)]);
@@ -197,7 +206,9 @@ async function survey(body: Record<string, unknown>, deps: Deps) {
     }, BUDGET.survey);
     const choice = validateAiChoice(responseOf(out), state, locale);
     if (choice?.kind === "bank") return json({ question: { ...choice.question, source: "bank" }, by: "ai" });
-    if (choice?.kind === "followup") {
+    // A follow-up must be in the user's script: some CJK for zh-Hant/zh-Hans, none for English.
+    const script = (s: string) => /[㐀-鿿豈-﫿]/.test(s) === (locale !== "en");
+    if (choice?.kind === "followup" && script(choice.text) && choice.chips.every((c) => script(c.label))) {
       const same = (s: string): Localised => ({ en: s, "zh-Hant": s, "zh-Hans": s });
       const topic = BANK.find((q) => q.id === last?.id)?.topic ?? "memory";
       return json({ question: { id: `ai-${state.aiFollowUps + 1}`, topic, text: same(choice.text), chips: choice.chips.map((c) => ({ ...c, label: same(c.label) })), source: "ai" }, by: "ai" });
@@ -212,11 +223,21 @@ function tagDescriptions() {
   for (const q of BANK) for (const c of q.chips) for (const tag of c.tags) out.set(tag, [...(out.get(tag) ?? []), `${q.text.en} ${c.label.en} / ${c.label["zh-Hant"]}`]);
   return [...out].map(([tag, texts]) => ({ tag, text: texts.join(" | ") }));
 }
-const embed = async (deps: Deps, text: string[]) =>
-  ((await ai(deps, MODELS.embed, { text }, BUDGET.voice)) as { data: number[][] }).data;
+const embed = async (deps: Deps, text: string[], ms = BUDGET.voice) =>
+  ((await ai(deps, MODELS.embed, { text }, ms)) as { data: number[][] }).data;
+
+// Run once before the demo (and after the bank changes):
+// curl -X POST https://<host>/api/element/seed-tags -H "x-element-admin: $ELEMENT_ADMIN_KEY"
+async function seedTags(request: Request, deps: Deps) {
+  if (!deps.adminKey || request.headers.get("x-element-admin") !== deps.adminKey) return fail(403);
+  const tags = tagDescriptions();
+  const vectors = await embed(deps, tags.map((t) => t.text), BUDGET.seed);
+  await deps.vectorize.upsert(tags.map((t, i) => ({ id: t.tag, values: vectors[i] })));
+  return json({ seeded: tags.length });
+}
 
 async function voice(request: Request, deps: Deps) {
-  const { text, file } = await readForm(request, "audio");
+  const { text, file } = await readForm(request, "audio", AUDIO_LIMIT);
   const locale = localeOf(text("locale"));
   try {
     return json(await within(BUDGET.voice, (async () => {
@@ -224,11 +245,6 @@ async function voice(request: Request, deps: Deps) {
       if (!heard) return { tags: [] };
       const [vector] = await embed(deps, [heard]);
       const { matches } = await deps.vectorize.query(vector, { topK: 3 });
-      if (!matches.length) {
-        // ponytail: the index seeds itself on first use; move to a deploy script if the bank grows past one embedding batch.
-        const tags = tagDescriptions();
-        deps.waitUntil(embed(deps, tags.map((t) => t.text)).then((vectors) => deps.vectorize.upsert(tags.map((t, i) => ({ id: t.tag, values: vectors[i] })))).catch(() => undefined));
-      }
       return { text: heard.slice(0, 500), tags: matches.map((m) => m.id) };
     })()));
   } catch { return json({ tags: [] }); }
@@ -241,7 +257,7 @@ function resultInput(body: Record<string, unknown>) {
   const likes = (body.likes ?? {}) as Record<string, unknown>;
   const sensitivity = (body.sensitivity ?? "unknown") as (typeof SENSITIVITY)[number];
   const oil = body.oil, trust = body.trust ?? 1;
-  if (!(base in BASES) || !SENSITIVITY.includes(sensitivity) || typeof likes !== "object" || Array.isArray(likes)
+  if (typeof base !== "string" || !Object.hasOwn(BASES, base) || !SENSITIVITY.includes(sensitivity) || typeof likes !== "object" || Array.isArray(likes)
     || !Object.entries(likes).every(([k, v]) => FAMILIES.includes(k as Family) && typeof v === "number" && v >= 1 && v <= 5)
     || (oil !== undefined && (typeof oil !== "number" || oil < 0 || oil > 1)) || typeof trust !== "number" || trust < 0 || trust > 1
     || !strings(body.tags ?? [], 40, 32) || !((body.tags ?? []) as string[]).every((t) => SLUG.test(t))) throw new HttpError(400);
@@ -333,10 +349,17 @@ const FORM_ROUTES: Record<string, (request: Request, deps: Deps) => Promise<Resp
 export async function handle(action: string, request: Request, deps: Deps): Promise<Response> {
   try {
     if (action === "label") return request.method === "GET" ? await label(request, deps) : fail(405);
-    if (!(action in JSON_ROUTES) && !(action in FORM_ROUTES)) return fail(404);
+    const form = Object.hasOwn(FORM_ROUTES, action);
+    if (!form && !Object.hasOwn(JSON_ROUTES, action) && action !== "seed-tags") return fail(404);
     if (request.method !== "POST") return fail(405);
+    if (action === "seed-tags") return await seedTags(request, deps);
     if (request.headers.get("origin") !== new URL(request.url).origin) return fail(403);
-    return action in FORM_ROUTES ? await FORM_ROUTES[action](request, deps) : await JSON_ROUTES[action](await readJson(request), deps);
+    // ponytail: a per-IP key can catch a whole event Wi-Fi; raise the limit if the demo room trips it.
+    const ip = request.headers.get("cf-connecting-ip") || "local";
+    if (!(await deps.limiter.limit({ key: `yat-element:${ip}` })).success) {
+      return Response.json({ ok: false }, { status: 429, headers: { "Cache-Control": "no-store", "Retry-After": "60" } });
+    }
+    return form ? await FORM_ROUTES[action](request, deps) : await JSON_ROUTES[action](await readJson(request), deps);
   } catch (error) {
     // Never log bodies, photos or readings. The demo falls back to local logic on any non-200.
     return fail(error instanceof HttpError ? error.status : 503);
