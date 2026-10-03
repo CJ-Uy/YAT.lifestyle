@@ -7,11 +7,12 @@ export type Question = {
   topic: "routine" | "climate" | "activity" | "social" | "memory" | "dislikes";
   text: Localised;
   chips: { id: string; label: Localised; tags: string[] }[];
-  followsFrom?: { question: string; chip: string };
+  followsFrom?: { question: string; chip: string | string[] };
 };
 
 // Topics a perfumer would never ask a stranger about; also enforced on AI output.
 export const BANNED = ["health", "illness", "medic", "religio", "sexual", "income", "salary", "weight"];
+export const BANNED_ZH = ["健康", "疾病", "醫", "医", "宗教", "性取向", "性生活", "收入", "薪", "工資", "工资", "體重", "体重"];
 
 type L = [en: string, zhHant: string, zhHans: string];
 const loc = ([en, h, s]: L): Localised => ({ en, "zh-Hant": h, "zh-Hans": s });
@@ -30,7 +31,7 @@ export const BANK: Question[] = [
     c("office", ["At a desk in an office", "坐在辦公室對著電腦", "坐在办公室对着电脑"], ["office"]),
     c("remote", ["Mostly working from home", "大部分時間在家工作", "大部分时间在家工作"], ["home"]),
     c("onfeet", ["On my feet, meeting people", "要四處走動、見人", "要四处走动、见人"], ["active-day"]),
-    c("study", ["Classes and studying", "上課和溫書", "上课和温书"], ["campus"]),
+    c("study", ["Classes and studying", "上課和溫書", "上课和复习"], ["campus"]),
   ]),
   q("commute", "routine", ["How do you get to work or class?", "你平時怎樣上班或上學？", "你平时怎么上班或上学？"], [
     c("mtr", ["The MTR, usually packed", "搭港鐵，通常好擠", "坐港铁，通常很挤"], ["close-quarters"]),
@@ -91,13 +92,13 @@ export const BANK: Question[] = [
     c("lunch", ["At lunchtime", "午飯時間", "午饭时间"], ["post-gym"]),
     c("after", ["After work", "下班後", "下班后"], ["post-gym", "evening-active"]),
     c("weekend", ["Weekends only", "只在週末", "只在周末"], ["weekend-active"]),
-  ], { question: "gym", chip: "regular" }),
+  ], { question: "gym", chip: ["regular", "sometimes"] }),
   q("weekend", "activity", ["What does a good weekend look like?", "理想的週末是怎樣的？", "理想的周末是怎样的？"], [
     c("hiking", ["Hiking a trail", "行山", "徒步爬山"], ["outdoors"]),
-    c("dimsum", ["Dim sum with family", "跟家人飲茶", "跟家人饮茶"], ["family"]),
+    c("dimsum", ["Dim sum with family", "跟家人飲茶", "跟家人喝早茶"], ["family"]),
     c("beach", ["A beach day", "去沙灘", "去海滩"], ["beach"]),
     c("city", ["Cafes and shopping", "逛咖啡店和商場", "逛咖啡店和商场"], ["city-wander"]),
-    c("late", ["A late night out", "夜晚玩到很晚", "夜里玩到很晚"], ["nightlife"]),
+    c("late", ["A late night out", "玩到深夜", "玩到深夜"], ["nightlife"]),
   ]),
   q("trail", "activity", ["Which trail do you keep going back to?", "你最常回去哪條行山徑？", "你最常回去哪条徒步路线？"], [
     c("dragons-back", ["Dragon's Back", "龍脊", "龙脊"], ["trail-memory", "humid-outdoor"]),

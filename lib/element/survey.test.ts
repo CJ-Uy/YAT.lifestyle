@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { BANK, BANNED } from "./survey-bank.ts";
+import { BANK, BANNED, BANNED_ZH } from "./survey-bank.ts";
 import { nextFromBank, validateAiChoice } from "./survey.ts";
 
 test("survey: bank covers all topics in all languages", () => {
@@ -20,11 +20,12 @@ test("survey: bank shape, required questions and safe copy", () => {
   assert.ok(by("weekend").chips.some((c) => c.id === "hiking"));
   assert.deepEqual(by("trail").followsFrom, { question: "weekend", chip: "hiking" });
   for (const q of BANK) {
-    if (q.followsFrom) assert.ok(by(q.followsFrom.question).chips.some((c) => c.id === q.followsFrom!.chip), q.id);
+    if (q.followsFrom) for (const id of [q.followsFrom.chip].flat()) assert.ok(by(q.followsFrom.question).chips.some((c) => c.id === id), q.id);
     const copy = [q.text, ...q.chips.map((c) => c.label)].flatMap((l) => Object.values(l));
     for (const s of copy) {
       assert.ok(!s.includes("—"), `em dash in ${q.id}`);
       assert.ok(!BANNED.some((b) => s.toLowerCase().includes(b)), `banned word in ${q.id}`);
+      assert.ok(!BANNED_ZH.some((b) => s.includes(b)), `banned Chinese word in ${q.id}`);
     }
   }
 });
@@ -42,13 +43,23 @@ test("survey: non-matching chip gives no follow-up; fresh start is routine; cove
   const next = nextFromBank({ answered: [a("weekday", ["remote"])], aiFollowUps: 0 });
   assert.notEqual(next?.id, "aircon");
   assert.notEqual(next?.topic, "routine");
-  // never repeats and never offers a follow-up whose trigger was not chosen
+  // never repeats, never offers an untriggered follow-up, and 12 bank-only answers cover each topic exactly twice
   const seen: ReturnType<typeof a>[] = [];
   for (let i = 0; i < 12; i++) {
     const q = nextFromBank({ answered: seen, aiFollowUps: 0 })!;
     assert.ok(q && !seen.some((s) => s.id === q.id) && !q.followsFrom);
     seen.push(a(q.id, ["untriggering-chip"]));
   }
+  const counts = new Map<string, number>();
+  for (const s of seen) { const topic = BANK.find((q) => q.id === s.id)!.topic; counts.set(topic, (counts.get(topic) ?? 0) + 1); }
+  assert.deepEqual([...counts.values()], [2, 2, 2, 2, 2, 2]);
+});
+
+test("survey: gym-time follows both gym chips", () => {
+  const a = (chip: string) => [{ id: "gym", text: "", chips: [chip], tags: [], source: "bank" as const }];
+  assert.equal(nextFromBank({ answered: a("regular"), aiFollowUps: 0 })?.id, "gym-time");
+  assert.equal(nextFromBank({ answered: a("sometimes"), aiFollowUps: 0 })?.id, "gym-time");
+  assert.notEqual(nextFromBank({ answered: a("no"), aiFollowUps: 0 })?.id, "gym-time");
 });
 
 test("survey: AI output is validated; bad output returns null so the bank is used", () => {
@@ -71,4 +82,24 @@ test("survey: AI follow-up accepted only when well formed", () => {
   const answered = [{ id: "gym", text: "", chips: ["regular"], tags: [], source: "bank" as const }];
   assert.equal(validateAiChoice({ questionId: "gym" }, { answered, aiFollowUps: 0 }, "en"), null);
   assert.equal(validateAiChoice({ questionId: "aircon" }, state, "en"), null);
+});
+
+test("survey: Chinese ban list and em dashes are rejected in AI output", () => {
+  const state = { answered: [], aiFollowUps: 0 };
+  const chips = [{ id: "a", label: "早上", tags: ["morning"] }, { id: "b", label: "晚上", tags: ["evening"] }];
+  assert.equal(validateAiChoice({ followup: { text: "你早上還是晚上去跑步？", chips } }, state, "zh-Hant")?.kind, "followup");
+  for (const [text, locale] of [["你有沒有健康方面的問題？", "zh-Hant"], ["你的月收入大概多少？", "zh-Hant"], ["你有宗教信仰吗？", "zh-Hans"], ["你的体重是多少？", "zh-Hans"], ["你需要看医生吗？", "zh-Hans"], ["你每月薪水多少？", "zh-Hans"]] as const)
+    assert.equal(validateAiChoice({ followup: { text, chips } }, state, locale), null, text);
+  for (const label of ["健康狀況", "工资", "體重", "醫生", "性取向"])
+    assert.equal(validateAiChoice({ followup: { text: "你早上還是晚上去跑步？", chips: [chips[0], { id: "x", label, tags: [] }] } }, state, "zh-Hant"), null, label);
+  const dash = "—";
+  assert.equal(validateAiChoice({ followup: { text: `Morning ${dash} or evening?`, chips: [{ id: "m", label: "Morning", tags: [] }, { id: "e", label: "Evening", tags: [] }] } }, state, "en"), null);
+  assert.equal(validateAiChoice({ followup: { text: "Morning or evening?", chips: [{ id: "m", label: `Morning ${dash} early`, tags: [] }, { id: "e", label: "Evening", tags: [] }] } }, state, "en"), null);
+});
+
+test("survey: AI choices are rejected once 12 questions are answered", () => {
+  const answered = Array.from({ length: 12 }, (_, i) => ({ id: `q${i}`, text: "", chips: [], tags: [], source: "bank" as const }));
+  const state = { answered, aiFollowUps: 0 };
+  assert.equal(validateAiChoice({ questionId: "gym" }, state, "en"), null);
+  assert.equal(validateAiChoice({ followup: { text: "Morning or evening?", chips: [{ id: "m", label: "Morning", tags: [] }, { id: "e", label: "Evening", tags: [] }] } }, state, "en"), null);
 });

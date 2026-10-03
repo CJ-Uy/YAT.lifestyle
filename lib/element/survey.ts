@@ -1,7 +1,7 @@
 import type { Locale } from "../../app/site-header.tsx";
-import { BANK, BANNED, type Question } from "./survey-bank.ts";
+import { BANK, BANNED, BANNED_ZH, type Question } from "./survey-bank.ts";
 
-export { BANNED };
+export { BANNED, BANNED_ZH };
 
 export type SurveyState = {
   answered: { id: string; text: string; chips: string[]; tags: string[]; source: "bank" | "ai" }[];
@@ -12,7 +12,7 @@ export const MAX_ANSWERS = 12;
 const MAX_AI_FOLLOWUPS = 3;
 
 const triggered = (q: Question, state: SurveyState) =>
-  !!q.followsFrom && state.answered.some((a) => a.id === q.followsFrom!.question && a.chips.includes(q.followsFrom!.chip));
+  !!q.followsFrom && state.answered.some((a) => a.id === q.followsFrom!.question && a.chips.some((id) => [q.followsFrom!.chip].flat().includes(id)));
 
 const available = (state: SurveyState) => BANK.filter((q) => !state.answered.some((a) => a.id === q.id));
 
@@ -28,7 +28,8 @@ export function nextFromBank(state: SurveyState): Question | null {
 }
 
 const SLUG = /^[a-z0-9-]{1,32}$/;
-const clean = (s: string) => !BANNED.some((b) => s.toLowerCase().includes(b));
+// Applies to every locale: English and Chinese ban lists, plus no em dashes in copy.
+const clean = (s: string) => !s.includes("—") && !BANNED.some((b) => s.toLowerCase().includes(b)) && !BANNED_ZH.some((b) => s.includes(b));
 
 export type AiChoice =
   | { kind: "bank"; question: Question }
@@ -39,7 +40,7 @@ export function validateAiChoice(raw: unknown, state: SurveyState, _locale: Loca
   if (typeof raw === "string") {
     try { raw = JSON.parse(raw); } catch { return null; }
   }
-  if (!raw || typeof raw !== "object") return null;
+  if (state.answered.length >= MAX_ANSWERS || !raw || typeof raw !== "object") return null;
   const { questionId, followup } = raw as { questionId?: unknown; followup?: { text?: unknown; chips?: unknown } };
 
   if (typeof questionId === "string") {
