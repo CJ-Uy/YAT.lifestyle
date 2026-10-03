@@ -3,7 +3,7 @@ import type { Locale } from "../../app/site-header.tsx";
 import { authLogout, authRequest, authVerify, profile, profileVector, publicProfile, viewerEmail } from "./auth.server.ts";
 import { BASES, CARRIER } from "./bases.ts";
 import { compare, type ProfileVector } from "./compare.ts";
-import { FAMILY_NAMES, REASONS, templateExplanations, validateExplanations, type Explanations } from "./explain.ts";
+import { FAMILY_NAMES, REASONS, matchingReasons, templateExplanations, validateExplanations, type Explanations } from "./explain.ts";
 import { BANK } from "./survey-bank.ts";
 import { nextFromBank, validateAiChoice, type SurveyState } from "./survey.ts";
 import { tune, type Change } from "./tune.ts";
@@ -276,7 +276,7 @@ async function explain(deps: Deps, base: BaseId, changes: Change[], concentratio
     const out = await ai(deps, MODELS.text, {
       messages: [
         { role: "system", content: `You explain a perfumer's computed formula changes to a customer in ${LANGUAGE[locale]}. Write exactly one plain, warm sentence per change, in the given order, plus a one-sentence summary. Only describe the given change and its reasons. Never mention any other note, any number except that change's from and to percentages, skin pH, health or medical effects. Never use em dashes. Reply with JSON only: {"lines": ["..."], "summary": "..."}.` },
-        { role: "user", content: JSON.stringify({ perfume: BASES[base].name.en, concentration, changes: changes.map((c) => ({ note: c.note, from: c.from, to: c.to, reasons: c.reasons.map((r) => (REASONS[r] ?? REASONS.rebalance).en) })) }) },
+        { role: "user", content: JSON.stringify({ perfume: BASES[base].name.en, concentration, changes: changes.map((c) => ({ note: c.note, from: c.from, to: c.to, reasons: matchingReasons(c).map((r) => (REASONS[r] ?? REASONS.rebalance).en) })) }) },
       ],
       response_format: { type: "json_schema", json_schema: { type: "object", required: ["lines", "summary"], properties: { lines: { type: "array", items: { type: "string" } }, summary: { type: "string" } } } },
       max_tokens: 600,
