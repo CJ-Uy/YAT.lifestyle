@@ -1,0 +1,205 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1180" viewBox="0 0 1600 1180" font-size="16" role="img" aria-labelledby="chart-title chart-desc">
+  <title id="chart-title">Element Test Kit: the 31 minute protocol</title>
+  <desc id="chart-desc">A proportional timeline from 0:00 to 0:31, with thirteen numbered protocol steps grouped into Setup, Clean-skin readings, Smell tests, and On-skin and follow-up. RESET pauses precede steps 6 and 8. Evaporation runs from 0:10 to 0:30. Follow-up takes place at +2h and +6h.</desc>
+  <style>
+    text { fill: #f1eadc; font-family: "Trebuchet MS", sans-serif; }
+    .display { font-family: "Bodoni Moda", Georgia, serif; font-weight: 400; }
+    .muted { fill: #aaa499; }
+    .gold { fill: #d8a443; }
+    .time { fill: #d8a443; font-size: 14px; font-variant-numeric: tabular-nums; }
+    .step-tag { fill: #d8a443; font-size: 14px; letter-spacing: 1px; font-variant-numeric: tabular-nums; }
+    .step-title { font-family: "Bodoni Moda", Georgia, serif; font-size: 24px; font-weight: 400; }
+    .tell-label { font-size: 14px; letter-spacing: .6px; }
+    .rule { fill: none; stroke: #aaa499; stroke-opacity: .28; stroke-width: 1; }
+    .time-rule { fill: none; stroke: #d8a443; stroke-width: 1; }
+  </style>
+
+  <rect width="1600" height="1180" fill="#080806"/>
+
+  <!-- Title and reading order. -->
+  <text x="64" y="44" font-size="14" letter-spacing="1.6">YAT.lifestyle / ELEMENT</text>
+  <text x="64" y="99" class="display" font-size="44">Element Test Kit: the 31 minute protocol</text>
+  <text x="64" y="140" font-size="20" class="muted">Clean skin first, faint scents next, perfume last. Survey questions fill the waiting time.</text>
+
+  <!-- Proportional axis: x = 64 + minute × (1184 / 31). -->
+  <g id="time-axis">
+    <text x="64" y="185" font-size="16">1 Setup</text>
+    <text x="190" y="185" font-size="16">2 Clean-skin readings</text>
+    <text x="496" y="185" font-size="16">3 Smell tests</text>
+    <text x="954" y="185" font-size="16">4 On-skin and follow-up</text>
+    <path d="M64 198H168" fill="none" stroke="#ece5d8" stroke-width="1"/>
+    <path d="M179 198H474" fill="none" stroke="#aaa499" stroke-width="1"/>
+    <path d="M484 198H932" fill="none" stroke="#f1eadc" stroke-width="1"/>
+    <path d="M942 198H1248" class="time-rule"/>
+
+    <path d="M64 260H1248" class="time-rule"/>
+    <path d="M64 255V272 M178.581 255V272 M293.161 255V272 M445.935 255V272 M484.129 255V272 M713.290 255V272 M827.871 255V272 M942.452 255V272 M1057.032 255V272 M1171.613 255V272 M1209.806 255V272 M1248 255V272" class="time-rule"/>
+
+    <!-- Every number is anchored to its actual start time. -->
+    <g text-anchor="middle" class="gold">
+      <text x="64" y="247" class="time">1</text>
+      <text x="178.581" y="247" class="time">2</text>
+      <text x="293.161" y="247" class="time">3</text>
+      <text x="445.935" y="247" class="time">4</text>
+      <text x="484.129" y="247" class="time">5</text>
+      <text x="713.290" y="247" class="time">6</text>
+      <text x="827.871" y="247" class="time">7</text>
+      <text x="942.452" y="247" class="time">8</text>
+      <text x="1057.032" y="247" class="time">9</text>
+      <text x="1171.613" y="247" class="time">10</text>
+      <text x="1209.806" y="247" class="time">11</text>
+      <text x="1248" y="247" class="time">12</text>
+    </g>
+    <g text-anchor="middle">
+      <text x="64" y="286" class="time" text-anchor="start">0:00</text>
+      <text x="178.581" y="286" class="time">0:03</text>
+      <text x="293.161" y="286" class="time">0:06</text>
+      <text x="445.935" y="286" class="time">0:10</text>
+      <text x="484.129" y="286" class="time">0:11</text>
+      <text x="713.290" y="286" class="time">0:17</text>
+      <text x="827.871" y="286" class="time">0:20</text>
+      <text x="942.452" y="286" class="time">0:23</text>
+      <text x="1057.032" y="286" class="time">0:26</text>
+      <text x="1171.613" y="286" class="time">0:29</text>
+      <text x="1209.806" y="286" class="time">0:30</text>
+      <text x="1248" y="286" class="time">0:31</text>
+    </g>
+
+    <!-- Brief RESET pauses immediately before steps 6 and 8. -->
+    <text x="696" y="219" class="time" text-anchor="end" letter-spacing="1">RESET</text>
+    <path d="M704 222V238" class="time-rule"/>
+    <text x="925" y="219" class="time" text-anchor="end" letter-spacing="1">RESET</text>
+    <path d="M933 222V238" class="time-rule"/>
+  </g>
+
+  <!-- The later readings are a distinct, unscaled block. -->
+  <path d="M1272 176V1116" class="rule"/>
+  <text x="1292" y="185" font-size="14" class="muted" letter-spacing="1.2">FOLLOW-UP</text>
+  <path d="M1292 198H1536" class="rule"/>
+  <text x="1292" y="247" font-size="30" class="display gold">+2h / +6h</text>
+  <path d="M64 324H1536" class="rule"/>
+
+  <!-- Four readable phase bands, keyed to the axis above. -->
+  <g id="phase-headings">
+    <text x="64" y="355" class="display" font-size="23"><tspan class="gold">1 </tspan>Setup</text>
+    <text x="304" y="355" class="display" font-size="23"><tspan class="gold">2 </tspan>Clean-skin readings</text>
+    <text x="628" y="355" class="display" font-size="23"><tspan class="gold">3 </tspan>Smell tests</text>
+    <text x="948" y="355" class="display" font-size="23"><tspan class="gold">4 </tspan>On-skin and follow-up</text>
+    <text x="1292" y="355" class="display" font-size="23">Follow-up</text>
+    <path d="M64 380H270" fill="none" stroke="#ece5d8" stroke-width="1"/>
+    <path d="M304 380H592" fill="none" stroke="#aaa499" stroke-width="1"/>
+    <path d="M628 380H912" fill="none" stroke="#f1eadc" stroke-width="1"/>
+    <path d="M948 380H1248" class="time-rule"/>
+    <path d="M1292 380H1536" class="rule"/>
+    <path d="M286 348V1040 M610 348V1040 M930 348V1040" class="rule"/>
+  </g>
+
+  <g id="step-01" data-step="1" data-right="270" data-bottom="602">
+    <text x="64" y="420" class="step-tag">01 / 0:00</text>
+    <text x="64" y="450" class="step-title">Setup</text>
+    <text x="64" y="480"><tspan x="64">Still room, no fragrance,</tspan><tspan x="64" y="502">room temp.</tspan></text>
+    <text x="64" y="542" class="tell-label">Tells us</text>
+    <text x="64" y="566" class="muted"><tspan x="64">how far to trust</tspan><tspan x="64" y="588">each result.</tspan></text>
+  </g>
+
+  <g id="step-02" data-step="2" data-right="592" data-bottom="602">
+    <text x="304" y="420" class="step-tag">02 / 0:03</text>
+    <text x="304" y="450" class="step-title">Oil blot</text>
+    <text x="304" y="480"><tspan x="304">Blot forehead and forearm,</tspan><tspan x="304" y="502">photo on lid.</tspan></text>
+    <text x="304" y="542" class="tell-label">Tells us</text>
+    <text x="304" y="566" class="muted"><tspan x="304">oily or dry skin,</tspan><tspan x="304" y="588">how it may hold scent.</tspan></text>
+  </g>
+  <path d="M304 602H592" class="rule"/>
+  <g id="step-03" data-step="3" data-right="592" data-bottom="800">
+    <text x="304" y="618" class="step-tag">03 / 0:06</text>
+    <text x="304" y="648" class="step-title">Skin pH + control</text>
+    <text x="304" y="678"><tspan x="304">Water ampoule, control strip</tspan><tspan x="304" y="700">plus 2 skin strips, photo.</tspan></text>
+    <text x="304" y="740" class="tell-label">Tells us</text>
+    <text x="304" y="764" class="muted"><tspan x="304">skin acidity, read against</tspan><tspan x="304" y="786">the control.</tspan></text>
+  </g>
+  <path d="M304 800H592" class="rule"/>
+  <g id="step-04" data-step="4" data-right="592" data-bottom="1012">
+    <text x="304" y="816" class="step-tag">04 / 0:10</text>
+    <text x="304" y="846" class="step-title">Evaporation start</text>
+    <text x="304" y="876"><tspan x="304">Drop on hand and blotter,</tspan><tspan x="304" y="898">photo t=0.</tspan></text>
+    <text x="304" y="938" class="tell-label">Tells us</text>
+    <text x="304" y="962" class="muted"><tspan x="304">how fast liquid leaves</tspan><tspan x="304" y="984">your skin.</tspan></text>
+  </g>
+
+  <g id="step-05" data-step="5" data-right="912" data-bottom="602">
+    <text x="628" y="420" class="step-tag">05 / 0:11</text>
+    <text x="628" y="450" class="step-title">Sensitivity ladder</text>
+    <text x="628" y="480"><tspan x="628">Coded vials,</tspan><tspan x="628" y="502">weakest to strongest.</tspan></text>
+    <text x="628" y="542" class="tell-label">Tells us</text>
+    <text x="628" y="566" class="muted">how sensitive your nose is.</text>
+  </g>
+  <path d="M628 602H912" class="rule"/>
+  <g id="step-06" data-step="6" data-right="912" data-bottom="800">
+    <text x="628" y="618" class="step-tag">06 / 0:17</text>
+    <text x="628" y="648" class="step-title">Note panel</text>
+    <text x="628" y="678"><tspan x="628">6 blind strips, rate liking</tspan><tspan x="628" y="700">and strength.</tspan></text>
+    <text x="628" y="740" class="tell-label">Tells us</text>
+    <text x="628" y="764" class="muted">notes to add, boost or avoid.</text>
+  </g>
+  <path d="M628 800H912" class="rule"/>
+  <g id="step-07" data-step="7" data-right="912" data-bottom="1012">
+    <text x="628" y="816" class="step-tag">07 / 0:20</text>
+    <text x="628" y="846" class="step-title">Evaporation photo</text>
+    <text x="628" y="876">t=10.</text>
+  </g>
+
+  <g id="step-08" data-step="8" data-right="1248" data-bottom="540">
+    <text x="948" y="420" class="step-tag">08 / 0:23</text>
+    <text x="948" y="450" class="step-title">Base scents</text>
+    <text x="948" y="480">Smell A to D, wear top 2.</text>
+    <text x="948" y="508" class="tell-label">Tells us</text>
+    <text x="948" y="530" class="muted">the base we will tune.</text>
+  </g>
+  <path d="M948 540H1248" class="rule"/>
+  <g id="step-09" data-step="9" data-right="1248" data-bottom="680">
+    <text x="948" y="560" class="step-tag">09 / 0:26</text>
+    <text x="948" y="590" class="step-title">Lifestyle survey</text>
+    <text x="948" y="620">Adaptive questions.</text>
+    <text x="948" y="648" class="tell-label">Tells us</text>
+    <text x="948" y="670" class="muted">where and how you wear scent.</text>
+  </g>
+  <path d="M948 680H1248" class="rule"/>
+  <g id="step-10" data-step="10" data-right="1248" data-bottom="820">
+    <text x="948" y="700" class="step-tag">10 / 0:29</text>
+    <text x="948" y="730" class="step-title">Distance test</text>
+    <text x="948" y="760">10 / 30 / 60 cm.</text>
+    <text x="948" y="788" class="tell-label">Tells us</text>
+    <text x="948" y="810" class="muted">close or carrying.</text>
+  </g>
+  <path d="M948 820H1248" class="rule"/>
+  <g id="step-11" data-step="11" data-right="1248" data-bottom="940">
+    <text x="948" y="840" class="step-tag">11 / 0:30</text>
+    <text x="948" y="870" class="step-title">Finish</text>
+    <text x="948" y="900"><tspan x="948">Evaporation photo t=20,</tspan><tspan x="948" y="922">first pick.</tspan></text>
+  </g>
+  <path d="M948 940H1248" class="rule"/>
+  <g id="step-12" data-step="12" data-right="1248" data-bottom="1040">
+    <text x="948" y="960" class="step-tag">12 / 0:31</text>
+    <text x="948" y="990" class="step-title">pH finale (optional)</text>
+    <text x="948" y="1020">Lemon drop turns the strip.</text>
+  </g>
+
+  <g id="step-13" data-step="13" data-right="1536" data-bottom="602">
+    <text x="1292" y="420" class="step-tag">13 / +2h / +6h</text>
+    <text x="1292" y="450" class="step-title">Follow-up</text>
+    <text x="1292" y="480">Re-smell forearms.</text>
+    <text x="1292" y="542" class="tell-label">Tells us</text>
+    <text x="1292" y="566" class="muted"><tspan x="1292">longevity through the day,</tspan><tspan x="1292" y="588">final pick.</tspan></text>
+  </g>
+
+  <!-- This band uses the same scale as the axis: 0:10 through 0:30. -->
+  <g id="evaporation-running">
+    <text x="445.935" y="1064" font-size="16">Evaporation running in the background (photos at t=0, 10, 20)</text>
+    <path d="M445.935 1084H1209.806 M445.935 1078V1090 M827.871 1078V1090 M1209.806 1078V1090" class="time-rule"/>
+    <text x="445.935" y="1108" class="time">0:10 / t=0</text>
+    <text x="827.871" y="1108" class="time" text-anchor="middle">0:20 / t=10</text>
+    <text x="1209.806" y="1108" class="time" text-anchor="end">0:30 / t=20</text>
+  </g>
+
+  <text x="64" y="1148" font-size="14" class="muted">Draft concept. Evidence and wording: see Element Test Kit doc v2.</text>
+</svg>
