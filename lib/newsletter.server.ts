@@ -1,4 +1,4 @@
-import { NEWSLETTER_POLICY_VERSION, newsletterCopy } from "./newsletter.ts";
+import { NEWSLETTER_POLICY_VERSION, NEWSLETTER_SOURCES, newsletterCopy } from "./newsletter.ts";
 
 export type NewsletterEnv = {
   DB: { prepare(sql: string): { bind(...values: (string | number)[]): { run(): Promise<{ success: boolean }> } } };
@@ -41,13 +41,14 @@ export async function subscribe(request: Request, env: NewsletterEnv): Promise<R
       || email.split("@")[0].length > 64 || email.startsWith(".") || email.includes("..") || email.includes(".@")
       || !["en", "zh-Hant", "zh-Hans"].includes(body.locale)
       || body.marketingConsent !== true || body.privacyAcknowledged !== true
-      || body.policyVersion !== NEWSLETTER_POLICY_VERSION) return response(400);
+      || body.policyVersion !== NEWSLETTER_POLICY_VERSION
+      || (body.source !== undefined && !NEWSLETTER_SOURCES.includes(body.source))) return response(400);
 
     const locale = body.locale as keyof typeof newsletterCopy;
     const result = await env.DB.prepare(`INSERT INTO newsletter_subscribers
       (email, locale, policy_version, marketing_consent, privacy_acknowledged, source)
-      VALUES (?, ?, ?, ?, 1, 'shop') ON CONFLICT(email) DO NOTHING`)
-      .bind(email, locale, NEWSLETTER_POLICY_VERSION, newsletterCopy[locale].consent).run();
+      VALUES (?, ?, ?, ?, 1, ?) ON CONFLICT(email) DO NOTHING`)
+      .bind(email, locale, NEWSLETTER_POLICY_VERSION, newsletterCopy[locale].consent, body.source ?? "shop").run();
     // Existing addresses get the same response. Never reactivate a withdrawn subscription.
     return response(result.success ? 200 : 503);
   } catch {

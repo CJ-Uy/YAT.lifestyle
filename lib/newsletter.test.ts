@@ -7,7 +7,7 @@ import { NEWSLETTER_POLICY_VERSION, newsletterCopy } from "./newsletter.ts";
 
 test("newsletter: bounded input, consent, SQL storage, duplicates, withdrawal and safe failures", async () => {
   const db = new DatabaseSync(":memory:");
-  db.exec(readFileSync(new URL("../migrations/0001_newsletter.sql", import.meta.url), "utf8"));
+  for (const file of ["0001_newsletter.sql", "0003_newsletter_sources.sql"]) db.exec(readFileSync(new URL(`../migrations/${file}`, import.meta.url), "utf8"));
   let allowed = true;
   const env: NewsletterEnv = {
     DB: { prepare: (sql) => ({ bind: (...values) => ({ run: async () => { db.prepare(sql).run(...values); return { success: true }; } }) }) },
@@ -57,6 +57,12 @@ test("newsletter: bounded input, consent, SQL storage, duplicates, withdrawal an
       assert.equal((await subscribe(request({ locale, email: `${locale}@example.com` }), env)).status, 200);
       assert.equal(db.prepare("SELECT marketing_consent FROM newsletter_subscribers WHERE locale=?").get(locale)!.marketing_consent, newsletterCopy[locale].consent);
     }
+    assert.equal(db.prepare("SELECT source FROM newsletter_subscribers WHERE email=?").get("test@example.com")!.source, "shop");
+    for (const source of ["element-order", "element-gift"]) {
+      assert.equal((await subscribe(request({ source, email: `${source}@example.com` }), env)).status, 200);
+      assert.equal(db.prepare("SELECT source FROM newsletter_subscribers WHERE email=?").get(`${source}@example.com`)!.source, source);
+    }
+    assert.equal((await subscribe(request({ source: "partner", email: "partner@example.com" }), env)).status, 400);
     const failed = await subscribe(request(), { ...env, DB: { prepare() { throw new Error("Private database error"); } } });
     assert.equal(failed.status, 503);
     assert.deepEqual(await failed.json(), { ok: false });
