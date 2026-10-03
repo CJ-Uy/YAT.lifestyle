@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, type ReactNode } from "react";
+import { Fragment, type ReactNode, useEffect, useState } from "react";
 import SiteHeader, { type Locale, useLocale } from "../../site-header";
 import { elementCopy as c } from "../content";
 import { ElementFooter, LabTabs } from "../lab-notes";
@@ -35,7 +35,7 @@ function wrap(text: string, width: number, size: number): string[] {
 const INK = "#080806", PANEL = "#14130e", WARM = "#f1eadc", MUTED = "#aaa499", GOLD = "#d8a443", RULE = "rgba(241,234,220,.28)";
 
 function Diagram({ locale, narrow }: { locale: Locale; narrow: boolean }) {
-  const W = narrow ? 360 : 1200, cols = narrow ? 2 : 5, pad = narrow ? 12 : 32, gap = narrow ? 14 : 28;
+  const W = narrow ? 360 : 1000, cols = narrow ? 2 : 5, pad = narrow ? 12 : 32, gap = narrow ? 14 : 28;
   const fs = narrow ? 12.5 : 15, ts = narrow ? 10 : 12, lh = fs * 1.3, inner = narrow ? 10 : 14;
   const nodeW = (W - pad * 2 - gap * (cols - 1)) / cols;
   const lanes: { label: string; steps: TechStep[] }[] = [{ label: tc.dataLane[locale], steps: tc.steps }, { label: tc.buildLane[locale], steps: tc.build }];
@@ -86,12 +86,24 @@ function Section({ id, children, className = "" }: { id: string; children: React
 export default function TechPage() {
   const [locale, setLocale] = useLocale();
   const nav: [string, string][] = [["abstract", tc.abstractNav[locale]], ["methods", tc.methodsNav[locale]], ["results", tc.resultsNav[locale]], ["limitations", tc.limitsNav[locale]], ["stack", tc.stackNav[locale]], ["references", tc.refsNav[locale]]];
+  // Highlight the section crossing a band a third of the way down the viewport; stack sub-sections count as "stack".
+  const [active, setActive] = useState("abstract");
+  useEffect(() => {
+    const top = new Set(["abstract", "methods", "results", "limitations", "stack", "references"]);
+    const observer = new IntersectionObserver(entries => {
+      for (const entry of entries) if (entry.isIntersecting) setActive(top.has(entry.target.id) ? entry.target.id : "stack");
+    }, { rootMargin: "-33% 0px -62% 0px" });
+    document.querySelectorAll(".tech-section").forEach(section => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
   return <><a className="skip-link" href="#tech-content">{tc.title[locale]}</a><SiteHeader locale={locale} onLocaleChange={setLocale} subpage />
     <main className="lab-page tech-page" id="top">
       <header className="lab-heading"><a className="text-link" href="/element">← {c.back[locale]}</a><span className="eyebrow">ELEMENT / {c.notes[locale]}</span><h1>{tc.title[locale]}</h1><p>{tc.intro[locale]}</p><LabTabs locale={locale} active="tech" /></header>
       <nav className="research-index tech-index" aria-label={tc.onPage[locale]}>{nav.map(([id, label]) => <a href={`#${id}`} key={id}>{label} ↓</a>)}</nav>
-      <div id="tech-content">
+      <div className="tech-layout" id="tech-content">
         <Section id="abstract"><aside className="tech-abstract"><h2>{tc.abstractTitle[locale]}</h2><p><Cited text={tc.abstract[locale]} /></p></aside></Section>
+        <nav className="tech-toc" aria-label={tc.onPage[locale]}><p>{tc.onPage[locale]}</p><ol>{nav.map(([id, label]) => <li key={id}><a href={`#${id}`} aria-current={active === id ? "location" : undefined}>{label}</a></li>)}</ol></nav>
+        <div className="tech-body">
 
         <Section id="methods">
           <h2>{tc.journeyTitle[locale]}</h2><p>{tc.journeyIntro[locale]}</p>
@@ -125,6 +137,7 @@ export default function TechPage() {
           <h2>{tc.refsTitle[locale]}</h2><p>{tc.refsIntro[locale]}</p>
           <ol className="tech-refs">{references.map(r => <li id={`ref-${r.n}`} key={r.n} className={r.code ? "tech-ref-code" : undefined}><span className="tech-step-n">[{r.n}]</span><p>{r.text}{r.href && <> <a href={r.href} rel="noreferrer" target="_blank">{new URL(r.href).hostname} ↗</a></>}{r.claim && <> <a href={`/element/research#${r.claim}`}>{tc.reviewed[locale]} ↗</a></>}</p></li>)}</ol>
         </Section>
+        </div>
       </div>
       <section className="lab-end"><p>{c.review[locale]}<br />{c.disclaimer[locale]}</p><a className="action primary" href="/element/demo">{c.demo[locale]} ↗</a></section>
     </main><ElementFooter locale={locale} /></>;
