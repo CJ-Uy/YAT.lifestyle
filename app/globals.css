@@ -352,7 +352,7 @@ footer > a:last-child { align-items: center; color: #d8c7a5; display: flex; just
 .demo-back { align-items: center; background: transparent; border: 1px solid var(--rule); color: var(--warm); cursor: pointer; display: inline-flex; height: 44px; justify-content: center; width: 44px; }
 .demo-back:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); }
 .demo-back:disabled { opacity: .25; cursor: default; }
-.demo-bar p { align-items: baseline; display: flex; font-size: .78rem; gap: .5rem; justify-content: space-between; letter-spacing: .16em; margin: 0; text-transform: uppercase; }
+.demo-bar p { align-items: baseline; display: flex; font-size: .8rem; gap: .5rem; justify-content: space-between; letter-spacing: .12em; margin: 0; }
 .demo-count { color: var(--muted); letter-spacing: .06em; text-transform: none; }
 .demo-progress { background: rgba(241, 234, 220, .12); grid-column: 1 / -1; height: 2px; margin-top: .75rem; overflow: hidden; }
 .demo-progress span { background: var(--gold); display: block; height: 100%; transform-origin: left; transition: transform 500ms cubic-bezier(.2, .7, .2, 1); }
@@ -501,7 +501,7 @@ label:has(> .demo-hidden-input:focus-visible) { outline: 2px solid var(--gold); 
 .demo-legend i { display: inline-block; height: 8px; width: 14px; }
 .demo-legend .ghost { border: 1px dashed var(--muted); }
 .demo-legend .tuned { background: var(--gold); margin-left: .6rem; }
-.demo-graph svg { display: block; height: auto; overflow: visible; width: 100%; }
+.demo-graph svg { display: block; height: auto; margin-inline: auto; max-width: 440px; overflow: visible; width: 100%; }
 .demo-graph text { fill: var(--warm); font-family: var(--body); }
 .demo-graph .demo-graph-note { font-size: 13px; }
 .demo-graph .demo-graph-tier { fill: var(--gold); font-size: 8.5px; letter-spacing: .2em; text-transform: uppercase; }
@@ -542,8 +542,9 @@ label:has(> .demo-hidden-input:focus-visible) { outline: 2px solid var(--gold); 
 .demo-card-nose { font-family: var(--display); font-size: 2rem; line-height: 1.1; }
 .demo-card-body .demo-card-base { border-top: 1px solid var(--rule); color: var(--muted); font-size: .85rem; margin-top: 1.1rem; padding-top: .8rem; }
 .demo-share { align-items: start; display: grid; gap: 1.2rem; grid-template-columns: auto 1fr; margin-bottom: 1.2rem; }
+.demo-share > div { min-width: 0; width: 100%; }
 .demo-share .demo-label { margin-top: 0; }
-.demo-share .demo-secondary { margin: .6rem 0; }
+.demo-share .demo-primary { margin: .6rem 0; }
 .demo-link { font-size: .8rem; margin: 0; overflow-wrap: anywhere; }
 .qr-stub { align-items: center; background: #fff; color: #8a6418; display: flex; font-size: .6rem; justify-content: center; overflow-wrap: anywhere; padding: .6rem; text-align: center; }
 .demo-social { display: grid; gap: .6rem; }

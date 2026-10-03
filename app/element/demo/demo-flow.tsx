@@ -282,7 +282,7 @@ export default function DemoFlow() {
     default: {
       const r = s.result ?? localResult(s);
       body = <Share r={r} s={s} t={t} locale={locale} heading={heading} />;
-      primary = { label: t.share.restart, onClick: () => { setPicked([]); setS({ ...initial, mode: s.mode }); } };
+      secondary = { label: t.share.restart, onClick: () => { setPicked([]); setS({ ...initial, mode: s.mode }); } };
     }
   }
 
@@ -592,7 +592,7 @@ function NoteGraph({ r, t, locale }: { r: Result; t: Copy; locale: Locale }) {
   ].sort((a, b) => order[a.tier] - order[b.tier] || b.to - a.to);
   const max = Math.max(40, ...rows.map((x) => Math.max(x.from, x.to)));
   const name = (note: string) => t.notes[note] ?? note;
-  const rowH = 30, tierGap = 22, x0 = 118, w = 182;
+  const rowH = 30, tierGap = 22, x0 = 100, w = 160;
   // Each tier gets a small header; y positions accumulate so headers never touch the rows above.
   let y = 0;
   const placed = rows.map((x, i) => {
@@ -603,7 +603,7 @@ function NoteGraph({ r, t, locale }: { r: Result; t: Copy; locale: Locale }) {
   });
   return <figure className="demo-graph">
     <figcaption><span>{t.result.graphTitle}</span><span className="demo-legend"><i className="ghost" />{t.result.legendBase}<i className="tuned" />{t.result.legendTuned}</span></figcaption>
-    <svg viewBox={`0 0 340 ${y + 4}`} role="img" aria-label={rows.map((x) => `${name(x.note)} ${x.from} to ${x.to}`).join(", ")}>
+    <svg viewBox={`0 0 300 ${y + 4}`} role="img" aria-label={rows.map((x) => `${name(x.note)} ${x.from} to ${x.to}`).join(", ")}>
       {placed.map((x, i) => {
         const y = x.y, changed = Math.abs(x.to - x.from) >= 0.5, delta = Math.round((x.to - x.from) * 10) / 10;
         return <g key={x.note} style={{ "--i": i } as CSSProperties}>
@@ -612,7 +612,7 @@ function NoteGraph({ r, t, locale }: { r: Result; t: Copy; locale: Locale }) {
           <rect x={x0} y={y + 3} width={w} height="14" className="demo-graph-track" />
           <rect x={x0} y={y + 3} width={(w * x.from) / max} height="14" className="demo-graph-ghost" />
           {x.to > 0 && <rect x={x0} y={y + 5} width={(w * x.to) / max} height="10" className={`demo-graph-bar ${changed ? "is-changed" : ""}`} style={{ "--from": x.to ? x.from / x.to : 0 } as CSSProperties} />}
-          <text x="340" y={y + 13} textAnchor="end" className={`demo-graph-delta ${changed ? "is-changed" : ""}`}>{changed ? `${delta > 0 ? "+" : ""}${delta}` : `${x.to}`}</text>
+          <text x="300" y={y + 13} textAnchor="end" className={`demo-graph-delta ${changed ? "is-changed" : ""}`}>{changed ? `${delta > 0 ? "+" : ""}${delta}` : `${x.to}`}</text>
         </g>;
       })}
     </svg>
@@ -700,7 +700,7 @@ function Share({ r, s, t, locale, heading }: { r: Result; s: State; t: Copy; loc
       <div>
         <p className="demo-label">{t.share.linkLabel}</p>
         <p className="demo-link">{link}</p>
-        <button type="button" className="demo-secondary" onClick={share}>{copied ? t.share.copied : t.share.share}</button>
+        <button type="button" className="demo-primary demo-inline" onClick={share}>{copied ? t.share.copied : t.share.share}</button>
         <p className="demo-muted">{t.share.friendsTry}</p>
       </div>
     </div>
