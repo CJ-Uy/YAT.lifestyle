@@ -30,8 +30,8 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1791047885.2448223,
-    "ast_hash": "b6aa32c89200eec9608b3403987e986d",
+    "mtime": 1791057213.1235974,
+    "ast_hash": "68c16c4e8e46facc1a4017aca9960cb6",
     "semantic_hash": ""
   },
   "postcss.config.mjs": {
@@ -95,8 +95,8 @@
     "semantic_hash": ""
   },
   "app/home-experience.tsx": {
-    "mtime": 1791054342.626991,
-    "ast_hash": "57ba385cd04e8dd5dfcfba1996a7c4d6",
+    "mtime": 1791057219.1235092,
+    "ast_hash": "bcd3c0a98013375622cb17354463a2e4",
     "semantic_hash": ""
   },
   ".impeccable/home-build-brief.md": {
@@ -195,8 +195,8 @@
     "semantic_hash": ""
   },
   ".impeccable/design.json": {
-    "mtime": 1790228717.041589,
-    "ast_hash": "42564942d6d9d471ca827cf9b57425bf",
+    "mtime": 1791063490.0416195,
+    "ast_hash": "77dee4af3bfe2ee4f7516e28225158cd",
     "semantic_hash": ""
   },
   "public/media/hong-kong-harbour-afterimage.json": {
@@ -205,8 +205,8 @@
     "semantic_hash": ""
   },
   "DESIGN.md": {
-    "mtime": 1790262429.7512534,
-    "ast_hash": "e87a17f04b4c161517d0b89b9b95258a",
+    "mtime": 1791063438.4666908,
+    "ast_hash": "729cba1b9a0c41fca573cfb8efd7d930",
     "semantic_hash": ""
   },
   "public/media/hong-kong-harbour-afterimage-poster.jpg": {
@@ -595,8 +595,8 @@
     "semantic_hash": ""
   },
   "app/site-header.tsx": {
-    "mtime": 1791054229.2674928,
-    "ast_hash": "ecf3ddc691770560d50a395327fd8f16",
+    "mtime": 1791063022.315569,
+    "ast_hash": "1c282a98071e0bc616dbf98ed47a3062",
     "semantic_hash": ""
   },
   "scripts/check-navigation.js": {
@@ -755,13 +755,13 @@
     "semantic_hash": ""
   },
   ".remember/tmp/last-ndc.ts": {
-    "mtime": 1791052153.785744,
-    "ast_hash": "61676ebdebb84209b74ef9a9e5cec08b",
+    "mtime": 1791063547.130712,
+    "ast_hash": "5d64e65a05589d7875384fcc012f8ddb",
     "semantic_hash": ""
   },
   ".remember/tmp/last-save.json": {
-    "mtime": 1791054889.087098,
-    "ast_hash": "4d57cdeea5fafe2461fbc9474d500b08",
+    "mtime": 1791063545.9738197,
+    "ast_hash": "9321c6cb8e7284bdb4196e4fd9060f34",
     "semantic_hash": ""
   },
   "app/api/element/[action]/route.ts": {
@@ -785,8 +785,8 @@
     "semantic_hash": ""
   },
   "app/element/content.ts": {
-    "mtime": 1791052791.2398877,
-    "ast_hash": "6a9b58ffefa368b4647be6aff67f2709",
+    "mtime": 1791060255.6454434,
+    "ast_hash": "5c28077d3e5d354bebfa73c5d2013af1",
     "semantic_hash": ""
   },
   "app/element/demo/api.ts": {
@@ -795,8 +795,8 @@
     "semantic_hash": ""
   },
   "app/element/demo/demo-flow.tsx": {
-    "mtime": 1791055060.1555781,
-    "ast_hash": "fcd63933591b5925871d23dcef65bc23",
+    "mtime": 1791063331.6567435,
+    "ast_hash": "cded54c4075dad0cc0a5020cc0c04050",
     "semantic_hash": ""
   },
   "app/element/demo/page.tsx": {
@@ -824,14 +824,9 @@
     "ast_hash": "bd450850ffb8df1241d0605bd24091d7",
     "semantic_hash": ""
   },
-  "app/element/element-experience.tsx": {
-    "mtime": 1791047864.2350864,
-    "ast_hash": "58547814232fea9ced6ffae611d75277",
-    "semantic_hash": ""
-  },
   "app/element/lab-notes.tsx": {
-    "mtime": 1791054769.188063,
-    "ast_hash": "cdb6bb34851e7890e835165e1f33dcca",
+    "mtime": 1791058612.218227,
+    "ast_hash": "8dca731fbaefbfd801fc39be8a5014dd",
     "semantic_hash": ""
   },
   "app/element/login/page.tsx": {
@@ -850,8 +845,8 @@
     "semantic_hash": ""
   },
   "app/element/page.tsx": {
-    "mtime": 1791052791.2459543,
-    "ast_hash": "5e5312939f9fc6ae6d281ff1f6c81664",
+    "mtime": 1791056644.7244208,
+    "ast_hash": "c606ced19eee9a4b4c0b6e4e6d377a4a",
     "semantic_hash": ""
   },
   "app/element/research/page.tsx": {
@@ -865,8 +860,8 @@
     "semantic_hash": ""
   },
   "app/element/styled-qr.tsx": {
-    "mtime": 1791047873.4642632,
-    "ast_hash": "1a000c02fae86c34f9c1aa329c7904c0",
+    "mtime": 1791062999.9185233,
+    "ast_hash": "eb268647036f0dabee0b6fe9d6cc32d5",
     "semantic_hash": ""
   },
   "app/element/tech/page.tsx": {
@@ -895,13 +890,13 @@
     "semantic_hash": ""
   },
   "lib/element/api.server.ts": {
-    "mtime": 1791052791.2459543,
-    "ast_hash": "f05e83861d510e00d055a17c598c05b1",
+    "mtime": 1791060407.2068384,
+    "ast_hash": "f9ed9179eaf3bc857827bb87b6d99455",
     "semantic_hash": ""
   },
   "lib/element/api.test.ts": {
-    "mtime": 1791049695.7259712,
-    "ast_hash": "388c16d8e43133789c62ecf815a2fce1",
+    "mtime": 1791060404.4521832,
+    "ast_hash": "654e1e778f6336e2879d5672259cdf74",
     "semantic_hash": ""
   },
   "lib/element/auth.server.ts": {
@@ -925,8 +920,8 @@
     "semantic_hash": ""
   },
   "lib/element/copy.ts": {
-    "mtime": 1791055060.1565964,
-    "ast_hash": "2f50cf1827943bd9d8e4be8ea545ef03",
+    "mtime": 1791056884.7305498,
+    "ast_hash": "a05b4ae9bd376513b06d1134ca8f13e2",
     "semantic_hash": ""
   },
   "lib/element/explain.test.ts": {
@@ -1000,8 +995,8 @@
     "semantic_hash": ""
   },
   "lib/element/survey.ts": {
-    "mtime": 1791052791.2520492,
-    "ast_hash": "a3b36f59e5905a523a25880e643b1a06",
+    "mtime": 1791060404.4491892,
+    "ast_hash": "c0897a48084583ab69404a5cf210164e",
     "semantic_hash": ""
   },
   "lib/element/tech-content.test.ts": {
@@ -1120,8 +1115,8 @@
     "semantic_hash": ""
   },
   ".remember/now.md": {
-    "mtime": 1791054888.007595,
-    "ast_hash": "04d5dbd90f382bf7af623c2949aa058c",
+    "mtime": 1791063559.9137888,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
     "semantic_hash": ""
   },
   ".remember/recent.md": {
@@ -1135,8 +1130,8 @@
     "semantic_hash": ""
   },
   ".remember/today-2026-10-04.md": {
-    "mtime": 1791052193.2567418,
-    "ast_hash": "dbec9e36da909f4f7b5d8ae0823ca881",
+    "mtime": 1791063559.4657507,
+    "ast_hash": "96850e3cbc606c771fac91373652be00",
     "semantic_hash": ""
   },
   "docs/element-nose-model.md": {
@@ -1562,6 +1557,2601 @@
   "tmp/pdfs/element-lid/paper-preview.png": {
     "mtime": 1791036774.143656,
     "ast_hash": "85d5b4bb2475d9d05761ca3b1218d284",
+    "semantic_hash": ""
+  },
+  "app/element/demo/completion.test.ts": {
+    "mtime": 1791060677.9184341,
+    "ast_hash": "9a55caa117d3c5ffb4bda9f105c5da95",
+    "semantic_hash": ""
+  },
+  "app/element/demo/completion.ts": {
+    "mtime": 1791060677.9174333,
+    "ast_hash": "b43f4c2cfa77365bcffed0222b498196",
+    "semantic_hash": ""
+  },
+  "app/element/demo/lab-copy.ts": {
+    "mtime": 1791057649.6125124,
+    "ast_hash": "e965da9ef34091c459fe7f0d202465d6",
+    "semantic_hash": ""
+  },
+  "app/element/element-landing.tsx": {
+    "mtime": 1791063166.7845297,
+    "ast_hash": "0af3b3c1a38a135c15600b7f40da7082",
+    "semantic_hash": ""
+  },
+  "app/element/landing-copy.ts": {
+    "mtime": 1791058612.2172256,
+    "ast_hash": "664308b22aceb22754d8ab0a4d631d90",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/inventory.json": {
+    "mtime": 1791057904.8051739,
+    "ast_hash": "6a6729c036e307ed9c4095dd08952fea",
+    "semantic_hash": ""
+  },
+  "public/media/element-final-board.json": {
+    "mtime": 1791056562.9572608,
+    "ast_hash": "9c7dd2350a67f5174f5d87e6c127e2c7",
+    "semantic_hash": ""
+  },
+  "public/media/element-scent-study.json": {
+    "mtime": 1791056566.9953847,
+    "ast_hash": "97d2ab1c710c2e00d43d70daaf9a5b09",
+    "semantic_hash": ""
+  },
+  "scripts/prepare-demo-tutorials.py": {
+    "mtime": 1791057420.668263,
+    "ast_hash": "dd02b2626007c58d3808a5c3af111cda",
+    "semantic_hash": ""
+  },
+  "scripts/prepare-element-reference.py": {
+    "mtime": 1791056558.6728764,
+    "ast_hash": "03eece13a55818a67665bc7ce9bd500e",
+    "semantic_hash": ""
+  },
+  "tmp/element-footage-review.py": {
+    "mtime": 1791057636.1856334,
+    "ast_hash": "e39b0bfc91bf816693fd35321dc2d137",
+    "semantic_hash": ""
+  },
+  "app/element/demo/TUTORIALS.md": {
+    "mtime": 1791057418.2220712,
+    "ast_hash": "6138d18d8c136722f737f665cce90304",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/source-documents/1A13EmehnasmOYDnvC3Uc7QxGF8wblgZM87WnIFW6X6Q.md": {
+    "mtime": 1791057247.444777,
+    "ast_hash": "64984a418154828d9e91123b0fd4de8d",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/source-documents/1Hr-dYzS2gM3C2W7H-HJvxIAga_kIJVme659VuQGHePA.md": {
+    "mtime": 1791057247.4472122,
+    "ast_hash": "2ab1212d9fd899848867876a6ee62efb",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/source-documents/1je4kGoC8rEgLGVCIc4ShWByU1_P_VrfGpGgIPknP_sc.md": {
+    "mtime": 1791057247.4461875,
+    "ast_hash": "708ca2747b81ea21298768a7865b8155",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/source-documents/1nKFQg3xZl5ZnnlWnJ27wImSN6eYrqbnwgyTi9LpIBJU.md": {
+    "mtime": 1791057247.4457774,
+    "ast_hash": "912980ed40c064d7290e928c8ca5d721",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/source-documents/assets.md": {
+    "mtime": 1791057247.4437776,
+    "ast_hash": "60a729ebf60df0ac086b6ba59cb4c165",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/source-documents/briefing.md": {
+    "mtime": 1791057247.4397726,
+    "ast_hash": "0c46470241d70bff9da502991b6ae01c",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/source-documents/business-pitch.md": {
+    "mtime": 1791057247.4407768,
+    "ast_hash": "7dd28ce97c77f91d8ea225b3ab6d4d67",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/source-documents/directions.md": {
+    "mtime": 1791057247.4437776,
+    "ast_hash": "4c312fc7050d64191582c385b4a7d164",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/source-documents/kit-v1.md": {
+    "mtime": 1791057247.4397726,
+    "ast_hash": "b529a085ef9da0ce073d52812db86ad8",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/source-documents/kit-v2.md": {
+    "mtime": 1791057247.4427772,
+    "ast_hash": "01b2c68124785309734e048dcd3027cb",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/source-documents/research-backing.md": {
+    "mtime": 1791057247.4472122,
+    "ast_hash": "87cfa1d15a0194330209fc56344d1ad5",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/source-documents/script-v2.md": {
+    "mtime": 1791057247.4472122,
+    "ast_hash": "55e10e98eddce38c909b30f4f2d7f1bf",
+    "semantic_hash": ""
+  },
+  "public/media/element-scent-study-prompt.txt": {
+    "mtime": 1791057106.0545337,
+    "ast_hash": "e00f348f74af706c68c3db94e2a3a92e",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-desktop.jpg": {
+    "mtime": 1791057760.3916214,
+    "ast_hash": "3fc378b5290bb2a369b0ecdcc2027191",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-mobile.jpg": {
+    "mtime": 1791057547.2746837,
+    "ast_hash": "e763268802c87ab8c8f7c800229f5349",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/element-board.jpg": {
+    "mtime": 1791056900.2299266,
+    "ast_hash": "b262a568b95a6a31f0a556719993040e",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/element-desktop.jpg": {
+    "mtime": 1791057771.2660084,
+    "ast_hash": "018691b8e557ce49add2f67e455f7cfb",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/element-mobile-zh.jpg": {
+    "mtime": 1791056990.3685591,
+    "ast_hash": "827e8b14e91ee40f496fb73ef7c5d123",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/element-mobile.jpg": {
+    "mtime": 1791056974.4823015,
+    "ast_hash": "f2ea0580ca0c841f86fe32405cfb7c6c",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/home-collections.jpg": {
+    "mtime": 1791057145.446656,
+    "ast_hash": "8933fd672853ca859e5d01e90c32c335",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-000.jpg": {
+    "mtime": 1791057388.967154,
+    "ast_hash": "90d7d5558a4e0733e4881efb2b1b954f",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-001.jpg": {
+    "mtime": 1791057389.2982893,
+    "ast_hash": "8682e68157a39b7328ae8331d1142d5a",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-002.jpg": {
+    "mtime": 1791057389.604022,
+    "ast_hash": "9fbea023c5de4ce178c1dafc587975ff",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-003.jpg": {
+    "mtime": 1791057389.9479496,
+    "ast_hash": "80d83d9a97e19b330b40241db5966d91",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-004.jpg": {
+    "mtime": 1791057390.054684,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-005.jpg": {
+    "mtime": 1791057390.1812892,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-006.jpg": {
+    "mtime": 1791057390.304539,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-007.jpg": {
+    "mtime": 1791057390.445664,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-008.jpg": {
+    "mtime": 1791057390.5639133,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-009.jpg": {
+    "mtime": 1791057390.7060966,
+    "ast_hash": "08a873ef57e62b26f288e6c147956525",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-010.jpg": {
+    "mtime": 1791057391.0112216,
+    "ast_hash": "1714b5ab4be0b5a0c1948dd01212f5d3",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-011.jpg": {
+    "mtime": 1791057391.3462276,
+    "ast_hash": "37a2f23f97d0350d9dfd139433913392",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-012.jpg": {
+    "mtime": 1791057391.7262373,
+    "ast_hash": "b42016be205a95150ef258099690c519",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-013.jpg": {
+    "mtime": 1791057392.1037703,
+    "ast_hash": "91c5fec775e95174bcd4f8f523ead1e5",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-014.jpg": {
+    "mtime": 1791057392.2299542,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-015.jpg": {
+    "mtime": 1791057392.3483977,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-016.jpg": {
+    "mtime": 1791057392.462979,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-017.jpg": {
+    "mtime": 1791057392.5949638,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-018.jpg": {
+    "mtime": 1791057392.7311506,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-019.jpg": {
+    "mtime": 1791057392.8746495,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-020.jpg": {
+    "mtime": 1791057393.0240917,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-021.jpg": {
+    "mtime": 1791057393.1630404,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-022.jpg": {
+    "mtime": 1791057393.285701,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-023.jpg": {
+    "mtime": 1791057393.3880134,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-024.jpg": {
+    "mtime": 1791057393.4909883,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-025.jpg": {
+    "mtime": 1791057393.587469,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-026.jpg": {
+    "mtime": 1791057393.6905117,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-027.jpg": {
+    "mtime": 1791057393.7874131,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-028.jpg": {
+    "mtime": 1791057393.8916216,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-029.jpg": {
+    "mtime": 1791057393.995697,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-030.jpg": {
+    "mtime": 1791057394.090832,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-031.jpg": {
+    "mtime": 1791057394.188943,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-032.jpg": {
+    "mtime": 1791057394.2783718,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-033.jpg": {
+    "mtime": 1791057394.375422,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-034.jpg": {
+    "mtime": 1791057394.4671986,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-035.jpg": {
+    "mtime": 1791057394.5697417,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-036.jpg": {
+    "mtime": 1791057394.6692579,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-037.jpg": {
+    "mtime": 1791057394.7699008,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-038.jpg": {
+    "mtime": 1791057394.8791797,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-039.jpg": {
+    "mtime": 1791057394.9872339,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-040.jpg": {
+    "mtime": 1791057395.0926278,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-041.jpg": {
+    "mtime": 1791057395.1963353,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-042.jpg": {
+    "mtime": 1791057395.2963347,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-043.jpg": {
+    "mtime": 1791057395.4004498,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-044.jpg": {
+    "mtime": 1791057395.5145442,
+    "ast_hash": "9a0f7b91c6eff1c441fbf95109490da0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-sheet-1.jpg": {
+    "mtime": 1791057395.594764,
+    "ast_hash": "2bc8e44a6bb191e88e17e48ca5fd8b70",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/Full-script-sheet-2.jpg": {
+    "mtime": 1791057395.6299827,
+    "ast_hash": "405396079966e5878a5edc71470055da",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7238-000.jpg": {
+    "mtime": 1791057285.3594441,
+    "ast_hash": "87418ebfc1751012dfc5a82050e40ed7",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7238-001.jpg": {
+    "mtime": 1791057285.7143059,
+    "ast_hash": "6da057c2d6759ca047b864e660659789",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7238-002.jpg": {
+    "mtime": 1791057286.001786,
+    "ast_hash": "be9cc6c8a041b6b090aab72cc5d8606f",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7238-003.jpg": {
+    "mtime": 1791057286.3217359,
+    "ast_hash": "2ddc18fde7c0da9f69e53feee7ce7aba",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7238-004.jpg": {
+    "mtime": 1791057286.6791234,
+    "ast_hash": "f8e09d705f259d836598a774ba48ea0f",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7238-sheet-1.jpg": {
+    "mtime": 1791057286.7186158,
+    "ast_hash": "86dfe93d2e196f0cf209fc81e55d516b",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7239-000.jpg": {
+    "mtime": 1791057286.909652,
+    "ast_hash": "2bbd97c6ad483408ba078dbecafc95a1",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7239-001.jpg": {
+    "mtime": 1791057287.1205337,
+    "ast_hash": "21f1e4b18e83b882156c2d8d5f2e1908",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7239-002.jpg": {
+    "mtime": 1791057287.3744783,
+    "ast_hash": "e4411fd9c6f54feeb694d16b578d6fa7",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7239-003.jpg": {
+    "mtime": 1791057287.640277,
+    "ast_hash": "a004be2e2c153eab3dc9e6ba5d09a5b4",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7239-004.jpg": {
+    "mtime": 1791057287.9306104,
+    "ast_hash": "9851bb05757644be615f90990d4edabb",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7239-sheet-1.jpg": {
+    "mtime": 1791057287.9689622,
+    "ast_hash": "23cb3baaace0be831d52c822807f9499",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7240-000.jpg": {
+    "mtime": 1791057288.452115,
+    "ast_hash": "3a9c615cfb558fd16b1ab7421fc927bd",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7240-001.jpg": {
+    "mtime": 1791057289.01881,
+    "ast_hash": "3378658be915d1206c0bff6e5fcc5953",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7240-002.jpg": {
+    "mtime": 1791057289.557637,
+    "ast_hash": "18f3e6ed699720729a7384f3032dc702",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7240-003.jpg": {
+    "mtime": 1791057290.1714854,
+    "ast_hash": "da44418743fd5a89a8127f9b9b68f1e3",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7240-004.jpg": {
+    "mtime": 1791057290.5370998,
+    "ast_hash": "b3d4dcadd52a437668f6e033af09e277",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7240-sheet-1.jpg": {
+    "mtime": 1791057290.621108,
+    "ast_hash": "4144eef88c6537172e6ee8a876a0bb6c",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7241-000.jpg": {
+    "mtime": 1791057291.0579746,
+    "ast_hash": "f1d7b99215845398eea8de609285f233",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7241-001.jpg": {
+    "mtime": 1791057291.8633325,
+    "ast_hash": "b8b8fcdab45012876ecaba3e5254a0dd",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7241-002.jpg": {
+    "mtime": 1791057292.131443,
+    "ast_hash": "bb4379e8688c14b827fde402b98cc07d",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7241-003.jpg": {
+    "mtime": 1791057292.7890198,
+    "ast_hash": "bdeee794de08b0a7f78f6097a663fa56",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7241-004.jpg": {
+    "mtime": 1791057293.1787765,
+    "ast_hash": "d3b2ed075056e6bc17e342df650ecc0e",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7241-sheet-1.jpg": {
+    "mtime": 1791057293.222602,
+    "ast_hash": "5cb84b6e99fe98083ce5c6dd67a2af8a",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7242-000.jpg": {
+    "mtime": 1791057293.4399254,
+    "ast_hash": "996dd960e517cddedb04e27d02e65733",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7242-001.jpg": {
+    "mtime": 1791057294.0171065,
+    "ast_hash": "126d642657ed64b169c8a24ac7626763",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7242-002.jpg": {
+    "mtime": 1791057294.4118042,
+    "ast_hash": "e9697e0ce0633a7974ee445d32fb504a",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7242-003.jpg": {
+    "mtime": 1791057295.0935035,
+    "ast_hash": "30bb248ac619f18b8941346d0be79ec8",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7242-004.jpg": {
+    "mtime": 1791057295.7718902,
+    "ast_hash": "2105b2838392a332df2bb43a49bb51a7",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7242-sheet-1.jpg": {
+    "mtime": 1791057295.8142612,
+    "ast_hash": "30b609697345349a9d96332e890c72f8",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7243-000.jpg": {
+    "mtime": 1791057296.1960347,
+    "ast_hash": "f0d1edc25098745c96384c0a6a7ba24d",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7243-001.jpg": {
+    "mtime": 1791057296.9188585,
+    "ast_hash": "a2eab8115dc1bbe6152471ba2a906342",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7243-002.jpg": {
+    "mtime": 1791057297.4711242,
+    "ast_hash": "0ca37adea7e8a294e4ad64a1e0ae93e1",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7243-003.jpg": {
+    "mtime": 1791057298.3050807,
+    "ast_hash": "b785bdccaf8fc1cbb657e81bffef195b",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7243-004.jpg": {
+    "mtime": 1791057298.6849155,
+    "ast_hash": "919195dfb723275db438a953bc435baa",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7243-sheet-1.jpg": {
+    "mtime": 1791057298.7465043,
+    "ast_hash": "fc56d683da19f9a9468d49d1d934f191",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7244-000.jpg": {
+    "mtime": 1791057299.168302,
+    "ast_hash": "4d9fe38195c49847c7fef7918d47df5b",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7244-001.jpg": {
+    "mtime": 1791057299.811263,
+    "ast_hash": "b0b81d3b7a6f242f258d1d5115467dcf",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7244-002.jpg": {
+    "mtime": 1791057300.356801,
+    "ast_hash": "dd3727bffb1b6fd55e0062af4640ef44",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7244-003.jpg": {
+    "mtime": 1791057300.6976266,
+    "ast_hash": "55ca6dbb04840a2b8c0d9e4671a33212",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7244-004.jpg": {
+    "mtime": 1791057301.2491007,
+    "ast_hash": "fc92a2a94407dbb7b684f3dcb9d806ea",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7244-sheet-1.jpg": {
+    "mtime": 1791057301.3017113,
+    "ast_hash": "9c15d95e3cb72e0bb312115a7a68af9f",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7245-000.jpg": {
+    "mtime": 1791057301.6234589,
+    "ast_hash": "a6401402144c00e0e0ebcd025377da21",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7245-001.jpg": {
+    "mtime": 1791057302.4965074,
+    "ast_hash": "a85eda0ec1eed449680637950a91d0af",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7245-002.jpg": {
+    "mtime": 1791057302.756898,
+    "ast_hash": "c27e9fe002f2cb09f3dd8192b44b9774",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7245-003.jpg": {
+    "mtime": 1791057303.654158,
+    "ast_hash": "e359cefc5c1954e5d03ac78742968d37",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7245-004.jpg": {
+    "mtime": 1791057304.2439454,
+    "ast_hash": "d81a2d2024cd2845c13122fd9fcb2447",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7245-sheet-1.jpg": {
+    "mtime": 1791057304.3007202,
+    "ast_hash": "0c71d18ed7f1be85922db39f1e61675d",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7246-000.jpg": {
+    "mtime": 1791057304.754926,
+    "ast_hash": "114e4f69da60729358c7d76dec47bfc9",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7246-001.jpg": {
+    "mtime": 1791057305.3719668,
+    "ast_hash": "7a9ee2abc24b68ebd4275da0da2325ca",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7246-002.jpg": {
+    "mtime": 1791057305.7414215,
+    "ast_hash": "69e80e1b5e754e0e1f415021d86318b9",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7246-003.jpg": {
+    "mtime": 1791057306.18845,
+    "ast_hash": "08ae94a5d42c7d817ae33130e2d01582",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7246-004.jpg": {
+    "mtime": 1791057306.6433666,
+    "ast_hash": "e840bd83dcc00f57f618f1c2e5d5eb88",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7246-sheet-1.jpg": {
+    "mtime": 1791057306.7283854,
+    "ast_hash": "abeedc11bb2d462a3c4be9fdf75a57fc",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7247-000.jpg": {
+    "mtime": 1791057307.1006052,
+    "ast_hash": "65bdc31f01c46638b9308ada0aa53f2b",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7247-001.jpg": {
+    "mtime": 1791057307.6895587,
+    "ast_hash": "69d45cbb1e5545e4717bd9a60550d92b",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7247-002.jpg": {
+    "mtime": 1791057308.4159667,
+    "ast_hash": "8198e16fce45fb9874efcc1e6c20f6db",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7247-003.jpg": {
+    "mtime": 1791057309.0459602,
+    "ast_hash": "2b61b9fee1891a42c24429a789a2b1f4",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7247-004.jpg": {
+    "mtime": 1791057309.283919,
+    "ast_hash": "55074549bf32213840dc12ca2fc2c993",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7247-sheet-1.jpg": {
+    "mtime": 1791057309.3292005,
+    "ast_hash": "3aeb5347afb536a6474c73c0639e570a",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7248-000.jpg": {
+    "mtime": 1791057309.6192338,
+    "ast_hash": "c95c72526b3b657ac9c7fcbb77af4dd9",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7248-001.jpg": {
+    "mtime": 1791057310.0458596,
+    "ast_hash": "9efe7db88ee4f6b8216eac97c56fc5c3",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7248-002.jpg": {
+    "mtime": 1791057310.294919,
+    "ast_hash": "edd8bd39f5fe7fc2eeaa7c645c7a3859",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7248-003.jpg": {
+    "mtime": 1791057310.6847627,
+    "ast_hash": "98794f023ba2b77075b86d73e3db2448",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7248-004.jpg": {
+    "mtime": 1791057310.930066,
+    "ast_hash": "56a38603841a1152f74fcb8be382f07e",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7248-sheet-1.jpg": {
+    "mtime": 1791057310.9957716,
+    "ast_hash": "1837eac833ad391ef658a81c1419dd58",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7249-000.jpg": {
+    "mtime": 1791057311.3878448,
+    "ast_hash": "9024b8d97802c413d824eef28a41a0fd",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7249-001.jpg": {
+    "mtime": 1791057311.57571,
+    "ast_hash": "3385204e04d909831d217795bb4ebbe6",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7249-002.jpg": {
+    "mtime": 1791057311.9373536,
+    "ast_hash": "6fc1be13379bea5cd87770c86324f6b0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7249-003.jpg": {
+    "mtime": 1791057312.6278257,
+    "ast_hash": "f56edde380034c78edfd18e3e36f57bc",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7249-004.jpg": {
+    "mtime": 1791057313.199247,
+    "ast_hash": "d4bca9a633722819a5f4daca47510782",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7249-sheet-1.jpg": {
+    "mtime": 1791057313.2458508,
+    "ast_hash": "671313a092347ec051e58075872d5f60",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7250-000.jpg": {
+    "mtime": 1791057313.5453687,
+    "ast_hash": "d9137e9a5032e1405ddf5ed47afab9d6",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7250-001.jpg": {
+    "mtime": 1791057313.907049,
+    "ast_hash": "f15ad77b8c1506c532200b819044da41",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7250-002.jpg": {
+    "mtime": 1791057314.215925,
+    "ast_hash": "16787a5caf823e47a38c6b51f7473af1",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7250-003.jpg": {
+    "mtime": 1791057314.485721,
+    "ast_hash": "6d2caf3ad1c1bbdbb4e684c8122ad7da",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7250-004.jpg": {
+    "mtime": 1791057315.1209867,
+    "ast_hash": "aab49016841a6315ac5a5ea4b995cb15",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7250-sheet-1.jpg": {
+    "mtime": 1791057315.1726875,
+    "ast_hash": "e117a118890b81a72e9a147a8c518d40",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-000.jpg": {
+    "mtime": 1791057316.029435,
+    "ast_hash": "8e7992cb92b1b860aa7ab5e693ab353c",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-001.jpg": {
+    "mtime": 1791057316.5051181,
+    "ast_hash": "0a83b6355f1bddfbb4a41db37df9039f",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-002.jpg": {
+    "mtime": 1791057317.0823123,
+    "ast_hash": "7cc125d1be2e94a362e18976bc347643",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-003.jpg": {
+    "mtime": 1791057317.4792755,
+    "ast_hash": "ab115d9d31e59e1a8d3ce7b5a859ffc4",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-004.jpg": {
+    "mtime": 1791057317.9584336,
+    "ast_hash": "4132007b959f41dd3762174faff3f239",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-005.jpg": {
+    "mtime": 1791057318.663251,
+    "ast_hash": "40d56637d318fd670c33dc095590fd58",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-006.jpg": {
+    "mtime": 1791057319.0047503,
+    "ast_hash": "4872a320415341e7237385a3ee7d2147",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-007.jpg": {
+    "mtime": 1791057319.5319085,
+    "ast_hash": "3852b1a80da5ece2ad64b2258ce6f592",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-008.jpg": {
+    "mtime": 1791057320.3466656,
+    "ast_hash": "274c13f8cbacfa57f55de4d02cbd3b56",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-009.jpg": {
+    "mtime": 1791057320.661375,
+    "ast_hash": "af8411f4f50627f1306b06bbf8042cea",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-010.jpg": {
+    "mtime": 1791057321.2867818,
+    "ast_hash": "b685b5970e1f99d923eeec801bdd4d2b",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-011.jpg": {
+    "mtime": 1791057322.0064838,
+    "ast_hash": "679e598c39b116dfd3672e3fa7d7ca58",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-012.jpg": {
+    "mtime": 1791057322.455091,
+    "ast_hash": "af3762689d85b765551de0efea7509fc",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-013.jpg": {
+    "mtime": 1791057323.1398096,
+    "ast_hash": "6bc8c52cd9740ef920e917b3f1b4e2bb",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-014.jpg": {
+    "mtime": 1791057323.8559175,
+    "ast_hash": "0d21178e24f75625f61e49e42faf6da6",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-015.jpg": {
+    "mtime": 1791057324.3074439,
+    "ast_hash": "1365dbf8bf84f22221fdc66bab343b01",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-016.jpg": {
+    "mtime": 1791057324.918984,
+    "ast_hash": "7879d3de615197848380cffb7fa3ce43",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-017.jpg": {
+    "mtime": 1791057325.1500115,
+    "ast_hash": "288fe2db0ae6cb6fc639902af7586808",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-018.jpg": {
+    "mtime": 1791057325.5991132,
+    "ast_hash": "30be5a010c98e0895bd1a8cebade3c8d",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-019.jpg": {
+    "mtime": 1791057326.220343,
+    "ast_hash": "6ebd6ccf701d611bc9a663d4e2a20afd",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-020.jpg": {
+    "mtime": 1791057326.54622,
+    "ast_hash": "bbc1b6cd9ce19e57acaaa24218d4c76d",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-021.jpg": {
+    "mtime": 1791057327.081191,
+    "ast_hash": "ce9532574dc5f3c5edf81861c1cd23f9",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-022.jpg": {
+    "mtime": 1791057327.8412514,
+    "ast_hash": "474229ce1a92e40973cb48a272e01fcb",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-023.jpg": {
+    "mtime": 1791057328.2451465,
+    "ast_hash": "ac15c28680fb80cb651379431dd65ec0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-024.jpg": {
+    "mtime": 1791057328.738595,
+    "ast_hash": "3bc356c93f57ed30aa392a94630e4e09",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-025.jpg": {
+    "mtime": 1791057329.661129,
+    "ast_hash": "7d746deebf134209d0a0283f0f8c0d69",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-026.jpg": {
+    "mtime": 1791057330.0748487,
+    "ast_hash": "ecf8ca83d58e13f6e4a25d816aefe020",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-027.jpg": {
+    "mtime": 1791057331.0146277,
+    "ast_hash": "d9928e0b6a9ac2ed10b00d1ae4711dd8",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-028.jpg": {
+    "mtime": 1791057331.8593352,
+    "ast_hash": "c9ad7067e28c69057ef85937216701aa",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-029.jpg": {
+    "mtime": 1791057332.3663437,
+    "ast_hash": "9581534f78d807dc34b59544350fb11e",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-030.jpg": {
+    "mtime": 1791057333.0279272,
+    "ast_hash": "2ee010d81b05e9b18c89b4c1474528ff",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-031.jpg": {
+    "mtime": 1791057333.4512239,
+    "ast_hash": "548d2a577a62e4e59fa1c6de19ff2847",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-032.jpg": {
+    "mtime": 1791057333.9247942,
+    "ast_hash": "ed9b06fa9807f615df0e45ce053903fc",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-033.jpg": {
+    "mtime": 1791057334.7799973,
+    "ast_hash": "fc58b45289eedcd2b4b1c2c6196123e0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-034.jpg": {
+    "mtime": 1791057335.0662725,
+    "ast_hash": "6229d85926d71fcd23184700d89f4a63",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-035.jpg": {
+    "mtime": 1791057335.6656208,
+    "ast_hash": "7633e5e1f5d73f9e855f0c20573523b3",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-036.jpg": {
+    "mtime": 1791057336.339902,
+    "ast_hash": "5cefd6c4ab23cbc7205e5a60c58cdf31",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-037.jpg": {
+    "mtime": 1791057336.6800332,
+    "ast_hash": "04365b0960cefdfe2c6d2a8e61f73997",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-038.jpg": {
+    "mtime": 1791057337.1802063,
+    "ast_hash": "31b5d574419840ae32f52ef38285ce64",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-039.jpg": {
+    "mtime": 1791057337.8224509,
+    "ast_hash": "4207719fdaf38b54ae269a885ecb19c7",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-040.jpg": {
+    "mtime": 1791057338.302109,
+    "ast_hash": "53adda1f736bbef7457e5e295a0e6812",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-041.jpg": {
+    "mtime": 1791057339.2360473,
+    "ast_hash": "6f7d0b1d8922f62789f09bff2681dc9a",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-042.jpg": {
+    "mtime": 1791057340.4521341,
+    "ast_hash": "1e9d5a5d5846d46a8669e1cc91c2a456",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-043.jpg": {
+    "mtime": 1791057341.2335982,
+    "ast_hash": "b38ebacd2c98bfef57d7f139343dcd69",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-044.jpg": {
+    "mtime": 1791057342.2252307,
+    "ast_hash": "2abb89365fcc1bd43d2c1fc3dbf7be7a",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-045.jpg": {
+    "mtime": 1791057342.6376617,
+    "ast_hash": "e08ba39cc86918d6022d0e25bb83124e",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-046.jpg": {
+    "mtime": 1791057343.460352,
+    "ast_hash": "bdd9d4d779a49da250fbb9c0f68f46fd",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-047.jpg": {
+    "mtime": 1791057344.5430317,
+    "ast_hash": "2ad791fafd94054b46e94376fdd3ef3a",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-048.jpg": {
+    "mtime": 1791057344.9080508,
+    "ast_hash": "b39097c748505bb5a28623bd073cf1f1",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-049.jpg": {
+    "mtime": 1791057345.5942621,
+    "ast_hash": "40b192e8731dfd960530f5ee687447c8",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-050.jpg": {
+    "mtime": 1791057346.8208947,
+    "ast_hash": "c7e5435ddca36161ff4256433610a8d0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-051.jpg": {
+    "mtime": 1791057347.2827423,
+    "ast_hash": "c7312060e0a9b5a862d7f9d28146debe",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-052.jpg": {
+    "mtime": 1791057347.869014,
+    "ast_hash": "8b13068975c6138ee4f6e77cabc8ca40",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-053.jpg": {
+    "mtime": 1791057348.6898515,
+    "ast_hash": "0c161151e526f6e7d3f396b6c151c93a",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-054.jpg": {
+    "mtime": 1791057349.4972608,
+    "ast_hash": "5158f2b74aca41139103c1151b272046",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-055.jpg": {
+    "mtime": 1791057350.3521981,
+    "ast_hash": "e541e846bfcb94336c030d22964bcc3e",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-056.jpg": {
+    "mtime": 1791057351.2499015,
+    "ast_hash": "65c89268319ad1ba8577fab646289409",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-057.jpg": {
+    "mtime": 1791057351.734296,
+    "ast_hash": "267f91e2deffb53852c0a07ae04511b2",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-058.jpg": {
+    "mtime": 1791057352.39473,
+    "ast_hash": "3a6491ddfc95a0dbc25810e96f1aabcc",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-059.jpg": {
+    "mtime": 1791057352.8131766,
+    "ast_hash": "584aba47799860c0f9474b40e8ece6cd",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-060.jpg": {
+    "mtime": 1791057353.3580332,
+    "ast_hash": "05a2c2389403015eb66dbcba5a06bbfd",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-061.jpg": {
+    "mtime": 1791057354.1794446,
+    "ast_hash": "a30b8708ffdc83f3d628ec5f11eb5406",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-062.jpg": {
+    "mtime": 1791057354.455412,
+    "ast_hash": "92eabb0a7099c7a30b1e40ab4cf201b7",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-063.jpg": {
+    "mtime": 1791057355.001294,
+    "ast_hash": "1b1b70539e5d1eadf2f0db4804a62a7a",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-064.jpg": {
+    "mtime": 1791057355.5949726,
+    "ast_hash": "4eacc1d42327c8e5f9db55431db63295",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-065.jpg": {
+    "mtime": 1791057355.8994472,
+    "ast_hash": "24d869cbb43ead1b8cc5e251cae5410f",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-066.jpg": {
+    "mtime": 1791057356.380174,
+    "ast_hash": "1a355b50cd047c1fe11268a6194bea1c",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-067.jpg": {
+    "mtime": 1791057357.0083983,
+    "ast_hash": "befc5e171b8f3bef0e86965fe812141b",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-068.jpg": {
+    "mtime": 1791057357.3202136,
+    "ast_hash": "8c2f97b6f4b9ed077bc537268e7d1c00",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-069.jpg": {
+    "mtime": 1791057357.8145974,
+    "ast_hash": "32919eb34b8c3fa391e3ab1fbe2c95c1",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-070.jpg": {
+    "mtime": 1791057358.4171293,
+    "ast_hash": "ccc0bfe4d32b50ee20100d5fb15633a6",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-071.jpg": {
+    "mtime": 1791057358.777135,
+    "ast_hash": "2fe32eb2504533aff67b7080fd6abe2f",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-072.jpg": {
+    "mtime": 1791057359.2451484,
+    "ast_hash": "8613d6b7e0596fa7e8a14071a0ffab9d",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-073.jpg": {
+    "mtime": 1791057359.4659145,
+    "ast_hash": "1f15a8f2db82f17aa66ec228eeada91e",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-074.jpg": {
+    "mtime": 1791057359.7865086,
+    "ast_hash": "ab0356aa059dc51c327cd6ded0a29ff5",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-075.jpg": {
+    "mtime": 1791057360.3197286,
+    "ast_hash": "3845be999f867037081a16a2e9822a80",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-076.jpg": {
+    "mtime": 1791057360.5294924,
+    "ast_hash": "765332163fff687ebff7fb22a2064d2f",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-077.jpg": {
+    "mtime": 1791057360.946874,
+    "ast_hash": "50235f0480e4993cbf0b62d6264096d9",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-078.jpg": {
+    "mtime": 1791057361.4629574,
+    "ast_hash": "8bfdd43ef41e9f0bce21c295f06c52ee",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-079.jpg": {
+    "mtime": 1791057361.7773058,
+    "ast_hash": "5c9bb5460d6f4a8cc2102f7dba9f69c4",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-080.jpg": {
+    "mtime": 1791057362.2120395,
+    "ast_hash": "7edadaf0a53bae97042e2de68db7d83f",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-081.jpg": {
+    "mtime": 1791057362.7877867,
+    "ast_hash": "f572cdc271a8db8236be74a61516dae4",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-082.jpg": {
+    "mtime": 1791057363.090137,
+    "ast_hash": "55248523aeef8dd3ebe3457027e6e985",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-083.jpg": {
+    "mtime": 1791057363.574016,
+    "ast_hash": "5e0c35141564edb5c63ad9a7bfb58b7e",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-084.jpg": {
+    "mtime": 1791057364.21272,
+    "ast_hash": "5e436966fdaaadd1ec08a2b3ab3850b3",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-085.jpg": {
+    "mtime": 1791057364.5545177,
+    "ast_hash": "80d4c5cea686a99472529c0bff237fdc",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-086.jpg": {
+    "mtime": 1791057365.075508,
+    "ast_hash": "bbc9a8ebe20fb03dd13e1c6888287ca7",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-087.jpg": {
+    "mtime": 1791057365.333951,
+    "ast_hash": "6fbafa81a8f6aed634b3114c1ee306e7",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-088.jpg": {
+    "mtime": 1791057365.7120461,
+    "ast_hash": "da8611a00004e581db1ec3565d56bd69",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-089.jpg": {
+    "mtime": 1791057366.306841,
+    "ast_hash": "fac0a1e4d0ea45b225583427d8a6d9ba",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-090.jpg": {
+    "mtime": 1791057366.547928,
+    "ast_hash": "2a4316d208593eb3db34e66b99a606d2",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-091.jpg": {
+    "mtime": 1791057366.9544194,
+    "ast_hash": "09cd7feaa0817c6a89847d0695198ca2",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-092.jpg": {
+    "mtime": 1791057367.4956596,
+    "ast_hash": "c7cdaf576fa9b6900683725a89ff0452",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-093.jpg": {
+    "mtime": 1791057367.779972,
+    "ast_hash": "5ad828330030a0e1a5e98bf7d2e80864",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-094.jpg": {
+    "mtime": 1791057368.2785077,
+    "ast_hash": "8d74808f3a91537dfe60b0f41d6024e5",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-095.jpg": {
+    "mtime": 1791057368.97942,
+    "ast_hash": "44e5a48f4f3b55ded0ba011090b456e4",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-096.jpg": {
+    "mtime": 1791057369.2812922,
+    "ast_hash": "2d357e120e0a25c213d669eed936c9ac",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-097.jpg": {
+    "mtime": 1791057369.7338767,
+    "ast_hash": "832323205f9e728511703c29f40fc17e",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-098.jpg": {
+    "mtime": 1791057370.3015227,
+    "ast_hash": "6dd302af45715a0417c4ea759758d8f8",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-099.jpg": {
+    "mtime": 1791057370.6418257,
+    "ast_hash": "84676041a568063838eeefe825e66450",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-100.jpg": {
+    "mtime": 1791057371.1325662,
+    "ast_hash": "3ae1c08810d1a2e404c9f10d9d409175",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-101.jpg": {
+    "mtime": 1791057371.3508215,
+    "ast_hash": "35b1c7dd7485daa3244de9f13dc0c1eb",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-102.jpg": {
+    "mtime": 1791057371.7194548,
+    "ast_hash": "87824e22eb0fbcb7850f71c33675dd7b",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-103.jpg": {
+    "mtime": 1791057372.293752,
+    "ast_hash": "fac7760f7bfe6344fe50374290c43a9d",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-104.jpg": {
+    "mtime": 1791057372.5842805,
+    "ast_hash": "ec7f9c94acad3d6c72801e0db0afdfe3",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-105.jpg": {
+    "mtime": 1791057373.036494,
+    "ast_hash": "f5233133bec74c759a35210cf5b0ff17",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-106.jpg": {
+    "mtime": 1791057373.5826576,
+    "ast_hash": "cc95c0870ff9a20acc215c3490728d57",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-107.jpg": {
+    "mtime": 1791057373.8671207,
+    "ast_hash": "3f14c6185bbdeb3767cddbb86875ae98",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-108.jpg": {
+    "mtime": 1791057374.3241346,
+    "ast_hash": "0ece486b13be3e1dd0279338e2d9bb8d",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-109.jpg": {
+    "mtime": 1791057374.9442174,
+    "ast_hash": "ac1371f36a21d087e42170b29d51fd70",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-110.jpg": {
+    "mtime": 1791057375.2472599,
+    "ast_hash": "31cf9699ae00f98dd4646bec56102cd7",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-111.jpg": {
+    "mtime": 1791057375.7530901,
+    "ast_hash": "12846302dfb8f9c5fcfddb1ce41c5d91",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-112.jpg": {
+    "mtime": 1791057376.3324544,
+    "ast_hash": "d164d8c32e3a1fc4b508cf4c38fc873e",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-113.jpg": {
+    "mtime": 1791057376.686183,
+    "ast_hash": "070386d8b42ee702d6543705fa8ba86d",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-114.jpg": {
+    "mtime": 1791057377.1609488,
+    "ast_hash": "7aed37e87e9a044e936a141e06f868f7",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-115.jpg": {
+    "mtime": 1791057377.4010525,
+    "ast_hash": "08ecc6a46c09d689caa722d4b42f5d16",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-116.jpg": {
+    "mtime": 1791057377.7265415,
+    "ast_hash": "bf02a3a49eea0421fe8dc126f98bdb37",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-117.jpg": {
+    "mtime": 1791057378.1932738,
+    "ast_hash": "39c20434ce7adbec4cbe65e63e4b0a70",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-118.jpg": {
+    "mtime": 1791057378.4147174,
+    "ast_hash": "761de234a1635ba20956d22d1a3c14fc",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-119.jpg": {
+    "mtime": 1791057378.8262565,
+    "ast_hash": "00407a8d76d3d790fe2ad24475eb86ad",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-120.jpg": {
+    "mtime": 1791057379.3734317,
+    "ast_hash": "a6325a4688f4e1a1b3a36ca4d3aa801a",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-121.jpg": {
+    "mtime": 1791057379.6663408,
+    "ast_hash": "efed0deef81f7bfa8d3aa7d71efe3212",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-122.jpg": {
+    "mtime": 1791057380.1017032,
+    "ast_hash": "3a79c8115330cc8bb40b883634c6b733",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-123.jpg": {
+    "mtime": 1791057380.6864362,
+    "ast_hash": "d0e7364c0e5d4ffb9a850b600a32b3ee",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-124.jpg": {
+    "mtime": 1791057380.9547873,
+    "ast_hash": "245c697b74c13123afefe42bd98e5920",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-125.jpg": {
+    "mtime": 1791057381.3829143,
+    "ast_hash": "73dedb2b7ec7a8c6a3359fca03dfcd91",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-126.jpg": {
+    "mtime": 1791057381.930788,
+    "ast_hash": "73d734d0b6ed795c545551ae04134aa5",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-127.jpg": {
+    "mtime": 1791057382.2159252,
+    "ast_hash": "e0496d3a338bd8b0c5784252f86e1c80",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-128.jpg": {
+    "mtime": 1791057382.6740384,
+    "ast_hash": "944c2b348c06e4851a99330e0af517fe",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-129.jpg": {
+    "mtime": 1791057382.879179,
+    "ast_hash": "bc482f8413e4b98eb69a8644d36444cf",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-130.jpg": {
+    "mtime": 1791057383.2095282,
+    "ast_hash": "f6cfff07a0db874b6a90be6ab660bf34",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-131.jpg": {
+    "mtime": 1791057383.7143493,
+    "ast_hash": "404e9c535b29a69efd9f86a36bf47509",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-132.jpg": {
+    "mtime": 1791057383.9508345,
+    "ast_hash": "e48685cf9f5986015d40d5b0b1c4d793",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-133.jpg": {
+    "mtime": 1791057384.353579,
+    "ast_hash": "45bbd65c280668acbd6f9da453a957e0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-134.jpg": {
+    "mtime": 1791057384.8797274,
+    "ast_hash": "8dfd7bf167912c9284d359d4d2c07f74",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-135.jpg": {
+    "mtime": 1791057385.190244,
+    "ast_hash": "7f9153733fc43a692f41cbe2713d5b36",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-sheet-1.jpg": {
+    "mtime": 1791057385.3173437,
+    "ast_hash": "18b0b50984c270d9e6dc0859db4ea115",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-sheet-2.jpg": {
+    "mtime": 1791057385.3956757,
+    "ast_hash": "a1f2371ffcabbe5bf41d030422eb353f",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-sheet-3.jpg": {
+    "mtime": 1791057385.4748704,
+    "ast_hash": "bc44de235c51ca8505ee232dd249488a",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-sheet-4.jpg": {
+    "mtime": 1791057385.5471394,
+    "ast_hash": "9c0ed08e8398c431af4a29b669499ed8",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7275-sheet-5.jpg": {
+    "mtime": 1791057385.5917313,
+    "ast_hash": "48aa15cec603fdd0af094f3fce93f03b",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7276-000.jpg": {
+    "mtime": 1791057386.1522772,
+    "ast_hash": "5f9c144e95f078d30ccc00a60262dbd5",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7276-001.jpg": {
+    "mtime": 1791057386.3834054,
+    "ast_hash": "9aa9dffa45b0608d0c6e92d6c21ca176",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7276-002.jpg": {
+    "mtime": 1791057386.681892,
+    "ast_hash": "282eeca2be8f339756988a2ace59b458",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7276-003.jpg": {
+    "mtime": 1791057386.9812436,
+    "ast_hash": "c31a70ddbcbcf1e26d382e323552fb98",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7276-004.jpg": {
+    "mtime": 1791057387.1520984,
+    "ast_hash": "f23888748adc06af3fcef1cd1182d2d1",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7276-sheet-1.jpg": {
+    "mtime": 1791057387.184785,
+    "ast_hash": "85920aa3201f49268558c93b345be0e9",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7277-000.jpg": {
+    "mtime": 1791057387.6214325,
+    "ast_hash": "7509368c8b259f5915b395646f3f7206",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7277-001.jpg": {
+    "mtime": 1791057387.8774908,
+    "ast_hash": "1e90a3968aff1db71dd8c307163eef55",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7277-002.jpg": {
+    "mtime": 1791057388.1883037,
+    "ast_hash": "0faf81fbbfe034ceec0f82e492fca6f1",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7277-003.jpg": {
+    "mtime": 1791057388.5408952,
+    "ast_hash": "9934526dfc279c7f5f17aa1f1e33b775",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7277-004.jpg": {
+    "mtime": 1791057388.7475324,
+    "ast_hash": "df017b1a9b321ed7dc14882159aa7327",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7277-sheet-1.jpg": {
+    "mtime": 1791057388.7887068,
+    "ast_hash": "4f85a394611954ae336af883a9e93bb4",
+    "semantic_hash": ""
+  },
+  "public/media/demo-tutorial-blot.webp": {
+    "mtime": 1791057114.123397,
+    "ast_hash": "83c3ee84724564e5fb4a514142fc0767",
+    "semantic_hash": ""
+  },
+  "public/media/demo-tutorial-ph.webp": {
+    "mtime": 1791057130.554195,
+    "ast_hash": "e61367f91a3ccfa1d85dcc43539974f1",
+    "semantic_hash": ""
+  },
+  "public/media/demo-tutorial-scent.webp": {
+    "mtime": 1791057133.8064234,
+    "ast_hash": "0514324952522ba55038b70dbd955343",
+    "semantic_hash": ""
+  },
+  "public/media/element-final-board.webp": {
+    "mtime": 1791056562.9552367,
+    "ast_hash": "234ea24ce979e55358161c5d4643422b",
+    "semantic_hash": ""
+  },
+  "public/media/element-scent-study.webp": {
+    "mtime": 1791056565.843891,
+    "ast_hash": "47ace2fcf5726c93dde814a03c8455da",
+    "semantic_hash": ""
+  },
+  "tmp/pdfs/final-board-reference.png": {
+    "mtime": 1791056215.3230224,
+    "ast_hash": "aceafc7bd32a33ba71aa803f88a7b81f",
+    "semantic_hash": ""
+  },
+  "public/media/demo-tutorial-blot.mp4": {
+    "mtime": 1791057113.5607972,
+    "ast_hash": "704191c88834ea34911543d5a7b97945",
+    "semantic_hash": ""
+  },
+  "public/media/demo-tutorial-ph.mp4": {
+    "mtime": 1791057130.1446755,
+    "ast_hash": "f5454fc084430bd15692fae79a695951",
+    "semantic_hash": ""
+  },
+  "public/media/demo-tutorial-scent.mp4": {
+    "mtime": 1791057133.466386,
+    "ast_hash": "713eff4e4b73b917c11ce2410eeacfcb",
+    "semantic_hash": ""
+  },
+  "tmp/element-claude-context.py": {
+    "mtime": 1791057512.3575637,
+    "ast_hash": "a59b32fae6f661c0e6244d07dd4bc8e4",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/REVIEW.md": {
+    "mtime": 1791062612.8293257,
+    "ast_hash": "9d38ed11ee3d71e3ec687813cfe1265f",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/test-results.txt": {
+    "mtime": 1791058946.558661,
+    "ast_hash": "44a0507540d700dfee8eea2633b3f380",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7271-000.jpg": {
+    "mtime": 1791057684.4668255,
+    "ast_hash": "c346aa6b9125daaa01fee4bacb9a6dce",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7271-001.jpg": {
+    "mtime": 1791057684.9330797,
+    "ast_hash": "4b2a7f67a4870fb445a345ebc488105a",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7271-002.jpg": {
+    "mtime": 1791057685.3394578,
+    "ast_hash": "71d26dbd1307dbee000d6d0ae06fb7f6",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7271-003.jpg": {
+    "mtime": 1791057685.526505,
+    "ast_hash": "ee5534080ec7584a67d4e534d72df804",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7271-004.jpg": {
+    "mtime": 1791057686.010002,
+    "ast_hash": "8429c55e62d528f886db32fc25c99ada",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7271-sheet-1.jpg": {
+    "mtime": 1791057686.056681,
+    "ast_hash": "6393dc6c2f228dbc25523c52be87d984",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7272-000.jpg": {
+    "mtime": 1791057638.6570857,
+    "ast_hash": "4f61e11eb6ea791dab0890ccdeb8c9ad",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7272-001.jpg": {
+    "mtime": 1791057639.1487086,
+    "ast_hash": "54c68fec02d34dfc80e78263ec8d6709",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7272-002.jpg": {
+    "mtime": 1791057639.6388016,
+    "ast_hash": "1a8865787c7acd0312e3db5eed1d5b50",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7272-003.jpg": {
+    "mtime": 1791057640.0259318,
+    "ast_hash": "8fd4f1d1590b9070862e018931825ca1",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7272-004.jpg": {
+    "mtime": 1791057640.3275602,
+    "ast_hash": "6fe650481de06f747bb90948d1abcbd4",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7272-sheet-1.jpg": {
+    "mtime": 1791057640.3718684,
+    "ast_hash": "a84539c8f97c83bd039d4a6e2956c288",
+    "semantic_hash": ""
+  },
+  "app/element/demo/lab-motion-copy.ts": {
+    "mtime": 1791058390.165416,
+    "ast_hash": "0f08eb9fed56166ee3e4c8e28ca92c9f",
+    "semantic_hash": ""
+  },
+  "app/element/demo/lab-motion.tsx": {
+    "mtime": 1791058351.8741565,
+    "ast_hash": "d9913a5837f3de8d0915bf2a595e2118",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/storyboard.json": {
+    "mtime": 1791059052.7520783,
+    "ast_hash": "93a3210743f8b5454ac171bd965b77c4",
+    "semantic_hash": ""
+  },
+  "public/media/element-base-vials.json": {
+    "mtime": 1791058166.249263,
+    "ast_hash": "197749a2044d6de2da133608ba3307e3",
+    "semantic_hash": ""
+  },
+  "public/media/element-lab-study.json": {
+    "mtime": 1791058849.9269764,
+    "ast_hash": "5667a2e1c5173e7aa72c8cd463d0a1bf",
+    "semantic_hash": ""
+  },
+  "tmp/element-plan-board.py": {
+    "mtime": 1791058293.9024312,
+    "ast_hash": "0796aa8f6741780d00d4c7381271aefd",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/PLAN.md": {
+    "mtime": 1791058945.1371608,
+    "ast_hash": "7833a20b40561048529e563c3f116780",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage.md": {
+    "mtime": 1791059005.0929306,
+    "ast_hash": "bc9582f2c6c95d0b17e582af8f6ae352",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/review-notes.md": {
+    "mtime": 1791059050.9083724,
+    "ast_hash": "1407f017f9b866f7b2e137ff348a489b",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/review.html": {
+    "mtime": 1791059052.7520783,
+    "ast_hash": "800a0d141fc835e708328f3dac4be715",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/sources.md": {
+    "mtime": 1791059005.0918941,
+    "ast_hash": "a58773b9bafcea8202891fe80f0b7bc0",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/subtitle-cues.md": {
+    "mtime": 1791059005.0918941,
+    "ast_hash": "1994ac84c929192662761b9a6d8f9c66",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/transcript.txt": {
+    "mtime": 1791058033.5487368,
+    "ast_hash": "b80a34e3b56d5a922f36e76e5811b4bf",
+    "semantic_hash": ""
+  },
+  "public/media/element-base-vials.txt": {
+    "mtime": 1791058149.9387386,
+    "ast_hash": "38da7e09bb9b288758d894dd0a05cb5e",
+    "semantic_hash": ""
+  },
+  "public/media/element-lab-study.txt": {
+    "mtime": 1791058055.7224696,
+    "ast_hash": "670853f1c2a5285563d228a175fb9183",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7273-000.jpg": {
+    "mtime": 1791057901.591658,
+    "ast_hash": "07ac9b76300791b24b7d3ce9e3db1d86",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7273-001.jpg": {
+    "mtime": 1791057902.0790787,
+    "ast_hash": "35b404ae7279e8176df66072a3ed76c4",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7273-002.jpg": {
+    "mtime": 1791057902.2695012,
+    "ast_hash": "486f3e64efc5275d138a0d456a1c3e42",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7273-003.jpg": {
+    "mtime": 1791057902.592558,
+    "ast_hash": "b9d08170986e58a1e9a995b457d6a732",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7273-004.jpg": {
+    "mtime": 1791057902.9069746,
+    "ast_hash": "f9dedebaf78a5c7e86a97a7cdfb94e3e",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7273-sheet-1.jpg": {
+    "mtime": 1791057902.9442222,
+    "ast_hash": "59ea89eee86b604c9007840227c93b54",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7274-000.jpg": {
+    "mtime": 1791057903.4589393,
+    "ast_hash": "54eb6d4eecb231014b56bc2fdd479732",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7274-001.jpg": {
+    "mtime": 1791057903.6628375,
+    "ast_hash": "907c7e5a0a11dd7597730c28164f49f8",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7274-002.jpg": {
+    "mtime": 1791057903.8927433,
+    "ast_hash": "37104a911877b03f241482db3406f01c",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7274-003.jpg": {
+    "mtime": 1791057904.3976016,
+    "ast_hash": "35b9e02474104576df6f9e3b870c0e38",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7274-004.jpg": {
+    "mtime": 1791057904.7428393,
+    "ast_hash": "ff32e045364736daf90f71b88f0fb635",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/footage-review/IMG_7274-sheet-1.jpg": {
+    "mtime": 1791057904.8020582,
+    "ast_hash": "090e5076bae7a3347bdd6de92802b991",
+    "semantic_hash": ""
+  },
+  "public/media/element-base-vials.webp": {
+    "mtime": 1791058152.9820552,
+    "ast_hash": "50edaa39c96b5a9bcd16e1a8dae6bcba",
+    "semantic_hash": ""
+  },
+  "public/media/element-lab-study.webp": {
+    "mtime": 1791058058.894721,
+    "ast_hash": "2588bb3a238c2b7dd1a4776410601d4e",
+    "semantic_hash": ""
+  },
+  "public/media/element-pipette.json": {
+    "mtime": 1791058389.5021358,
+    "ast_hash": "e39c30ec4588e58ad6018d23d2ea8ae8",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/build-results.txt": {
+    "mtime": 1791059015.6543515,
+    "ast_hash": "023a1f1905c7734e34d11b8e8f20e807",
+    "semantic_hash": ""
+  },
+  "output/element-video-plan/decisions.md": {
+    "mtime": 1791059050.9083724,
+    "ast_hash": "ebe3f0531ca7a8377de4620988811d3f",
+    "semantic_hash": ""
+  },
+  "public/media/element-pipette.txt": {
+    "mtime": 1791058355.950518,
+    "ast_hash": "b9e325357afe8d682224d0e8731c5568",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-mustard-desktop-final.jpg": {
+    "mtime": 1791058870.7380474,
+    "ast_hash": "1ff24d4422b9228cfcb80a0afb77e7a9",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-mustard-desktop.jpg": {
+    "mtime": 1791058444.5207856,
+    "ast_hash": "1854b66d89eb46e8829a1bb8d0503100",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-mustard-mobile-final.jpg": {
+    "mtime": 1791058777.7380016,
+    "ast_hash": "9d025b6da891d207ab3ea3d2088aa3c0",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-mustard-mobile-zh-final.jpg": {
+    "mtime": 1791058869.5966148,
+    "ast_hash": "769521f2a6914d26796f4ffbd6135121",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-mustard-mobile.jpg": {
+    "mtime": 1791058451.1881976,
+    "ast_hash": "88f5cd754093dfb3069270cd05faa960",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-photo-processing.jpg": {
+    "mtime": 1791058532.3279397,
+    "ast_hash": "3b096d7cb8d0d37be9540e688294d2a2",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-processing-desktop.jpg": {
+    "mtime": 1791058730.822534,
+    "ast_hash": "7ba926d177fa0e71c22481bf6528e2b8",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-processing-mobile.jpg": {
+    "mtime": 1791058727.1290934,
+    "ast_hash": "a0f0c1bb8d13ec7ef3e770d80c4987c9",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-ratings-mobile.jpg": {
+    "mtime": 1791058691.7071257,
+    "ast_hash": "f90855b55c3aef68973563e95ef4b40d",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/landing-bases-desktop.jpg": {
+    "mtime": 1791058582.0773275,
+    "ast_hash": "aef2973ee09853f731a1dcf330513213",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/landing-bases-mobile.jpg": {
+    "mtime": 1791058777.2222095,
+    "ast_hash": "0de8df424c5e519d671f5d120c0e0891",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/landing-composition-desktop.jpg": {
+    "mtime": 1791058566.952492,
+    "ast_hash": "4602bd1fff42d23470cd4cb3156e9c17",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/landing-drop-desktop.jpg": {
+    "mtime": 1791058650.6230805,
+    "ast_hash": "600f485ad28a638078db6dcbbafe82ba",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/landing-drop-mobile.jpg": {
+    "mtime": 1791058764.6356027,
+    "ast_hash": "20b09ea1867ee72c3d4d9d1a068f5743",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/landing-drop-narrow-scroll.jpg": {
+    "mtime": 1791059058.1222737,
+    "ast_hash": "06b600ac92bf1399ed2d1399fbcb19bf",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/landing-drop-release-desktop.jpg": {
+    "mtime": 1791058649.6019475,
+    "ast_hash": "08ff7dbccee8e4be7fadbd68c661ab99",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/landing-drop-scroll-descent.jpg": {
+    "mtime": 1791058740.506577,
+    "ast_hash": "a75d36255d774b9cfaf08b679401074f",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/landing-drop-scroll-landed.jpg": {
+    "mtime": 1791058746.8318963,
+    "ast_hash": "eee468a06b684bfd22ec0317097c5e2d",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/landing-drop-scroll-start.jpg": {
+    "mtime": 1791058764.5644734,
+    "ast_hash": "c98aba5fda06be8f8fa9a91a18a22062",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/landing-explore-desktop.jpg": {
+    "mtime": 1791058791.0043907,
+    "ast_hash": "89b9ef4261fefdc045791a611dd45419",
+    "semantic_hash": ""
+  },
+  "public/media/element-pipette.png": {
+    "mtime": 1791058358.1421535,
+    "ast_hash": "343a3f87430687f56a09d15414b45765",
+    "semantic_hash": ""
+  },
+  "app/element/demo/card-export.ts": {
+    "mtime": 1791063237.5347328,
+    "ast_hash": "b88e726a5a2301c33c06002c96985e47",
+    "semantic_hash": ""
+  },
+  "app/element/demo/demo-vial.tsx": {
+    "mtime": 1791060306.8698099,
+    "ast_hash": "4dd3c3d8084bf5c3b5d8d00c8ce16afd",
+    "semantic_hash": ""
+  },
+  "app/element/demo/local-social.test.ts": {
+    "mtime": 1791060932.7735431,
+    "ast_hash": "334bf3462b050c3960b4f66e5bee145c",
+    "semantic_hash": ""
+  },
+  "app/element/demo/local-social.ts": {
+    "mtime": 1791060932.7735431,
+    "ast_hash": "b284ca402d5dab98fe5339d5d0f19bf9",
+    "semantic_hash": ""
+  },
+  "app/element/demo/sequential-copy.ts": {
+    "mtime": 1791061519.3454037,
+    "ast_hash": "743e37167ac19e98f9114a88ac0f8f4f",
+    "semantic_hash": ""
+  },
+  "app/element/demo/sequential-smell.test.ts": {
+    "mtime": 1791060754.3567443,
+    "ast_hash": "636cbbce35d46f66cf8f5dec270afb6b",
+    "semantic_hash": ""
+  },
+  "app/element/demo/sequential-smell.ts": {
+    "mtime": 1791060754.355239,
+    "ast_hash": "c4337e997590b6d09e4a93158e6e5629",
+    "semantic_hash": ""
+  },
+  "app/element/demo/share-experience.tsx": {
+    "mtime": 1791063154.3028882,
+    "ast_hash": "6c5c54dc4b51bfb64ffd7856ad0a469f",
+    "semantic_hash": ""
+  },
+  "app/element/demo/social-copy.ts": {
+    "mtime": 1791060424.3455217,
+    "ast_hash": "09b7ef666d68cbf7c56db1cfbdfabecc",
+    "semantic_hash": ""
+  },
+  "app/element/element-journey.tsx": {
+    "mtime": 1791063200.415785,
+    "ast_hash": "f3ab7032f3f6832eaa65bcdeaf2b2908",
+    "semantic_hash": ""
+  },
+  "app/element/element-signature.tsx": {
+    "mtime": 1791062999.9185233,
+    "ast_hash": "62b74a0512bdedf780f86e7e6ced2125",
+    "semantic_hash": ""
+  },
+  "app/element/journey-copy.ts": {
+    "mtime": 1791059863.4587762,
+    "ast_hash": "8bf01b34844fa60fe2c90832c344ab26",
+    "semantic_hash": ""
+  },
+  "lib/element/journey-motion.test.ts": {
+    "mtime": 1791063255.6935265,
+    "ast_hash": "13550315a35236f2082a4c6d62891ad1",
+    "semantic_hash": ""
+  },
+  "lib/element/journey-motion.ts": {
+    "mtime": 1791063046.2702343,
+    "ast_hash": "f254d590647ea5015d5ba317351eb166",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-v2-detector.json": {
+    "mtime": 1791061651.9701118,
+    "ast_hash": "1b34942cc48ede26baec7df263ada9bf",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/integrate-journey.py": {
+    "mtime": 1791060068.6914537,
+    "ast_hash": "2eab36cb1ab6b192b1ce7c40c9b5bbc0",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/landing-journey-detector.json": {
+    "mtime": 1791060353.1014845,
+    "ast_hash": "8f791ce0972a61e8106855f9b9bbcfb6",
+    "semantic_hash": ""
+  },
+  "public/media/element-blot-sheet.provenance.json": {
+    "mtime": 1791060021.9794643,
+    "ast_hash": "feff7c29cd9f601537173f9c65b7c22b",
+    "semantic_hash": ""
+  },
+  "public/media/element-blot-sheet.webp.provenance.json": {
+    "mtime": 1791060088.2777264,
+    "ast_hash": "13332b47876229e2210f201d7ee9698a",
+    "semantic_hash": ""
+  },
+  "public/media/element-demo-vial.provenance.json": {
+    "mtime": 1791060326.0590966,
+    "ast_hash": "173edc2b4885a783e6f3a9bc00dbdd08",
+    "semantic_hash": ""
+  },
+  "public/media/element-demo-vial.webp.provenance.json": {
+    "mtime": 1791060528.4370582,
+    "ast_hash": "04d35cd150d855481536b0e8437d9413",
+    "semantic_hash": ""
+  },
+  "public/media/element-ph-strip.provenance.json": {
+    "mtime": 1791060022.103394,
+    "ast_hash": "14fab9f46c3400538be045d1d27a1489",
+    "semantic_hash": ""
+  },
+  "public/media/element-ph-strip.webp.provenance.json": {
+    "mtime": 1791060090.2613797,
+    "ast_hash": "3ed702d712aecf73cfe186ea4aefd32e",
+    "semantic_hash": ""
+  },
+  ".impeccable/briefs/element-demo.md": {
+    "mtime": 1791063529.0166187,
+    "ast_hash": "7186ba0b053e400271606e6ecdf03813",
+    "semantic_hash": ""
+  },
+  ".impeccable/briefs/element-journey.md": {
+    "mtime": 1791063438.4677038,
+    "ast_hash": "1e5ed3af5298a01aac2edf192e803d1e",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/DEMO-REVIEW-BRIEF.md": {
+    "mtime": 1791062149.3158138,
+    "ast_hash": "b1e87e254617b6a39bbd9562df6dfb7d",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/JOURNEY-REVIEW-BRIEF.md": {
+    "mtime": 1791060561.076446,
+    "ast_hash": "b40906baff1c0749d6869cfee6e4ae11",
+    "semantic_hash": ""
+  },
+  "public/media/element-blot-sheet.prompt.txt": {
+    "mtime": 1791060018.7976692,
+    "ast_hash": "e67dbbf0ab2f09e7cf83006abcc7fb90",
+    "semantic_hash": ""
+  },
+  "public/media/element-blot-sheet.webp.prompt.txt": {
+    "mtime": 1791060088.278727,
+    "ast_hash": "e67dbbf0ab2f09e7cf83006abcc7fb90",
+    "semantic_hash": ""
+  },
+  "public/media/element-demo-vial.prompt.txt": {
+    "mtime": 1791060306.8678086,
+    "ast_hash": "04f8d3b36fbb11f91efafbe14976f19f",
+    "semantic_hash": ""
+  },
+  "public/media/element-demo-vial.webp.prompt.txt": {
+    "mtime": 1791060528.438058,
+    "ast_hash": "04f8d3b36fbb11f91efafbe14976f19f",
+    "semantic_hash": ""
+  },
+  "public/media/element-ph-strip.prompt.txt": {
+    "mtime": 1791060018.800601,
+    "ast_hash": "7c4ee8a299a4cda40200dce5d4277761",
+    "semantic_hash": ""
+  },
+  "public/media/element-ph-strip.webp.prompt.txt": {
+    "mtime": 1791060090.2613797,
+    "ast_hash": "7c4ee8a299a4cda40200dce5d4277761",
+    "semantic_hash": ""
+  },
+  ".impeccable/review/element-demo/desktop.png": {
+    "mtime": 1791061688.1683736,
+    "ast_hash": "b0be139e5f0d4d817649c7c4d2ef11ac",
+    "semantic_hash": ""
+  },
+  ".impeccable/review/element-demo/friends.jpg": {
+    "mtime": 1791061325.5862231,
+    "ast_hash": "6a267a1d96ca50f24c8d65a5e467930b",
+    "semantic_hash": ""
+  },
+  ".impeccable/review/element-demo/kit-pause.png": {
+    "mtime": 1791061642.5811992,
+    "ast_hash": "c697eb526680ca9e80aefcb7d415b5d1",
+    "semantic_hash": ""
+  },
+  ".impeccable/review/element-demo/memories.jpg": {
+    "mtime": 1791061516.1923387,
+    "ast_hash": "62994a587d89cca57d9d1dac77ec5681",
+    "semantic_hash": ""
+  },
+  ".impeccable/review/element-demo/mobile.png": {
+    "mtime": 1791061698.4488456,
+    "ast_hash": "07de686ff592980a2fd33d8165d2bf50",
+    "semantic_hash": ""
+  },
+  ".impeccable/review/element-demo/photo-empty.jpg": {
+    "mtime": 1791060745.7734613,
+    "ast_hash": "087db542c10ae2f5f7a39a44c2d5575d",
+    "semantic_hash": ""
+  },
+  ".impeccable/review/element-demo/photo-read.jpg": {
+    "mtime": 1791060755.8478818,
+    "ast_hash": "1ce9c0a5aa9071dfa1794d0b6f92e774",
+    "semantic_hash": ""
+  },
+  ".impeccable/review/element-demo/picks.png": {
+    "mtime": 1791061734.6469977,
+    "ast_hash": "2a101b295a9a983d4bf89c0460ceb191",
+    "semantic_hash": ""
+  },
+  ".impeccable/review/element-demo/simplified.png": {
+    "mtime": 1791061773.1851296,
+    "ast_hash": "e37554972d12a8faccbfa31c3ef556bc",
+    "semantic_hash": ""
+  },
+  ".impeccable/review/element-demo/traditional.png": {
+    "mtime": 1791061762.966038,
+    "ast_hash": "fb51e87ad30f93ca7ae1b4ffdb51b986",
+    "semantic_hash": ""
+  },
+  ".impeccable/review/element-demo/typed-answer.jpg": {
+    "mtime": 1791060822.602675,
+    "ast_hash": "f60f7e29ac91fe02856ff435450a0f41",
+    "semantic_hash": ""
+  },
+  ".impeccable/review/element-journey/incumbent-qr.jpg": {
+    "mtime": 1791060155.5575075,
+    "ast_hash": "3f1129467d5bb98110748ade1620420e",
+    "semantic_hash": ""
+  },
+  ".impeccable/review/element-journey/journey-desktop-final.jpg": {
+    "mtime": 1791060267.4226296,
+    "ast_hash": "38c59ba73d732b8acd81b7e2757c494b",
+    "semantic_hash": ""
+  },
+  ".impeccable/review/element-journey/journey-desktop-papers.jpg": {
+    "mtime": 1791060423.4439666,
+    "ast_hash": "ef4f7a5e7cd67589adb1984768822602",
+    "semantic_hash": ""
+  },
+  ".impeccable/review/element-journey/journey-desktop-pipette.jpg": {
+    "mtime": 1791060180.6958869,
+    "ast_hash": "0d4d271cf1391056a6d5f0a1a3624021",
+    "semantic_hash": ""
+  },
+  ".impeccable/review/element-journey/journey-desktop-refinement.jpg": {
+    "mtime": 1791060181.059762,
+    "ast_hash": "d02103f9ed88ee3ea12af4591bad7259",
+    "semantic_hash": ""
+  },
+  ".impeccable/review/element-journey/journey-desktop-start.jpg": {
+    "mtime": 1791060162.461862,
+    "ast_hash": "3fbf4f0d230dd8fd692a7aaa6133be2b",
+    "semantic_hash": ""
+  },
+  ".impeccable/review/element-journey/journey-mobile-final.jpg": {
+    "mtime": 1791060276.8470514,
+    "ast_hash": "d62566a27066db724612dba56f0c1548",
+    "semantic_hash": ""
+  },
+  ".impeccable/review/element-journey/journey-mobile-footer.jpg": {
+    "mtime": 1791060324.0128345,
+    "ast_hash": "ee3e1c7248f5e4a5116f02a97dca2a64",
+    "semantic_hash": ""
+  },
+  ".impeccable/review/element-journey/journey-mobile-papers.jpg": {
+    "mtime": 1791060323.6595778,
+    "ast_hash": "742f72b0e0c9fbda847a161d03c4ffe3",
+    "semantic_hash": ""
+  },
+  ".impeccable/review/element-journey/journey-mobile-pipette.jpg": {
+    "mtime": 1791060276.5322492,
+    "ast_hash": "8c82e6e82b9434d12dc896dd84979f74",
+    "semantic_hash": ""
+  },
+  ".impeccable/review/element-journey/journey-mobile-reduced.jpg": {
+    "mtime": 1791060423.0112557,
+    "ast_hash": "588247713edb4255a7fca0889c5153be",
+    "semantic_hash": ""
+  },
+  ".impeccable/review/element-journey/journey-mobile-start.jpg": {
+    "mtime": 1791060267.7890992,
+    "ast_hash": "dea9f6b2350cf882f718de509c844633",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-v2-desktop-base-a.jpg": {
+    "mtime": 1791061624.1062167,
+    "ast_hash": "0d6f1706d8a195f7e20b1b6357f305dc",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-v2-desktop-card.jpg": {
+    "mtime": 1791061548.4437585,
+    "ast_hash": "155b1361b95dd417cade41dfe65d8208",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-v2-desktop-card.png": {
+    "mtime": 1791061688.1683736,
+    "ast_hash": "b0be139e5f0d4d817649c7c4d2ef11ac",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-v2-mobile-account.jpg": {
+    "mtime": 1791061317.327931,
+    "ast_hash": "f196df190bc04d83e31837ade2e000cb",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-v2-mobile-base-a.jpg": {
+    "mtime": 1791061008.10074,
+    "ast_hash": "cb452270896b2607e314e99b92b30f3d",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-v2-mobile-base-a.png": {
+    "mtime": 1791061624.4829032,
+    "ast_hash": "e5fd96bcadb95d968f78d07e7b4b39c9",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-v2-mobile-base-f.png": {
+    "mtime": 1791061698.4488456,
+    "ast_hash": "07de686ff592980a2fd33d8165d2bf50",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-v2-mobile-base-pause.jpg": {
+    "mtime": 1791061009.983111,
+    "ast_hash": "70c69c54faec2e8a2c814213e6979fa8",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-v2-mobile-building.jpg": {
+    "mtime": 1791061100.3184652,
+    "ast_hash": "729db867d62feaff55ba64e31c796848",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-v2-mobile-card.jpg": {
+    "mtime": 1791061252.9137657,
+    "ast_hash": "9935c751d23ae114ba869c9e71b26876",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-v2-mobile-friends.jpg": {
+    "mtime": 1791061325.5862231,
+    "ast_hash": "6a267a1d96ca50f24c8d65a5e467930b",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-v2-mobile-hans.png": {
+    "mtime": 1791061773.1851296,
+    "ast_hash": "e37554972d12a8faccbfa31c3ef556bc",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-v2-mobile-hant.png": {
+    "mtime": 1791061762.966038,
+    "ast_hash": "fb51e87ad30f93ca7ae1b4ffdb51b986",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-v2-mobile-intensity-pause.jpg": {
+    "mtime": 1791060983.990537,
+    "ast_hash": "feb21900cb0f721900894ac56c1a0d16",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-v2-mobile-kit-pause.jpg": {
+    "mtime": 1791061405.2395573,
+    "ast_hash": "48f01c42007ebc28b6ac6c4c7a326dbe",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-v2-mobile-kit-pause.png": {
+    "mtime": 1791061642.5811992,
+    "ast_hash": "c697eb526680ca9e80aefcb7d415b5d1",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-v2-mobile-memories.jpg": {
+    "mtime": 1791061516.1923387,
+    "ast_hash": "62994a587d89cca57d9d1dac77ec5681",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-v2-mobile-photo-empty.jpg": {
+    "mtime": 1791060745.7734613,
+    "ast_hash": "087db542c10ae2f5f7a39a44c2d5575d",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-v2-mobile-photo-read.jpg": {
+    "mtime": 1791060755.8478818,
+    "ast_hash": "1ce9c0a5aa9071dfa1794d0b6f92e774",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-v2-mobile-picks.png": {
+    "mtime": 1791061734.6469977,
+    "ast_hash": "2a101b295a9a983d4bf89c0460ceb191",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-v2-mobile-typed.jpg": {
+    "mtime": 1791060822.602675,
+    "ast_hash": "f60f7e29ac91fe02856ff435450a0f41",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-v2-mobile-vial1.jpg": {
+    "mtime": 1791060926.3150651,
+    "ast_hash": "d7088c22d56e0ac504a07cecc0b23272",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-v2-mobile-vial3.jpg": {
+    "mtime": 1791061472.9534576,
+    "ast_hash": "91a8cf0f9de12e4da83b42c4bf786ea4",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/demo-v2-mobile-welcome.jpg": {
+    "mtime": 1791062307.8507545,
+    "ast_hash": "730d9d4d69f1322524a094b0ad443e1c",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/incumbent-qr.jpg": {
+    "mtime": 1791060155.5575075,
+    "ast_hash": "3f1129467d5bb98110748ade1620420e",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/journey-desktop-final.jpg": {
+    "mtime": 1791060267.4226296,
+    "ast_hash": "38c59ba73d732b8acd81b7e2757c494b",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/journey-desktop-papers.jpg": {
+    "mtime": 1791060423.4439666,
+    "ast_hash": "ef4f7a5e7cd67589adb1984768822602",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/journey-desktop-pipette.jpg": {
+    "mtime": 1791060180.6958869,
+    "ast_hash": "0d4d271cf1391056a6d5f0a1a3624021",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/journey-desktop-refinement.jpg": {
+    "mtime": 1791060181.059762,
+    "ast_hash": "d02103f9ed88ee3ea12af4591bad7259",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/journey-desktop-start.jpg": {
+    "mtime": 1791060162.461862,
+    "ast_hash": "3fbf4f0d230dd8fd692a7aaa6133be2b",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/journey-mobile-final.jpg": {
+    "mtime": 1791060276.8470514,
+    "ast_hash": "d62566a27066db724612dba56f0c1548",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/journey-mobile-footer.jpg": {
+    "mtime": 1791060324.0128345,
+    "ast_hash": "ee3e1c7248f5e4a5116f02a97dca2a64",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/journey-mobile-papers.jpg": {
+    "mtime": 1791060323.6595778,
+    "ast_hash": "742f72b0e0c9fbda847a161d03c4ffe3",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/journey-mobile-pipette.jpg": {
+    "mtime": 1791060276.5322492,
+    "ast_hash": "8c82e6e82b9434d12dc896dd84979f74",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/journey-mobile-reduced.jpg": {
+    "mtime": 1791060423.0112557,
+    "ast_hash": "588247713edb4255a7fca0889c5153be",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/journey-mobile-start.jpg": {
+    "mtime": 1791060267.7890992,
+    "ast_hash": "dea9f6b2350cf882f718de509c844633",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/live-demo.jpg": {
+    "mtime": 1791059350.7018127,
+    "ast_hash": "1854b66d89eb46e8829a1bb8d0503100",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/live-element.jpg": {
+    "mtime": 1791059291.9695895,
+    "ast_hash": "67fa3e0bbbc41481353985a6d6731640",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/qr-on-dark-verification.png": {
+    "mtime": 1791059628.552,
+    "ast_hash": "44448bc1c792960028e69cc6d09248ee",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/qr-transparent-verification.png": {
+    "mtime": 1791059628.536,
+    "ast_hash": "3d21e4b2c8e5efc55aaeb0354665e906",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/qr-transparent-verification.svg": {
+    "mtime": 1791059628.5070908,
+    "ast_hash": "0f5312f155457039d75b1d9b3d35c1f2",
+    "semantic_hash": ""
+  },
+  "public/media/element-blot-sheet.png": {
+    "mtime": 1791060021.9251387,
+    "ast_hash": "3be5acbbebfe5f6533cde38e3806f82a",
+    "semantic_hash": ""
+  },
+  "public/media/element-blot-sheet.webp": {
+    "mtime": 1791060088.2150643,
+    "ast_hash": "4c41366384f19c5162b7b0b40696b743",
+    "semantic_hash": ""
+  },
+  "public/media/element-demo-vial.png": {
+    "mtime": 1791060312.2363873,
+    "ast_hash": "b4e039be7255af098c8364faacb13b82",
+    "semantic_hash": ""
+  },
+  "public/media/element-demo-vial.webp": {
+    "mtime": 1791060325.937011,
+    "ast_hash": "f15778bba685749d04a0e6bc5f09afd0",
+    "semantic_hash": ""
+  },
+  "public/media/element-ph-strip.png": {
+    "mtime": 1791060022.0670903,
+    "ast_hash": "aa4047185f10a1e7c61c2312a6705926",
+    "semantic_hash": ""
+  },
+  "public/media/element-ph-strip.webp": {
+    "mtime": 1791060090.218497,
+    "ast_hash": "f37d3cc33ba374de91a62739421d3477",
+    "semantic_hash": ""
+  },
+  ".impeccable/review/element-demo/export-card.png": {
+    "mtime": 1791062022.2675874,
+    "ast_hash": "241572eeff3d5ae0e4cfd1a2ee605558",
+    "semantic_hash": ""
+  },
+  ".impeccable/review/element-demo/welcome.jpg": {
+    "mtime": 1791062307.8507545,
+    "ast_hash": "730d9d4d69f1322524a094b0ad443e1c",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/export-card.png": {
+    "mtime": 1791062022.2675874,
+    "ast_hash": "241572eeff3d5ae0e4cfd1a2ee605558",
+    "semantic_hash": ""
+  },
+  "app/element/demo/delivery-preview.tsx": {
+    "mtime": 1791063529.0154362,
+    "ast_hash": "a8502892c2a7dc3b47510695ae4abd42",
+    "semantic_hash": ""
+  },
+  "app/element/demo/delivery-state.test.ts": {
+    "mtime": 1791063285.9999478,
+    "ast_hash": "e51ac0ea4255898d71f5767f22ec4797",
+    "semantic_hash": ""
+  },
+  "app/element/demo/delivery-state.ts": {
+    "mtime": 1791063285.9982612,
+    "ast_hash": "d5f4e3e7ff51929d8ac918a99fad3e76",
+    "semantic_hash": ""
+  },
+  "app/element/demo/scent-code-geometry.test.ts": {
+    "mtime": 1791063289.5661404,
+    "ast_hash": "5faf001211361baf5d6cb44baaa26d5e",
+    "semantic_hash": ""
+  },
+  "app/element/demo/scent-code-geometry.ts": {
+    "mtime": 1791063308.2940578,
+    "ast_hash": "a9e7feb4eadc2339c77a391fc1a53839",
+    "semantic_hash": ""
+  },
+  "app/element/demo/scent-code.tsx": {
+    "mtime": 1791063154.3008325,
+    "ast_hash": "1c6802548bd87aa7d619b514482429f6",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/brand-v3-detector-summary.json": {
+    "mtime": 1791063419.1418464,
+    "ast_hash": "15cf63d8669851c913ad675da1e3bd8b",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/brand-v3-detector.json": {
+    "mtime": 1791063287.1777806,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  "public/media/element-home-pipette.provenance.json": {
+    "mtime": 1791063140.5732367,
+    "ast_hash": "ecac7081a6289d414f99e99520b5cce6",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/BRAND-REVIEW-BRIEF.md": {
+    "mtime": 1791063438.4686995,
+    "ast_hash": "171f4fa894c07a8c2c697929d949476d",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/brand-v3-card-phone.png": {
+    "mtime": 1791063542.1046848,
+    "ast_hash": "bdd9aa03c668735d5cad7c3dd92a4aa1",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/brand-v3-card.png": {
+    "mtime": 1791063542.2144468,
+    "ast_hash": "35e57f3a0af5320cdfd0dfecbeeae1cd",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/brand-v3-delivery-mobile.png": {
+    "mtime": 1791063646.3123872,
+    "ast_hash": "b4827b599aae1d403a7699e934e6e120",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/brand-v3-demo-mobile.png": {
+    "mtime": 1791063460.3916829,
+    "ast_hash": "8d07bb3f477397c68eafccd6c5bf4af8",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/brand-v3-desktop.png": {
+    "mtime": 1791063313.5825877,
+    "ast_hash": "2b65504dd2dd0dc0e638d113486259df",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/brand-v3-finale.png": {
+    "mtime": 1791063375.5199478,
+    "ast_hash": "cfcf13b30430217df413917986254913",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/brand-v3-melt.png": {
+    "mtime": 1791063358.9830425,
+    "ast_hash": "2ba4bd8b3d86e3fcf5a6f0157781265b",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/brand-v3-mobile.png": {
+    "mtime": 1791063383.5000758,
+    "ast_hash": "a1ef9789eebea1cfc4f3d1bf6e4c11fb",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/brand-v3-pipette.png": {
+    "mtime": 1791063340.2847135,
+    "ast_hash": "78b1455cfdbf4bc1ae58b3cfaf770a61",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/live-v2-demo-phone.jpg": {
+    "mtime": 1791062483.0214667,
+    "ast_hash": "2f322167d230cb40181036e973461333",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/live-v2-element-assembly.jpg": {
+    "mtime": 1791062563.4197206,
+    "ast_hash": "ed21a928acb17ca661c9079fbf245355",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/live-v2-element.jpg": {
+    "mtime": 1791062429.3277311,
+    "ast_hash": "99e158d8eff43c2a791d3d49a9b434b1",
+    "semantic_hash": ""
+  },
+  "output/element-redesign/live-v2-qr.jpg": {
+    "mtime": 1791062594.9704535,
+    "ast_hash": "884ac32489219d3138744b1dfea0f462",
+    "semantic_hash": ""
+  },
+  "public/media/element-brand-original.png": {
+    "mtime": 1791062572.7001302,
+    "ast_hash": "b7f4fef9d565776dd196a3303899af54",
+    "semantic_hash": ""
+  },
+  "public/media/element-home-pipette.png": {
+    "mtime": 1791062928.2213583,
+    "ast_hash": "014c6ed0d6b15c6280126845084e87c1",
     "semantic_hash": ""
   }
 }

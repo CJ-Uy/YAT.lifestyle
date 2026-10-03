@@ -3,6 +3,7 @@
 import { type CSSProperties, useEffect, useRef, useState } from "react";
 import { STORY_FRAMES, dropTipGeometry, storyMotion } from "../lib/story-motion";
 import SiteHeader, { useLocale } from "./site-header";
+import "./home-collections.css";
 
 const copy = {
   en: {
@@ -14,16 +15,16 @@ const copy = {
     },
     collections: {
       title: "Three ways into scent.",
-      intro: "Each collection begins with a different source: the hour around us, the city behind us, or the person in front of us.",
+      intro: "Your scent. A day in Hong Kong. A memory that stays. Three starting points for a fragrance.",
       hours: { title: "Hours", line: "A city in motion", body: "Time-of-day studies shaped by the changing pace, air, and light of Hong Kong.", imageAlt: "Generated study of the Tsim Sha Tsui Clock Tower in warm morning light" },
       afterimage: { title: "Afterimage", line: "Memories in the air", body: "Tea, forests, streets, and places recalled through scent without reducing the city to a postcard.", imageAlt: "Generated study of tea on a sunlit tiled windowsill in Hong Kong" },
-      element: { title: "Element", line: "Personal by inquiry", body: "A planned personalization line that begins with a scent sample and a base fragrance you already like.", imageAlt: "Generated study of amber liquid, glassware and a pipette on a sunlit ivory laboratory bench" },
+      element: { title: "Element", line: "Personal by inquiry", body: "An at-home scent study. Skin observations and blind fragrance preferences guide small refinements to a chosen base. In development.", imageAlt: "Six clear glass scent vials with amber perfume and a pipette on a dark laboratory bench; generated concept study" },
     },
     story: {
       heading: "A scent can keep time.", intro: "Follow the drop through the three working collection directions.",
       hours: { title: "Hours", body: "Morning lift, noon heat, evening air. Hours looks at the way Hong Kong changes within a single day, then carries those shifts into perfume." },
       afterimage: { title: "Afterimage", body: "A cup of tea, wet stone, leaves after rain. Afterimage starts with specific Hong Kong memories and follows what remains after the moment has passed." },
-      element: { title: "Element", body: "Element is a planned scientific personalization line. The intention is to study a customer-provided scent sample and refine an existing base fragrance they prefer. The process is still being developed." },
+      element: { title: "Element", body: "Element explores skin observations and six blind fragrance bases at home. Your preferences guide bounded refinements of a chosen base. The process remains a prototype in development." },
       stage: ["TIME", "PLACE", "YOU"],
     },
     process: {
@@ -39,8 +40,8 @@ const copy = {
   "zh-Hant": {
     contact: { explore: "探索 Element", element: "Element 查詢", press: "傳媒與合作", general: "一般查詢" },
     hero: { title: "讓香氣留住時間、地方與你。", intro: "YAT.lifestyle 誕生於香港，把實驗室的好奇心帶進香水。每款香氣從一個時刻、一處地方，或一個人開始。", explore: "探索系列", story: "進入香氣故事", note: "香港，留在香氣之中。" },
-    collections: { title: "三個進入香氣的方向。", intro: "每個系列都從不同地方開始：身邊的時間、身後的城市，或眼前的人。", hours: { title: "Hours", line: "流動中的城市", body: "以香港每個時段的節奏、空氣與光線變化為起點。", imageAlt: "晨光中的尖沙咀鐘樓，生成概念圖" }, afterimage: { title: "Afterimage", line: "留在空氣中的記憶", body: "從茶、樹林、街道與地方出發，不把香港簡化成一張明信片。", imageAlt: "香港日照瓷磚窗台上的一杯茶，生成概念圖" }, element: { title: "Element", line: "由探問開始的個人香氣", body: "計劃中的個人化系列，從氣味樣本及你原本喜歡的基礎香氣開始。", imageAlt: "日照象牙色實驗枱上的琥珀色液體、玻璃器皿與滴管，生成概念圖" } },
-    story: { heading: "香氣可以留住時間。", intro: "跟隨一滴香氣，走過三個仍在發展中的系列方向。", hours: { title: "Hours", body: "清晨的提振、正午的熱、入夜的空氣。Hours 觀察香港在一天內的轉變，再把這些變化帶進香水。" }, afterimage: { title: "Afterimage", body: "一杯茶、濕潤的石面、雨後的樹葉。Afterimage 從具體的香港記憶開始，追尋時刻過去後仍然留下的氣息。" }, element: { title: "Element", body: "Element 是計劃中的科學個人化系列，構想是研究顧客提供的氣味樣本，再調整他們偏好的現有基礎香氣。過程仍在開發中。" }, stage: ["時間", "地方", "你"] },
+    collections: { title: "三個進入香氣的方向。", intro: "你的氣味、香港的一天、留下來的記憶。三個香氣的起點。", hours: { title: "Hours", line: "流動中的城市", body: "以香港每個時段的節奏、空氣與光線變化為起點。", imageAlt: "晨光中的尖沙咀鐘樓，生成概念圖" }, afterimage: { title: "Afterimage", line: "留在空氣中的記憶", body: "從茶、樹林、街道與地方出發，不把香港簡化成一張明信片。", imageAlt: "香港日照瓷磚窗台上的一杯茶，生成概念圖" }, element: { title: "Element", line: "由探問開始的個人香氣", body: "居家香氣探索，以肌膚觀察與盲測香氣偏好，為選定基底提出小幅微調。仍在研發中。", imageAlt: "深色實驗枱上六支載有琥珀色香水的透明玻璃香氣瓶與滴管；生成概念圖" } },
+    story: { heading: "香氣可以留住時間。", intro: "跟隨一滴香氣，走過三個仍在發展中的系列方向。", hours: { title: "Hours", body: "清晨的提振、正午的熱、入夜的空氣。Hours 觀察香港在一天內的轉變，再把這些變化帶進香水。" }, afterimage: { title: "Afterimage", body: "一杯茶、濕潤的石面、雨後的樹葉。Afterimage 從具體的香港記憶開始，追尋時刻過去後仍然留下的氣息。" }, element: { title: "Element", body: "Element 在家探索肌膚觀察與六款盲測香氣基底，按你的偏好為選定基底提出有限度的微調。這個流程仍是研發中的原型。" }, stage: ["時間", "地方", "你"] },
     process: { title: "從觀察走到配方。", intro: "YAT.lifestyle 源於一位生物科技學生對實驗室工作與香水的興趣。方法先由留意開始，再進入細心的反覆試驗。", steps: [["觀察", "從值得理解的時刻、地方或氣味偏好開始。"], ["調配", "透過反覆並有記錄的試驗，建立及調整香氣。"], ["重聞", "讓香氣隨時間展開，只留下忠於最初想法的部分。"]], note: "Element 最終的諮詢及分析流程尚未公布。" },
     about: { title: "從香港開始。", body: "YAT.lifestyle 由一位香港科技大學生物科技學生創立，希望讓實驗室的好奇心與香水並排在同一張工作枱上。這是一項本地、早期，而且刻意保持小規模的工作。", quote: "不是為香港寫下一條公式，而是練習好好留意它。" },
     soon: { title: "首個作品仍在開發中。", body: "YAT.lifestyle 暫未接受訂購。購買服務開放初期，只會送貨到香港地址。", status: "即將推出", availability: "香港先行" },
@@ -49,8 +50,8 @@ const copy = {
   "zh-Hans": {
     contact: { explore: "探索 Element", element: "Element 咨询", press: "媒体与合作", general: "一般咨询" },
     hero: { title: "让香气留住时间、地方与你。", intro: "YAT.lifestyle 诞生于香港，把实验室的好奇心带进香水。每款香气从一个时刻、一处地方，或一个人开始。", explore: "探索系列", story: "进入香气故事", note: "香港，留在香气之中。" },
-    collections: { title: "三个进入香气的方向。", intro: "每个系列都从不同地方开始：身边的时间、身后的城市，或眼前的人。", hours: { title: "Hours", line: "流动中的城市", body: "以香港每个时段的节奏、空气与光线变化为起点。", imageAlt: "晨光中的尖沙咀钟楼，生成概念图" }, afterimage: { title: "Afterimage", line: "留在空气中的记忆", body: "从茶、树林、街道与地方出发，不把香港简化成一张明信片。", imageAlt: "香港日照瓷砖窗台上的一杯茶，生成概念图" }, element: { title: "Element", line: "由探问开始的个人香气", body: "计划中的个性化系列，从气味样本及你原本喜欢的基础香气开始。", imageAlt: "日照象牙色实验台上的琥珀色液体、玻璃器皿与滴管，生成概念图" } },
-    story: { heading: "香气可以留住时间。", intro: "跟随一滴香气，走过三个仍在发展的系列方向。", hours: { title: "Hours", body: "清晨的提振、正午的热、入夜的空气。Hours 观察香港在一天内的转变，再把这些变化带进香水。" }, afterimage: { title: "Afterimage", body: "一杯茶、湿润的石面、雨后的树叶。Afterimage 从具体的香港记忆开始，追寻时刻过去后仍然留下的气息。" }, element: { title: "Element", body: "Element 是计划中的科学个性化系列，构想是研究顾客提供的气味样本，再调整他们偏好的现有基础香气。过程仍在开发中。" }, stage: ["时间", "地方", "你"] },
+    collections: { title: "三个进入香气的方向。", intro: "你的气味、香港的一天、留下来的记忆。三个香气的起点。", hours: { title: "Hours", line: "流动中的城市", body: "以香港每个时段的节奏、空气与光线变化为起点。", imageAlt: "晨光中的尖沙咀钟楼，生成概念图" }, afterimage: { title: "Afterimage", line: "留在空气中的记忆", body: "从茶、树林、街道与地方出发，不把香港简化成一张明信片。", imageAlt: "香港日照瓷砖窗台上的一杯茶，生成概念图" }, element: { title: "Element", line: "由探问开始的个人香气", body: "居家香气探索，以肌肤观察与盲测香气偏好，为选定基底提出小幅微调。仍在研发中。", imageAlt: "深色实验台上六支装有琥珀色香水的透明玻璃香气瓶与滴管；生成概念图" } },
+    story: { heading: "香气可以留住时间。", intro: "跟随一滴香气，走过三个仍在发展的系列方向。", hours: { title: "Hours", body: "清晨的提振、正午的热、入夜的空气。Hours 观察香港在一天内的转变，再把这些变化带进香水。" }, afterimage: { title: "Afterimage", body: "一杯茶、湿润的石面、雨后的树叶。Afterimage 从具体的香港记忆开始，追寻时刻过去后仍然留下的气息。" }, element: { title: "Element", body: "Element 在家探索肌肤观察与六款盲测香气基底，按你的偏好为选定基底提出有限度的微调。这个流程仍是研发中的原型。" }, stage: ["时间", "地方", "你"] },
     process: { title: "从观察走到配方。", intro: "YAT.lifestyle 源于一位生物科技学生对实验室工作与香水的兴趣。方法先由留意开始，再进入细心的反复试验。", steps: [["观察", "从值得理解的时刻、地方或气味偏好开始。"], ["调配", "通过反复并有记录的试验，建立及调整香气。"], ["重闻", "让香气随时间展开，只留下忠于最初想法的部分。"]], note: "Element 最终的咨询及分析流程尚未公布。" },
     about: { title: "从香港开始。", body: "YAT.lifestyle 由一位香港科技大学生物科技学生创立，希望让实验室的好奇心与香水并排在同一张工作台上。这是一项本地、早期，而且刻意保持小规模的工作。", quote: "不是为香港写下一条公式，而是练习好好留意它。" },
     soon: { title: "首个作品仍在开发中。", body: "YAT.lifestyle 暂未接受订购。购买服务开放初期，只会送货到香港地址。", status: "即将推出", availability: "香港先行" },
@@ -76,7 +77,12 @@ export default function HomeExperience() {
   const dropTargetRef = useRef<HTMLSpanElement>(null);
   const dropPathRef = useRef<SVGPathElement>(null);
   const t = copy[locale];
-  const collectionItems = [t.collections.hours, t.collections.afterimage, t.collections.element];
+  const seriesItems = [t.collections.hours, t.collections.afterimage];
+  const collectionLabels = {
+    en: { featured: "Personalization in development", study: "Scent study · Generated concept image", series: "The Hong Kong series" },
+    "zh-Hant": { featured: "研發中的個人化香氣", study: "香氣研究 · 生成概念圖", series: "香港系列" },
+    "zh-Hans": { featured: "研发中的个性化香气", study: "香气研究 · 生成概念图", series: "香港系列" },
+  }[locale];
   const storyItems = [t.story.hours, t.story.afterimage, t.story.element];
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -300,7 +306,27 @@ export default function HomeExperience() {
       </section>
       <section aria-labelledby="collections-heading" className="collections" id="collections">
         <header className="section-heading"><h2 id="collections-heading">{t.collections.title}</h2><p>{t.collections.intro}</p></header>
-        <div className="contact-sheet">{collectionItems.map((item, index) => <article id={`collection-${index + 1}`} key={item.title}><div className={`contact-image contact-image-${index + 1}`}><img alt={item.imageAlt} loading="lazy" src={collectionImages[index]} /><span aria-hidden="true" className="contact-time">{index === 0 ? "06:00" : index === 1 ? "HONG KONG" : "YAT.E"}</span></div><div className="contact-copy"><span>{String(index + 1).padStart(2, "0")}</span><h3>{item.title}</h3><p>{item.body}</p><small>{item.line}</small>{index === 2 && <a className="element-home-link" href="/element">{t.contact.explore}<svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14"><path d="M2 12 12 2M3 2h9v9" fill="none" stroke="currentColor" /></svg></a>}{index === 2 && <a className="email-link" href="mailto:element@yatlifestyle.com"><span>{t.contact.element}</span><span>element@yatlifestyle.com</span></a>}</div></article>)}</div>
+        <div className="collection-grid">
+          <article className="collection-feature" id="collection-element" aria-labelledby="featured-element-heading">
+            <figure className="collection-feature-image">
+              <img alt={t.collections.element.imageAlt} loading="lazy" width="1536" height="1024" src="/media/element-scent-study.webp" />
+              <figcaption>{collectionLabels.study}</figcaption>
+            </figure>
+            <div className="collection-feature-copy">
+              <div className="collection-meta"><span>01</span><span>{collectionLabels.featured}</span></div>
+              <h3 id="featured-element-heading">{t.collections.element.title}<span aria-hidden="true">.</span></h3>
+              <p className="collection-line">{t.collections.element.line}</p>
+              <p className="collection-description">{t.collections.element.body}</p>
+              <a className="collection-explore" href="/element">{t.contact.explore}<svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20"><path d="M3 10h13M10 4l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="1.2" /></svg></a>
+              <a className="collection-inquiry" href="mailto:element@yatlifestyle.com">{t.contact.element}<span aria-hidden="true">↗</span></a>
+            </div>
+          </article>
+          <p className="collection-series-label">{collectionLabels.series}</p>
+          {seriesItems.map((item, index) => <article className="collection-series" id={index === 0 ? "hours" : "afterimage"} key={item.title}>
+            <div className="collection-series-image"><img alt={item.imageAlt} loading="lazy" width="1024" height="1536" src={collectionImages[index]} /><span aria-hidden="true">{index === 0 ? "06:00" : "HONG KONG"}</span></div>
+            <div className="collection-series-copy"><div className="collection-meta"><span>{String(index + 2).padStart(2, "0")}</span><span>{item.line}</span></div><h3>{item.title}</h3><p className="collection-description">{item.body}</p></div>
+          </article>)}
+        </div>
       </section>
       <section aria-labelledby="process-heading" className="process" id="process"><header><h2 id="process-heading">{t.process.title}</h2><p>{t.process.intro}</p></header><ol>{t.process.steps.map(([title, body], index) => <li key={title}><span>{String(index + 1).padStart(2, "0")}</span><h3>{title}</h3><p>{body}</p></li>)}</ol><p className="process-note">{t.process.note}</p></section>
       <section aria-labelledby="about-heading" className="about" id="about"><figure className="about-frame"><img alt={locale === "en" ? "Notebook, scent blotters and amber glass beside a Hong Kong window at dusk" : locale === "zh-Hant" ? "香港黃昏窗旁的筆記本、試香紙與琥珀色玻璃瓶" : "香港黄昏窗旁的笔记本、试香纸与琥珀色玻璃瓶"} loading="lazy" width="1536" height="1024" src="/media/hong-kong-beginning.webp" /><figcaption>{locale === "en" ? "An imagined Hong Kong workspace. Generated illustration." : locale === "zh-Hant" ? "想像中的香港工作室。生成概念圖。" : "想象中的香港工作室。生成概念图。"}</figcaption></figure><div className="about-copy"><h2 id="about-heading">{t.about.title}</h2><p>{t.about.body}</p><blockquote>{t.about.quote}</blockquote><a className="email-link" href="mailto:press@yatlifestyle.com"><span>{t.contact.press}</span><span>press@yatlifestyle.com</span></a></div></section>

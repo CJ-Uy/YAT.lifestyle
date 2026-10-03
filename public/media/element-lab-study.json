@@ -1,0 +1,29 @@
+{
+  "asset": "element-lab-study.webp",
+  "purpose": "Generated concept illustration for the Element demo laboratory bench",
+  "mode": "built-in image_gen",
+  "tool": "image_gen.imagegen",
+  "intent": "generate",
+  "generatedAtUtc": "2026-10-03T20:07:39Z",
+  "originalPath": "C:/Users/charl/.codex/generated_images/01a10349-3b06-70c1-9559-7ac983e2403a/exec-2b7db65f-5e76-4fbf-9865-8bf5ceb97c08.png",
+  "originalDimensions": [
+    1254,
+    1254
+  ],
+  "dimensions": [
+    1024,
+    1024
+  ],
+  "bytes": 53260,
+  "sha256": "c385a5411b0b38209ec12eaf477e557573dc53daf7bc4e811e6ce4e1519b4246",
+  "optimization": {
+    "library": "Pillow",
+    "resize": "Lanczos thumbnail to 1024 x 1024",
+    "format": "WebP",
+    "quality": 90,
+    "method": 6
+  },
+  "prompt": "Use case: product-mockup.\nAsset type: square 1024 × 1024 premium concept illustration for an at-home fragrance study demo, readable at 360 pixels wide and when cropped into a 150-pixel-high mobile image.\nPrimary request: a photorealistic, refined laboratory still life on a clean white laboratory table under soft daylight.\nSubject: exactly six small clear glass fragrance sample vials, each with a pale brushed-gold metal cap and a little very pale amber liquid; one delicate clear glass pipette; a few ivory scent blotter strips; one small rich dark-yellow amber liquid drop on the white surface.\nComposition/framing: slightly top-down, asymmetric arrangement with six complete miniature vials grouped across the middle horizontal third of the square; an angled pipette and two or three slim blotters close to the group. Keep the essential subjects legible and concentrated within the central half vertically so a short wide crop retains the story. Generous airy negative space above and below. All six vials visible, coherent physical proportions, no extra bottles.\nStyle/medium: high-end editorial still-life photography; a quiet modern perfumery laboratory, believable handcrafted restraint, crisp but natural material detail, subtle imperfect reflections.\nLighting/mood: soft window daylight from upper left, faint warm-gray shadows, delicate realistic glass reflections, soft caustics and a subtle glint through the amber drop, no dramatic theatrical lighting.\nColor palette: white and light warm gray, pale champagne gold, a restrained dark-yellow amber accent around #A07812. White background, light environment.\nMaterials/textures: transparent glass with realistic refraction and clean edges, lightly brushed metal caps, matte ivory paper strips, softly textured white laboratory surface.\nConstraints: this is an imagined concept study, not a photograph claiming to show an actual shipped kit. No text of any kind, no letters, no labels, no logo, no printed board, no QR code, no graphics or interface. No people, hands, plants, flowers, petals, smoke, mist or decorative props. No green hues, no black background, no clutter, no glossy plastic appearance. Opaque white background; square composition.",
+  "disclosure": "Generated concept illustration, not an actual shipped kit.",
+  "cropGuidance": "Verified mobile crop: center 50% at 160 px high and approximately 343 px wide preserves all six caps, vial bottoms, pipette and drop. Intermediate-width welcome imagery uses 260 px height."
+}

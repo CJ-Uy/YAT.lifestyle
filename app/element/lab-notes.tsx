@@ -5,6 +5,7 @@ import { elementCopy as c, text } from "./content";
 import { noseDataset, researchClaims, verdictLabels } from "../../lib/element/research";
 import { techCopy } from "../../lib/element/tech-content";
 import "./lab-notes.css";
+import "./note-graph.css";
 
 /** Section index for the left rail of a lab-notes row. */
 function Rail({ n, label }: { n: number; label: string }) {
@@ -25,7 +26,17 @@ export function ElementFooter({ locale }: { locale: Locale }) {
 }
 
 export function NoteGraph({ locale }: { locale: Locale }) {
-  return <div className="note-graph" role="img" aria-label={c.aiBody[locale]}><svg viewBox="0 0 500 380" aria-hidden="true"><g fill="none" stroke="#8a6418" strokeWidth="1"><path d="M75 60 250 190 425 60M75 190H425M75 320 250 190 425 320" /><circle cx="250" cy="190" r="62" /><circle cx="250" cy="190" r="94" strokeDasharray="2 9" />{[[75, 60], [75, 190], [75, 320], [425, 60], [425, 190], [425, 320]].map(([x, y]) => <circle key={`${x}-${y}`} cx={x} cy={y} r="25" fill="#0d0d0b" />)}</g></svg><span className="graph-centre">{c.graph[3][locale]}</span>{[0, 1, 2, 4, 5, 6].map((label, index) => <span className={`graph-label graph-label-${index}`} key={label}>{c.graph[label][locale]}</span>)}</div>;
+  const tiers = [
+    [text("Opening", "前調", "前调"), text("The first impression", "最初的印象", "最初的印象")],
+    [text("Heart", "中調", "中调"), text("The fragrance's character", "香氣的性格", "香气的性格")],
+    [text("Dry-down", "後調", "后调"), text("The lasting trail", "留下的餘韻", "留下的余韵")],
+  ];
+  return <div className="note-graph note-composition">
+    <header><h3>{text("Your scent, in three layers.", "你的香氣，三層演繹。", "你的香气，三层演绎。")[locale]}</h3></header>
+    <ol className="note-tier-list">{tiers.map(([title, description], index) => <li key={title.en}><div className={`note-tier-material note-tier-${index}`} aria-hidden="true"><i /><i /><i /></div><div><strong>{title[locale]}</strong><span>{description[locale]}</span></div></li>)}</ol>
+    <div className="note-refinement"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14M9 4v6M15 9v6M10 14v6" stroke="currentColor" strokeWidth="1.3" /></svg><p>{text("Small, bounded adjustments", "小幅、有界限的微調", "小幅、有界限的微调")[locale]}<span>{text("Your ratings + observations guide the suggestion.", "你的評分與觀察，為建議提供方向。", "你的评分与观察，为建议提供方向。")[locale]}</span></p></div>
+    <p className="note-composition-foot">{text("AI explains. Perfumer review before blending.", "AI 解釋，調配前由調香師審核。", "AI 解释，调配前由调香师审核。")[locale]}</p>
+  </div>;
 }
 
 const ai = {

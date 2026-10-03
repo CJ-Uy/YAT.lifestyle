@@ -36,7 +36,7 @@ export const elementCopy = {
   aiBody: text("Your base stays recognisable. Oil readings suggest tier balance; sensitivity suggests concentration; your routine and preferences suggest accents. The language model explains the calculated changes. It does not write the formula.", "保留基底的特色。油脂讀數供香調層次參考；敏感度供濃度參考；生活與喜好供點綴香調參考。語言模型解釋計算結果，不撰寫配方。", "保留基底的特色。油脂读数供香调层次参考；敏感度供浓度参考；生活与喜好供点缀香调参考。语言模型解释计算结果，不撰写配方。"),
   graph: [text("Skin", "肌膚", "肌肤"), text("Nose", "嗅覺", "嗅觉"), text("Routine", "生活", "生活"), text("Base", "基底", "基底"), text("Top", "前調", "前调"), text("Heart", "中調", "中调"), text("Dry-down", "尾調", "尾调")],
   honest: text("A pause. No magic beans.", "稍作停頓，不用神奇豆子。", "稍作停顿，不用神奇豆子。"),
-  honestBody: text("An exploratory study found no coffee advantage over air in fragrance identification. Our app cues a pause of about 30 seconds, with normal breathing or your unscented inner elbow. No saline dish is supplied. Recovery varies; a timer cannot guarantee a reset.", "一項探索研究未發現咖啡豆在辨認香氣上比空氣更有優勢。應用程式提示約 30 秒停頓，正常呼吸或聞無香的手肘內側。套裝不附鹽水碟。恢復因人而異，計時器不能保證嗅覺重置。", "一项探索研究未发现咖啡豆在辨认香气上比空气更有优势。应用程序提示约 30 秒停顿，正常呼吸或闻无香的手肘内侧。套装不附盐水碟。恢复因人而异，计时器不能保证嗅觉重置。"),
+  honestBody: text("Pause between samples: 5 seconds for the intensity vials and 15 seconds for the blind bases. Breathe normally in unscented air. Recovery varies; a timer cannot guarantee a reset. In the sample demo, you can skip the pause to explore the flow.", "在樣本之間稍作停頓：強度試管 5 秒，盲測基底 15 秒。在無香的空氣中正常呼吸。恢復因人而異，計時器不能保證嗅覺重置。示範模式可跳過停頓，探索流程。", "在样本之间稍作停顿：强度试管 5 秒，盲测基底 15 秒。在无香的空气中正常呼吸。恢复因人而异，计时器不能保证嗅觉重置。示范模式可跳过停顿，探索流程。"),
   pricing: text("Choose your way in.", "選擇你的起點。", "选择你的起点。"),
   labKit: text("Lab kit + tuned 50 ml bottle", "實驗套裝 + 微調香水 50 ml", "实验套装 + 微调香水 50 ml"),
   discovery: text("Discovery kit", "探索套裝", "探索套装"),

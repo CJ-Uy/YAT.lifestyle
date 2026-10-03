@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import ElementExperience from "./element-experience";
+import ElementExperience from "./element-landing";
 import { elementOg } from "./content";
 
 const title = "Element | YAT.lifestyle";

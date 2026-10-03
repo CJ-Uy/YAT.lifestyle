@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export function StyledQr({ value, size = 216 }: { value: string; size?: number }) {
+export function StyledQr({ value, size = 216, color = "#223541" }: { value: string; size?: number; color?: string }) {
   const host = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
   useEffect(() => {
@@ -14,19 +14,18 @@ export function StyledQr({ value, size = 216 }: { value: string; size?: number }
       if (cancelled || !container) return;
       container.replaceChildren();
       new QRCodeStyling({
-        width: size, height: size, type: "svg", data: value, margin: 10,
-        dotsOptions: { type: "rounded", color: "#8a6418" },
-        cornersSquareOptions: { type: "extra-rounded", color: "#8a6418" },
-        cornersDotOptions: { type: "dot", color: "#8a6418" },
-        image: "/media/element-e.png",
-        imageOptions: { margin: 6, hideBackgroundDots: true, imageSize: 0.32 },
+        // Four quiet-zone modules even for the smallest (21-module) QR matrix.
+        width: size, height: size, type: "svg", data: value, margin: Math.ceil(size * 4 / 29),
+        dotsOptions: { type: "square", color },
+        cornersSquareOptions: { type: "square", color },
+        cornersDotOptions: { type: "square", color },
         qrOptions: { errorCorrectionLevel: "H" },
-        backgroundOptions: { color: "#ffffff" },
+        backgroundOptions: { color: "transparent" },
       }).append(container);
     }).catch(() => { if (!cancelled) setFailed(true); });
     return () => { cancelled = true; container?.replaceChildren(); };
-  }, [value, size]);
-  return <div className="styled-qr" style={{ width: size, minHeight: size }}>
+  }, [value, size, color]);
+  return <div className="styled-qr" style={{ width: size, minHeight: size, background: "transparent" }}>
     <div ref={host} role="img" aria-label={value} />
     {failed && <a href={value}>{value}</a>}
   </div>;

@@ -3,45 +3,57 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from "react";
 import SiteHeader, { useLocale, type Locale } from "../../site-header";
 import { demoCopy, tagLabel } from "../../../lib/element/copy";
+import { labCopy } from "./lab-copy";
+import { ladderAnswerComplete, ladderComplete, pairComplete, ratingComplete, ratingsComplete } from "./completion";
+import { FormulaProcessing, InlineProcessing, LabStudy, PhotoProcessing } from "./lab-motion";
+import { motionCopy } from "./lab-motion-copy";
+import { DemoVial } from "./demo-vial";
+import { ElementSignature } from "../element-signature";
+import { sequentialCopy } from "./sequential-copy";
+import ShareExperience from "./share-experience";
+import DeliveryPreview, { deliveryCopy } from "./delivery-preview";
+import { emptyDelivery, normaliseDelivery, type DeliveryState } from "./delivery-state";
+import { advanceSequence, BASE_PAUSE_SECONDS, canAdvanceSequence, gapSeconds, INTENSITY_PAUSE_SECONDS, normaliseSequence, previousInSequence, skipDemoGap, type SmellSequence } from "./sequential-smell";
 import { changeLine, matchingReasons, NOTE_NAMES } from "../../../lib/element/explain";
 import { CITES } from "../../../lib/element/research";
 import { callApi } from "./api";
 import {
-  BASES, NOTE_TIER, StyledQr, compare, displayPercents, inferNose, kitKey, loadOpenCv, nextFromBank, readZone, scoreLadder, tune,
+  BASES, NOTE_TIER, displayPercents, inferNose, kitKey, loadOpenCv, nextFromBank, readZone, scoreLadder, tune,
   type BaseId, type Change, type Family, type Formula, type LadderAnswer, type Letter, type Localised, type Question, type Vial, type ZoneResult,
 } from "./stubs";
 import "./demo-bench.css";
+import "./lab-theme.css";
 
-type Copy = (typeof demoCopy)["en"];
+export type Copy = (typeof demoCopy)["en"];
 type Action = { label: string; onClick?: () => void; href?: string; disabled?: boolean };
 type Zone = "blot" | "ph";
 type Reading = {
   sample: boolean; estimated: boolean; image?: string; flags: string[];
   blot?: { oil: number; step: number; clearArea: number }; ph?: { skin: number; control: number; diff: number; confidence: number };
 };
-type Answer = { id: string; text: string; chips: string[]; tags: string[]; source: "bank" | "ai"; q: AskedQuestion };
+type Answer = { id: string; text: string; answerText?: string; chips: string[]; tags: string[]; source: "bank" | "ai"; q: AskedQuestion };
 type AskedQuestion = Question & { source: "bank" | "ai" };
-type Rating = { like: number; strength: number };
+type Rating = { like?: number; strength?: number };
 type Nose = { type: string; name: Localised; filled: Record<Family, number> };
-type Result = {
+export type Result = {
   base: BaseId; formula: Formula; changes: Change[]; explanations?: string[]; explLocale?: Locale;
   concentration: "EDT" | "EDP"; projection: "close" | "moderate" | "carrying"; nose: Nose; shareId?: string; resultId?: string; source: "api" | "local";
 };
-type State = {
+export type State = {
   step: number; sub: number; mode: "sample" | "kit"; name: string; email: string; demoAccount: boolean; kitCode: string; adult: boolean; consent: boolean;
-  setup: boolean[]; blot?: Reading; ph?: Reading; answers: Answer[]; current?: AskedQuestion | null;
+  setup: boolean[]; prepared: Record<Zone, boolean[]>; blot?: Reading; ph?: Reading; answers: Answer[]; current?: AskedQuestion | null;
   ladder: Partial<Record<Vial, 0 | 1 | 2 | 3>>; ratings: Partial<Record<Letter, Rating>>; top2: Letter[]; pick?: Letter; sessionId?: string; result?: Result;
+  smell: { intensity: SmellSequence; bases: SmellSequence }; surveyText: string;
+  delivery: DeliveryState;
 };
 
-const STORAGE = "element-demo-v1";
+const STORAGE = "element-demo-v2";
 const LETTERS: Letter[] = ["A", "B", "C", "D", "E", "F"];
 const FAMILIES: Family[] = ["citrus", "green", "water", "floral", "woody", "amber"];
-const LAST_SUB: Record<number, number> = { 3: 1, 4: 2, 6: 6 };
+const LAST_SUB: Record<number, number> = { 3: 1, 4: 2, 6: 3 };
 const SAMPLE_BLOT = { oil: 0.28, step: 2, clearArea: 0.14 };
 const SAMPLE_PH = { skin: 5.3, control: 6.9, diff: -1.6, confidence: 0.72 };
-// Copy of the founder row seeded in migrations/0004_element_accounts.sql; used only when /api/element/compare is unreachable.
-const FOUNDER_FALLBACK = { likes: { citrus: 3, green: 5, water: 3, floral: 5, woody: 3, amber: 2 } as Record<Family, number>, tags: ["trail-memory", "aircon-office"] };
-const initial: State = { step: 0, sub: 0, mode: "sample", name: "", email: "", demoAccount: false, kitCode: "DEMO", adult: false, consent: false, setup: [false, false, false, false], answers: [], ladder: {}, ratings: {}, top2: [] };
+const initial: State = { step: 0, sub: 0, mode: "sample", name: "", email: "", demoAccount: false, kitCode: "DEMO", adult: false, consent: false, setup: [false, false, false, false], prepared: { blot: [false, false, false], ph: [false, false] }, answers: [], ladder: {}, ratings: {}, top2: [], smell: { intensity: { index: 0 }, bases: { index: 0 } }, surveyText: "", delivery: emptyDelivery };
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 // A sample reading stands in for the sample photo; an estimate substituted for a person's own failed photo is not theirs, so it never drives tuning or claims.
 const usable = (r?: Reading) => (r && (r.sample || !r.estimated) ? r : undefined);
@@ -52,7 +64,7 @@ function derive(s: State) {
   const ladderAnswers: LadderAnswer[] = (Object.entries(s.ladder) as [string, 0 | 1 | 2 | 3][]).map(([vial, strength]) => ({ vial: Number(vial) as Vial, smelled: strength > 0, strength }));
   const ladder = scoreLadder(ladderAnswers, key.vials);
   const likes: Partial<Record<Family, number>> = {};
-  for (const letter of LETTERS) { const r = s.ratings[letter]; if (r) likes[BASES[key.letters[letter]].family] = r.like; }
+  for (const letter of LETTERS) { const r = s.ratings[letter]; if (r?.like !== undefined) likes[BASES[key.letters[letter]].family] = r.like; }
   const nose = inferNose(likes, ladder.sensitivity);
   const tags = [...new Set(s.answers.flatMap((a) => a.tags))];
   const byLike = [...LETTERS].sort((a, b) => (s.ratings[b]?.like ?? 0) - (s.ratings[a]?.like ?? 0));
@@ -140,37 +152,69 @@ function useCountdown(seconds: number, running: boolean) {
   return left;
 }
 
+function useWallClock(deadline?: number) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const update = () => setNow(Date.now());
+    update();
+    if (deadline === undefined || deadline <= Date.now()) return;
+    const timer = window.setInterval(() => {
+      update();
+      if (Date.now() >= deadline) window.clearInterval(timer);
+    }, 250);
+    document.addEventListener("visibilitychange", update);
+    return () => { window.clearInterval(timer); document.removeEventListener("visibilitychange", update); };
+  }, [deadline]);
+  return now;
+}
+
 export default function DemoFlow() {
   const [locale, setLocale] = useLocale();
   const t = demoCopy[locale];
+  const lab = labCopy[locale];
+  const stepLabels = [...t.stepLabels, deliveryCopy[locale].step];
+  const totalSteps = stepLabels.length;
   const [s, setS] = useState<State>(initial);
   const patch = (p: Partial<State> | ((prev: State) => Partial<State>)) => setS((prev) => ({ ...prev, ...(typeof p === "function" ? p(prev) : p) }));
-  const loaded = useRef(false);
+  const [restored, setRestored] = useState(false);
   const heading = useRef<HTMLHeadingElement>(null);
   const [picked, setPicked] = useState<string[]>([]);
   const [buildReady, setBuildReady] = useState([false, false, false, false]);
+  const phTimerLeft = useCountdown(60, s.step === 4 && s.sub === 1);
+  const smellNow = useWallClock(s.step === 6 ? (s.sub === 0 ? s.smell.intensity.deadline : s.sub === 1 ? s.smell.bases.deadline : undefined) : undefined);
 
   // iOS may reload the page after the camera closes, so the walkthrough survives a reload.
   useEffect(() => {
-    try { const saved = sessionStorage.getItem(STORAGE); if (saved) setS({ ...initial, ...JSON.parse(saved) }); } catch { /* start fresh */ }
-    loaded.current = true;
+    try {
+      const raw = sessionStorage.getItem(STORAGE);
+      if (raw) {
+        const saved = JSON.parse(raw) as Partial<State>;
+        setS({ ...initial, ...saved, step: typeof saved.step === "number" && Number.isInteger(saved.step) && saved.step >= 0 && saved.step <= 10 ? saved.step : 0, delivery: normaliseDelivery(saved.delivery), smell: { intensity: normaliseSequence(saved.smell?.intensity, 4), bases: normaliseSequence(saved.smell?.bases, 6) }, surveyText: typeof saved.surveyText === "string" ? saved.surveyText.slice(0, 500) : "", prepared: { blot: saved.prepared?.blot?.slice(0, 3) ?? initial.prepared.blot, ph: saved.prepared?.ph?.slice(0, 2) ?? initial.prepared.ph } });
+      }
+    } catch { /* start fresh */ }
+    setRestored(true);
     loadOpenCv().catch(() => { /* readZone falls back to estimated readings */ });
     lidLayout();
   }, []);
-  useEffect(() => { if (loaded.current) try { sessionStorage.setItem(STORAGE, JSON.stringify(s)); } catch { /* storage full or blocked */ } }, [s]);
+  // A state gate keeps initial-render effects from overwriting the saved session before restoration renders.
+  useEffect(() => { if (restored) try { sessionStorage.setItem(STORAGE, JSON.stringify(s)); } catch { /* storage full or blocked */ } }, [s, restored]);
   const moved = useRef(false);
   useEffect(() => {
     if (!moved.current) { moved.current = true; return; }
     window.scrollTo(0, 0);
     heading.current?.focus({ preventScroll: true });
-  }, [s.step, s.sub]);
+  }, [s.step, s.sub, s.smell.intensity.index, s.smell.bases.index]);
 
   const go = (step: number, sub = 0) => patch({ step, sub });
   const back = () => {
     if (s.step === 5 && s.answers.length && (s.sub === 0)) {
       const last = s.answers[s.answers.length - 1];
       setPicked(last.chips);
-      return patch({ answers: s.answers.slice(0, -1), current: last.q });
+      return patch({ answers: s.answers.slice(0, -1), current: last.q, surveyText: last.answerText ?? "" });
+    }
+    if (s.step === 6 && s.sub <= 1) {
+      const kind = s.sub === 0 ? "intensity" : "bases";
+      if (s.smell[kind].index > 0) return patch({ smell: { ...s.smell, [kind]: previousInSequence(s.smell[kind]) } });
     }
     if (s.sub > 0) return go(s.step, s.sub - 1);
     if (s.step === 8) return go(6, LAST_SUB[6]);
@@ -186,7 +230,7 @@ export default function DemoFlow() {
       // Server limits: 5 chips, 5 options and 8 tags per answer, 200 characters of text, 40 per label.
       // options and picked are the exact chip labels shown and chosen, so the AI can build on them and never repeat them.
       const labels = (chips: AskedQuestion["chips"]) => chips.slice(0, 5).map((c) => c.label[locale].slice(0, 40));
-      const answered = s.answers.map(({ id, text, chips, tags, source, q }) => ({ id, text: text.slice(0, 200), chips: chips.slice(0, 5), tags: tags.slice(0, 8), source,
+      const answered = s.answers.map(({ id, text, answerText, chips, tags, source, q }) => ({ id, text: text.slice(0, 200), answerText: answerText?.slice(0, 500), chips: chips.slice(0, 5), tags: tags.slice(0, 8), source,
         options: labels(q?.chips ?? []), picked: labels((q?.chips ?? []).filter((c) => chips.includes(c.id))) }));
       const state = { answered, aiFollowUps: answered.filter((a) => a.source === "ai").length };
       let next: AskedQuestion | null = null;
@@ -200,9 +244,10 @@ export default function DemoFlow() {
     return () => { alive = false; };
   }, [s.step, s.current]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const answer = (q: AskedQuestion, chips: string[], extraTags: string[] = []) => {
+  const answer = (q: AskedQuestion, chips: string[], extraTags: string[] = [], spokenText?: string) => {
     const tags = [...new Set([...q.chips.filter((c) => chips.includes(c.id)).flatMap((c) => c.tags), ...extraTags])];
-    patch((prev) => ({ answers: [...prev.answers, { id: q.id, text: q.text[locale], chips, tags, source: q.source, q }], current: undefined }));
+    const answerText = [s.surveyText.trim(), spokenText?.trim()].filter(Boolean).join("\n").slice(0, 500);
+    patch((prev) => ({ answers: [...prev.answers, { id: q.id, text: q.text[locale], ...(answerText ? { answerText } : {}), chips, tags, source: q.source, q }], current: undefined, surveyText: "" }));
   };
 
   const startSession = () => {
@@ -217,18 +262,18 @@ export default function DemoFlow() {
   switch (s.step) {
     case 0:
       body = <>
-        <img className="demo-logo" src="/media/element-logo.webp" alt="Element · YAT.lifestyle" width="1146" height="861" />
-        <p className="demo-eyebrow">{t.welcome.eyebrow}</p>
-        {h1(t.welcome.title)}
-        <p className="demo-lead">{t.welcome.lead}</p>
-        <h2 className="demo-label">{t.welcome.measureTitle}</h2>
-        <ol className="demo-measures">{t.welcome.measures.map(([name, text], i) => <li key={name}><span>{String(i + 1).padStart(2, "0")}</span><strong>{name}</strong><p>{text}</p></li>)}</ol>
+        {h1(lab.title)}
+        <p className="demo-lead">{lab.lead}</p>
+        <LabStudy locale={locale} className="lab-welcome-study" />
         <fieldset className="demo-modes"><legend className="demo-label">{t.welcome.modeLabel}</legend>
           {(["sample", "kit"] as const).map((mode) => <label key={mode} className="demo-option">
-            <input type="radio" name="mode" checked={s.mode === mode} onChange={() => patch({ mode })} />
+            <input type="radio" name="mode" checked={s.mode === mode} onChange={() => patch({ mode, setup: [...initial.setup], prepared: { blot: [...initial.prepared.blot], ph: [...initial.prepared.ph] }, blot: undefined, ph: undefined, ladder: {}, ratings: {}, top2: [], pick: undefined, smell: { intensity: { index: 0 }, bases: { index: 0 } }, result: undefined })} />
             <span><strong>{mode === "sample" ? t.welcome.modeSample : t.welcome.modeKit}</strong><small>{mode === "sample" ? t.welcome.modeSampleHint : t.welcome.modeKitHint}</small></span>
           </label>)}
         </fieldset>
+        {s.mode === "sample" && <p className="demo-context-note">{lab.sampleNote}</p>}
+        <h2 className="demo-label">{t.welcome.measureTitle}</h2>
+        <ol className="demo-measures">{t.welcome.measures.map(([name, text], i) => <li key={name}><span>{String(i + 1).padStart(2, "0")}</span><strong>{name}</strong><p>{text}</p></li>)}</ol>
       </>;
       primary = { label: t.welcome.start, onClick: () => go(1) };
       note = t.medical;
@@ -254,53 +299,60 @@ export default function DemoFlow() {
     case 2:
       body = <>
         {h1(t.setup.title)}
-        <p className="demo-lead">{t.setup.lead}</p>
+        <p className="demo-lead">{s.mode === "sample" ? lab.setupNote : t.setup.lead}</p>
+        <CompletionNote count={s.setup.filter(Boolean).length} total={4} locale={locale} />
         <ul className="demo-checklist">{t.setup.items.map((item, i) => <li key={i}><label className="demo-check demo-check-row">
           <input type="checkbox" checked={s.setup[i]} onChange={(e) => patch({ setup: s.setup.map((v, j) => (j === i ? e.target.checked : v)) })} /><span>{item}</span>
         </label></li>)}</ul>
       </>;
-      primary = { label: t.continue, onClick: () => go(3) };
+      primary = { label: t.continue, disabled: !s.setup.every(Boolean), onClick: () => go(3) };
+      if (!s.setup.every(Boolean)) note = lab.setupGate;
       break;
     case 3:
       if (s.sub === 0) {
-        body = <>{h1(t.blot.title)}<Steps items={t.blot.steps} /><ZoneArt zone="blot" /></>;
-        primary = { label: t.blot.ready, onClick: () => go(3, 1) };
+        body = <>{h1(t.blot.title)}<Tutorial kind="blot" locale={locale} /><Steps items={t.blot.steps} checked={s.mode === "kit" ? s.prepared.blot : undefined} onChange={(checked) => patch({ prepared: { ...s.prepared, blot: checked } })} /><BoardReference zone="blot" locale={locale} /></>;
+        primary = { label: s.mode === "sample" ? lab.sampleContinue : t.blot.ready, disabled: s.mode === "kit" && !s.prepared.blot.every(Boolean), onClick: () => go(3, 1) };
+        note = s.mode === "sample" ? lab.sampleNote : !s.prepared.blot.every(Boolean) ? lab.preparationGate : undefined;
       } else {
         body = <>{h1(t.blot.title)}<Capture zone="blot" t={t} locale={locale} mode={s.mode} reading={s.blot} sessionId={s.sessionId} onReading={(r) => patch((prev) => ({ blot: r && prev.blot && r.image === prev.blot.image ? { ...prev.blot, ...r } : r }))} hint={t.blot.frameHint} /></>;
-        if (s.blot) primary = { label: t.continue, onClick: () => go(4) }; else secondary = { label: t.skipStep, onClick: () => go(4) };
+        primary = { label: t.continue, disabled: !usable(s.blot)?.blot, onClick: () => go(4) };
+        if (!usable(s.blot)?.blot) { secondary = { label: t.skipStep, onClick: () => go(4) }; note = lab.photoGate; }
       }
       break;
     case 4:
       if (s.sub === 0) {
-        body = <>{h1(t.ph.title)}<Steps items={t.ph.steps} /><ZoneArt zone="ph" /></>;
-        primary = { label: t.ph.startTimer, onClick: () => go(4, 1) };
-        secondary = { label: t.ph.skipTimer, onClick: () => go(4, 2) };
+        body = <>{h1(t.ph.title)}<Tutorial kind="ph" locale={locale} /><Steps items={t.ph.steps} checked={s.mode === "kit" ? s.prepared.ph : undefined} onChange={(checked) => patch({ prepared: { ...s.prepared, ph: checked } })} /><BoardReference zone="ph" locale={locale} /></>;
+        primary = s.mode === "sample" ? { label: lab.sampleContinue, onClick: () => go(4, 2) } : { label: t.ph.startTimer, disabled: !s.prepared.ph.every(Boolean), onClick: () => go(4, 1) };
+        if (s.mode === "kit") secondary = { label: t.ph.skipTimer, disabled: !s.prepared.ph.every(Boolean), onClick: () => go(4, 2) };
+        note = s.mode === "sample" ? lab.sampleNote : !s.prepared.ph.every(Boolean) ? lab.preparationGate : undefined;
       } else if (s.sub === 1) {
-        body = <Timer seconds={60} unit={t.seconds} title={t.ph.timerTitle} hint={t.ph.timerHint} done={t.ph.timerDone} heading={heading} />;
-        primary = { label: t.continue, onClick: () => go(4, 2) };
+        body = <Timer seconds={60} left={phTimerLeft} unit={t.seconds} title={t.ph.timerTitle} hint={t.ph.timerHint} done={t.ph.timerDone} heading={heading} />;
+        primary = { label: t.continue, disabled: phTimerLeft > 0, onClick: () => go(4, 2) };
+        if (phTimerLeft > 0) note = lab.timerGate;
       } else {
         body = <>{h1(t.ph.photoTitle)}<Capture zone="ph" t={t} locale={locale} mode={s.mode} reading={s.ph} sessionId={s.sessionId} onReading={(r) => patch((prev) => ({ ph: r && prev.ph && r.image === prev.ph.image ? { ...prev.ph, ...r } : r }))} hint={t.ph.frameHint} /></>;
-        if (s.ph) primary = { label: t.continue, onClick: () => go(5) }; else secondary = { label: t.skipStep, onClick: () => go(5) };
+        primary = { label: t.continue, disabled: !usable(s.ph)?.ph, onClick: () => go(5) };
+        if (!usable(s.ph)?.ph) { secondary = { label: t.skipStep, onClick: () => go(5) }; note = lab.photoGate; }
       }
       break;
     case 5: {
       const q = s.current;
       if (q === undefined) {
-        body = <>{h1(t.survey.title)}<p className="demo-wait" role="status"><span className="demo-pulse" aria-hidden="true" />{t.survey.loading}</p></>;
+        body = <>{h1(t.survey.title)}<InlineProcessing locale={locale} kind="question" /></>;
       } else if (q === null) {
         const tags = [...new Set(s.answers.flatMap((a) => a.tags))];
         body = <>{h1(t.survey.title)}<p className="demo-label">{t.survey.tags}</p><TagList tags={tags} locale={locale} names={chipLabels(s.answers, locale)} /></>;
         primary = { label: t.continue, onClick: () => go(6) };
       } else {
-        body = <Survey key={q.id} q={q} n={s.answers.length + 1} t={t} locale={locale} picked={picked} setPicked={setPicked} heading={heading} sessionId={s.sessionId}
-          onVoice={(tags) => answer(q, picked, tags)} />;
-        primary = { label: picked.length ? t.survey.next : t.survey.skipQuestion, onClick: () => answer(q, picked) };
+        body = <Survey key={q.id} q={q} n={s.answers.length + 1} t={t} locale={locale} picked={picked} setPicked={setPicked} answerText={s.surveyText} onText={(surveyText) => patch({ surveyText })} heading={heading} sessionId={s.sessionId}
+          onVoice={(tags, text) => answer(q, picked, tags, text)} />;
+        primary = { label: picked.length || s.surveyText.trim() ? t.survey.next : t.survey.skipQuestion, onClick: () => answer(q, picked) };
         secondary = { label: t.survey.skipRest, onClick: () => patch({ current: null }) };
       }
       break;
     }
     case 6:
-      ({ body, primary, secondary } = smellStep(s, t, locale, patch, go, heading));
+      ({ body, primary, secondary, note } = smellStep(s, t, locale, patch, go, heading, smellNow));
       break;
     case 7:
       body = <Building s={s} t={t} locale={locale} heading={heading} onResult={(result) => patch({ result })} onProgress={setBuildReady} />;
@@ -309,59 +361,78 @@ export default function DemoFlow() {
     case 8: {
       const r = s.result ?? localResult(s);
       const d = derive(s);
-      body = <ResultView r={r} t={t} locale={locale} pick={d.pick} ph={usable(s.ph)} blot={usable(s.blot)} sensitivity={d.ladder.sensitivity} heading={heading} />;
+      body = <ResultView r={r} t={t} locale={locale} mode={s.mode} pick={d.pick} ph={usable(s.ph)} blot={usable(s.blot)} sensitivity={d.ladder.sensitivity} heading={heading} />;
       primary = { label: t.result.shareCard, onClick: () => go(9) };
+      break;
+    }
+    case 10: {
+      const r = s.result ?? localResult(s);
+      body = <DeliveryPreview locale={locale} baseName={BASES[r.base].name[locale]} concentration={r.concentration} value={s.delivery} onChange={delivery => patch({ delivery })} heading={heading} />;
+      secondary = { label: t.back, onClick: () => go(9) };
       break;
     }
     default: {
       const r = s.result ?? localResult(s);
-      body = <Share r={r} s={s} t={t} locale={locale} heading={heading} />;
+      body = <ShareExperience r={r} s={s} t={t} locale={locale} heading={heading} />;
+      primary = { label: deliveryCopy[locale].continueDelivery, onClick: () => go(10) };
       secondary = { label: t.share.restart, onClick: () => { setPicked([]); setS({ ...initial, mode: s.mode }); } };
     }
   }
 
-  return <>
+  return <div className="demo-shell">
     <a className="skip-link" href="#demo-content">{t.skip}</a>
-    <SiteHeader locale={locale} onLocaleChange={setLocale} subpage />
+    <SiteHeader locale={locale} onLocaleChange={setLocale} subpage brand="element" />
     <main className="demo" id="demo-content">
-      <ol className="demo-rail" aria-hidden="true">{t.stepLabels.map((label, i) => <li key={i} className={i === s.step ? "is-current" : i < s.step ? "is-done" : ""}><span>{String(i + 1).padStart(2, "0")}</span>{label}</li>)}</ol>
+      <ol className="demo-rail" aria-label={t.stepOf(s.step + 1, totalSteps)}>{stepLabels.map((label, i) => <li key={i} aria-current={i === s.step ? "step" : undefined} className={i === s.step ? "is-current" : i < s.step ? "is-done" : ""}><span>{i < s.step ? <Tick /> : String(i + 1).padStart(2, "0")}</span>{label}</li>)}</ol>
       <div className="demo-column">
         <div className="demo-bar">
           <button type="button" className="demo-back" onClick={back} disabled={s.step === 0 && s.sub === 0} aria-label={t.back}>
             <svg aria-hidden="true" width="18" height="14" viewBox="0 0 18 14"><path d="M7 1 1 7l6 6M1 7h16" fill="none" stroke="currentColor" strokeWidth="1.3" /></svg>
           </button>
-          <p><span>{t.stepLabels[s.step]}</span><span className="demo-count">{t.stepOf(s.step + 1, 10)}</span></p>
-          <div className="demo-progress" role="progressbar" aria-label={t.stepOf(s.step + 1, 10)} aria-valuemin={1} aria-valuemax={10} aria-valuenow={s.step + 1}><span style={{ transform: `scaleX(${(s.step + 1) / 10})` }} /></div>
+          <p><span>{stepLabels[s.step]}</span><span className="demo-count">{t.stepOf(s.step + 1, totalSteps)}</span></p>
+          <div className="demo-progress" role="progressbar" aria-label={t.stepOf(s.step + 1, totalSteps)} aria-valuemin={1} aria-valuemax={totalSteps} aria-valuenow={s.step + 1}><span style={{ transform: `scaleX(${(s.step + 1) / totalSteps})` }} /></div>
         </div>
         <section className="demo-screen" key={`${s.step}-${s.sub}`}>{body}</section>
         <div className="demo-actions">
-          {note && <p className="demo-note">{note}</p>}
+          {note && <p className="demo-note" id="demo-action-hint" role="status">{note}</p>}
           {primary && (primary.href ? <a className="demo-primary" href={primary.href}>{primary.label}</a>
-            : <button type="button" className="demo-primary" onClick={primary.onClick} disabled={primary.disabled}>{primary.label}</button>)}
-          {secondary && <button type="button" className="demo-secondary" onClick={secondary.onClick}>{secondary.label}</button>}
+            : <button type="button" className="demo-primary" onClick={primary.onClick} disabled={primary.disabled} aria-describedby={note ? "demo-action-hint" : undefined}>{primary.label}</button>)}
+          {secondary && <button type="button" className="demo-secondary" onClick={secondary.onClick} disabled={secondary.disabled}>{secondary.label}</button>}
         </div>
       </div>
       <Bench s={s} t={t} locale={locale} picked={picked} buildReady={buildReady} />
     </main>
-  </>;
+  </div>;
 }
 
-function Steps({ items }: { items: string[] }) {
-  return <ol className="demo-steps">{items.map((item, i) => <li key={i}><span>{i + 1}</span>{item}</li>)}</ol>;
+function Steps({ items, checked, onChange }: { items: string[]; checked?: boolean[]; onChange?: (checked: boolean[]) => void }) {
+  return <ol className="demo-steps">{items.map((item, i) => <li key={i}><span>{i + 1}</span>{checked && i < checked.length && onChange ? <label className="demo-check"><input type="checkbox" checked={checked[i]} onChange={(e) => onChange(checked.map((v, j) => j === i ? e.target.checked : v))} />{item}</label> : <p>{item}</p>}</li>)}</ol>;
+}
+
+function CompletionNote({ count, total, locale }: { count: number; total: number; locale: Locale }) {
+  return <p className={`demo-completion ${count === total ? "is-complete" : ""}`} role="status">{count === total && <Tick />}{labCopy[locale].selection(count, total)}</p>;
+}
+
+function Tutorial({ kind, locale }: { kind: "blot" | "ph" | "scent"; locale: Locale }) {
+  const lab = labCopy[locale];
+  const caption = kind === "blot" ? lab.blotTutorial : kind === "ph" ? lab.phTutorial : lab.scentTutorial;
+  return <details className="demo-tutorial"><summary>{lab.tutorial}<span>{caption}</span></summary><div>
+    <video controls playsInline preload="none" poster={`/media/demo-tutorial-${kind}.webp`} aria-label={caption}>
+      <source src={`/media/demo-tutorial-${kind}.mp4`} type="video/mp4" />
+      <track kind="captions" src={`/media/demo-tutorial-${kind}-${locale}.vtt`} srcLang={locale} label={locale === "en" ? "English" : locale === "zh-Hant" ? "繁體中文" : "简体中文"} default />
+    </video><p>{lab.tutorialNote}</p>
+  </div></details>;
+}
+
+function BoardReference({ zone, locale }: { zone: Zone; locale: Locale }) {
+  const lab = labCopy[locale];
+  return <figure className={`demo-board-reference demo-board-reference-${zone}`}>
+    <img src="/media/element-final-board.webp" width="1543" height="1254" alt={lab.referenceAlt} loading="lazy" />
+    <figcaption><strong>{lab.reference}</strong><span>{lab.referenceNote}</span></figcaption>
+  </figure>;
 }
 
 // Schematic of the lid zone so people know what to aim at before the camera opens.
-function ZoneArt({ zone }: { zone: Zone }) {
-  return <svg className="demo-zone-art" viewBox="0 0 160 66" aria-hidden="true">
-    <rect x=".5" y=".5" width="159" height="65" fill="none" stroke="currentColor" strokeOpacity=".35" />
-    {[[2, 2], [148, 2], [148, 54], [2, 54]].map(([x, y]) => <rect key={`${x}${y}`} x={x} y={y} width="10" height="10" fill="currentColor" />)}
-    {zone === "blot" ? <><rect x="16" y="6" width="86" height="54" fill="#000" stroke="currentColor" strokeOpacity=".5" /><rect x="19" y="9" width="80" height="48" fill="none" stroke="#d8a443" strokeDasharray="3 2" />
-      {[0, 1, 2, 3, 4, 5].map((i) => <rect key={i} x="106" y={6 + i * 9} width="7" height="7.5" fill="#23a8ff" fillOpacity={0.25 + i * 0.13} />)}</>
-      : <><rect x="20" y="10" width="110" height="16" fill="none" stroke="#d8a443" strokeDasharray="3 2" /><rect x="20" y="40" width="110" height="16" fill="none" stroke="currentColor" strokeOpacity=".6" strokeDasharray="3 2" />
-        {[0, 1, 2].map((i) => <rect key={i} x={40 + i * 30} y="13" width="10" height="10" fill="#e9b04a" fillOpacity=".8" />)}{[0, 1, 2].map((i) => <rect key={i} x={40 + i * 30} y="43" width="10" height="10" fill="#c9c46a" fillOpacity=".8" />)}</>}
-  </svg>;
-}
-
 // The server takes the straightened zone as a JPEG of at most 1024 px on the long side and under 1.5 MB.
 const shots: Record<Zone, number> = { blot: 0, ph: 0 };
 async function uploadZone(warped: HTMLCanvasElement, sessionId: string, zone: Zone, readings: Record<string, number>) {
@@ -384,20 +455,47 @@ async function uploadZone(warped: HTMLCanvasElement, sessionId: string, zone: Zo
   return callApi<{ flags?: string[] }>("photo", form, 6000);
 }
 
+function DemoPhoto({ src, className = "" }: { src: string; className?: string }) {
+  return <div className={`demo-photo-landscape ${className}`}>
+    <img src={src} className={src === "/kit/sample/blot.webp" ? "is-portrait-original" : undefined} alt="" loading="lazy" />
+  </div>;
+}
+
 function Capture({ zone, t, locale, mode, reading, onReading, hint, sessionId }: { zone: Zone; t: Copy; locale: Locale; mode: State["mode"]; reading?: Reading; onReading: (r: Reading | undefined) => void; hint: string; sessionId?: string }) {
   const [status, setStatus] = useState<"idle" | "reading" | "retake">("idle");
   const [problem, setProblem] = useState<string>();
   const [preview, setPreview] = useState<string>();
+  const [phase, setPhase] = useState(0);
+  const [readSample, setReadSample] = useState(mode === "sample");
   const input = useRef<HTMLInputElement>(null);
+  const photoUrl = useRef<string | undefined>(undefined);
+  const readGeneration = useRef(0);
+  useEffect(() => () => {
+    readGeneration.current += 1;
+    if (photoUrl.current) URL.revokeObjectURL(photoUrl.current);
+  }, []);
 
   async function read(src: string, sample: boolean) {
-    setStatus("reading"); setProblem(undefined); setPreview(src);
+    const generation = ++readGeneration.current;
+    onReading(undefined);
+    setStatus("reading"); setProblem(undefined); setPreview(src); setPhase(0); setReadSample(sample);
     let result: ZoneResult | null = null;
     try {
       const canvas = await toCanvas(src);
+      if (generation !== readGeneration.current) return;
+      setPhase(1);
       // ponytail: a fixed 6 s budget for OpenCV load + read; tune if real phones need longer.
-      result = await Promise.race([loadOpenCv().then(async () => readZone(canvas, zone, await lidLayout())), wait(6000).then(() => null)]);
+      result = await Promise.race([loadOpenCv().then(async () => {
+        if (generation !== readGeneration.current) return null;
+        setPhase(2);
+        return readZone(canvas, zone, await lidLayout());
+      }), wait(6000).then(() => null)]);
     } catch { result = null; }
+    if (generation !== readGeneration.current) return;
+    if (!result && !sample) {
+      setStatus("retake"); setProblem(t.retake.timeout);
+      return;
+    }
     // A judge's own photo gets a retake message; the sample photo always continues (with estimated values if unread).
     if (result && !result.ok && !sample) {
       setStatus("retake"); setProblem(t.retake[result.reason]);
@@ -410,34 +508,37 @@ function Capture({ zone, t, locale, mode, reading, onReading, hint, sessionId }:
     const next: Reading = result?.ok
       ? weakSamplePh ? { sample, estimated: true, image, flags: result.flags, ph: SAMPLE_PH } : { sample, estimated: false, image, flags: result.flags, blot: result.blot, ph: result.ph }
       : { sample, estimated: true, image, flags: [], ...(zone === "blot" ? { blot: SAMPLE_BLOT } : { ph: SAMPLE_PH }) };
-    if (!result && !sample) setProblem(t.retake.timeout);
     setStatus("idle");
     onReading(next);
     // Store the straightened photo and run the server vision check; extra flags arrive later if the API answers.
     if (result?.ok && sessionId) uploadZone(result.warped, sessionId, zone, next.blot ?? next.ph ?? {})
-      .then((r) => { if (r?.flags?.length) onReading({ ...next, flags: [...new Set([...next.flags, ...r.flags])] }); });
+      .then((r) => { if (generation === readGeneration.current && r?.flags?.length) onReading({ ...next, flags: [...new Set([...next.flags, ...r.flags])] }); });
   }
 
   const shown = status === "idle" && reading ? reading.image : preview;
   const sampleFirst = mode === "sample";
-  const quiet = !!reading; // once there is a reading, Continue is the only gold action
-  const take = <label className={sampleFirst || quiet ? "demo-secondary" : "demo-primary demo-inline"}>
-    <input ref={input} className="demo-hidden-input" type="file" accept="image/*" capture="environment" onChange={(e) => {
+  const quiet = !!reading;
+  const take = <label className={sampleFirst || quiet ? "demo-secondary" : "demo-primary demo-inline"} aria-disabled={status === "reading"}>
+    <input ref={input} disabled={status === "reading"} className="demo-hidden-input" type="file" accept="image/*" capture="environment" onChange={(e) => {
       const file = e.target.files?.[0]; e.target.value = "";
-      if (file) read(URL.createObjectURL(file), false); // ponytail: object URLs are not revoked; a handful per session.
+      if (file) {
+        if (photoUrl.current) URL.revokeObjectURL(photoUrl.current);
+        photoUrl.current = URL.createObjectURL(file);
+        read(photoUrl.current, false);
+      }
     }} />{reading || status === "retake" ? t.blot.retakePhoto : t.blot.takePhoto}
   </label>;
-  const useSample = <button type="button" className={sampleFirst && !quiet ? "demo-primary demo-inline" : "demo-secondary"} onClick={() => read(`/kit/sample/${zone}.webp`, true)}>{t.blot.useSample}</button>;
+  const useSample = <button type="button" disabled={status === "reading"} className={sampleFirst && !quiet ? "demo-primary demo-inline" : "demo-secondary"} onClick={() => read(`/kit/sample/${zone}.webp`, true)}>{t.blot.useSample}</button>;
 
   return <div className="demo-capture">
     <div className={`demo-frame demo-frame-${zone} ${status === "reading" ? "is-reading" : ""}`}>
-      {shown ? <img src={shown} alt="" /> : <ZoneArt zone={zone} />}
+      {shown ? <DemoPhoto src={shown} /> : <div className="demo-photo-empty"><svg aria-hidden="true" width="48" height="40" viewBox="0 0 48 40"><path d="M4 9h10l4-6h12l4 6h10v28H4Z" fill="none" stroke="currentColor" strokeWidth="1.5" /><circle cx="24" cy="23" r="8" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg><p>{labCopy[locale].photoGate}</p></div>}
       <span className="demo-frame-corners" aria-hidden="true" />
-      {status === "reading" && <span className="demo-scan" aria-hidden="true" />}
     </div>
     <p className="demo-hint">{hint}</p>
+    {(reading?.sample || (status === "reading" && readSample)) && <p className="demo-muted">{sequentialCopy[locale].olderPhoto}</p>}
     <div role="status" aria-live="polite">
-      {status === "reading" && <p className="demo-wait"><span className="demo-pulse" aria-hidden="true" />{t.blot.reading}</p>}
+      {status === "reading" && <PhotoProcessing locale={locale} phase={phase} sample={readSample} />}
       {status === "retake" && <p className="demo-problem">{problem}</p>}
       {status === "idle" && reading && <ReadingChip zone={zone} r={reading} t={t} locale={locale} problem={problem} />}
     </div>
@@ -483,12 +584,11 @@ function citer(t: Copy) {
   };
 }
 
-const Tick = () => <svg aria-hidden="true" width="14" height="12" viewBox="0 0 14 12"><path d="m2 6 3 3 7-7" fill="none" stroke="#d8a443" strokeWidth="1.4" /></svg>;
+const Tick = () => <svg aria-hidden="true" width="14" height="12" viewBox="0 0 14 12"><path d="m2 6 3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.4" /></svg>;
 const TagList = ({ tags, locale, names }: { tags: string[]; locale: Locale; names?: Record<string, string> }) =>
   <ul className="demo-tags">{tags.map((tag) => <li key={tag}>{tagLabel(tag, locale, names?.[tag])}</li>)}</ul>;
 
-function Timer({ seconds, unit, title, hint, done, heading }: { seconds: number; unit: string; title: string; hint: string; done: string; heading: RefObject<HTMLHeadingElement | null> }) {
-  const left = useCountdown(seconds, true);
+function Timer({ seconds, left, unit, title, hint, done, heading }: { seconds: number; left: number; unit: string; title: string; hint: string; done: string; heading: RefObject<HTMLHeadingElement | null> }) {
   const r = 88, c = 2 * Math.PI * r;
   return <div className="demo-timer">
     <h1 ref={heading} tabIndex={-1}>{title}</h1>
@@ -500,7 +600,8 @@ function Timer({ seconds, unit, title, hint, done, heading }: { seconds: number;
   </div>;
 }
 
-function Survey({ q, n, t, locale, picked, setPicked, heading, onVoice, sessionId }: { q: AskedQuestion; n: number; t: Copy; locale: Locale; picked: string[]; setPicked: (p: string[]) => void; heading: RefObject<HTMLHeadingElement | null>; onVoice: (tags: string[]) => void; sessionId?: string }) {
+function Survey({ q, n, t, locale, picked, setPicked, answerText, onText, heading, onVoice, sessionId }: { q: AskedQuestion; n: number; t: Copy; locale: Locale; picked: string[]; setPicked: (p: string[]) => void; answerText: string; onText: (text: string) => void; heading: RefObject<HTMLHeadingElement | null>; onVoice: (tags: string[], text?: string) => void; sessionId?: string }) {
+  const words = sequentialCopy[locale];
   const chosen = q.chips.filter((c) => picked.includes(c.id));
   const tags = [...new Set(chosen.flatMap((c) => c.tags))];
   const names: Record<string, string> = {};
@@ -512,12 +613,17 @@ function Survey({ q, n, t, locale, picked, setPicked, heading, onVoice, sessionI
     <div className="demo-chips" role="group" aria-label={q.text[locale]}>
       {q.chips.map((c) => <button type="button" key={c.id} aria-pressed={picked.includes(c.id)} onClick={() => setPicked(picked.includes(c.id) ? picked.filter((x) => x !== c.id) : [...picked, c.id])}>{c.label[locale]}</button>)}
     </div>
+    <label className="demo-field demo-typed-answer">
+      <span>{words.textLabel}</span>
+      <textarea rows={3} maxLength={500} value={answerText} onChange={(event) => onText(event.target.value)} placeholder={words.textPlaceholder} aria-describedby="demo-typed-hint" />
+      <small id="demo-typed-hint">{words.textHint}</small>
+    </label>
     <div className="demo-tag-area" aria-live="polite">{tags.length > 0 && <><p className="demo-label">{t.survey.tags}</p><TagList tags={tags} locale={locale} names={names} /></>}</div>
-    <Voice t={t} locale={locale} questionId={q.id} sessionId={sessionId} onTags={onVoice} />
+    <Voice t={t} locale={locale} questionId={q.id} sessionId={sessionId} onAnswer={onVoice} />
   </>;
 }
 
-function Voice({ t, locale, questionId, sessionId, onTags }: { t: Copy; locale: Locale; questionId: string; sessionId?: string; onTags: (tags: string[]) => void }) {
+function Voice({ t, locale, questionId, sessionId, onAnswer }: { t: Copy; locale: Locale; questionId: string; sessionId?: string; onAnswer: (tags: string[], text?: string) => void }) {
   const [state, setState] = useState<"idle" | "listening" | "working" | "fail">("idle");
   const recorder = useRef<MediaRecorder | null>(null);
   useEffect(() => () => recorder.current?.stream.getTracks().forEach((track) => track.stop()), []);
@@ -536,8 +642,8 @@ function Voice({ t, locale, questionId, sessionId, onTags }: { t: Copy; locale: 
         form.append("locale", locale);
         form.append("questionId", questionId);
         if (sessionId) form.append("sessionId", sessionId);
-        const r = await callApi<{ tags?: string[] }>("voice", form, 8000);
-        if (r?.tags?.length) { setState("idle"); onTags(r.tags); } else setState("fail");
+        const r = await callApi<{ tags?: string[]; text?: string }>("voice", form, 8000);
+        if (r?.tags?.length || r?.text?.trim()) { setState("idle"); onAnswer(r.tags ?? [], r.text); } else setState("fail");
       };
       rec.start();
       setState("listening");
@@ -553,78 +659,112 @@ function Voice({ t, locale, questionId, sessionId, onTags }: { t: Copy; locale: 
   </div>;
 }
 
-function smellStep(s: State, t: Copy, locale: Locale, patch: (p: Partial<State>) => void, go: (step: number, sub?: number) => void, heading: RefObject<HTMLHeadingElement | null>): { body: ReactNode; primary: Action; secondary?: Action } {
+function smellStep(s: State, t: Copy, locale: Locale, patch: (p: Partial<State>) => void, go: (step: number, sub?: number) => void, heading: RefObject<HTMLHeadingElement | null>, now: number): { body: ReactNode; primary: Action; secondary?: Action; note?: string } {
+  const lab = labCopy[locale];
+  const words = sequentialCopy[locale];
   const h1 = (text: string) => <h1 ref={heading} tabIndex={-1}>{text}</h1>;
-  const next = { label: t.continue, onClick: () => go(6, s.sub + 1) };
   const byLike = derive(s).byLike;
-  const rate = (letters: Letter[]) => <>
-    {h1(t.smell.rateTitle(`${letters[0]}-${letters[letters.length - 1]}`))}
-    <p className="demo-lead">{t.smell.rateLead}</p>
-    <div className="demo-bases">{letters.map((letter) => {
-      const r = s.ratings[letter];
-      const set = (k: keyof Rating, v: number) => patch({ ratings: { ...s.ratings, [letter]: { like: r?.like ?? 3, strength: r?.strength ?? 3, [k]: v } } });
-      return <div className="demo-base" key={letter}>
-        <p className="demo-letter">{letter}</p>
-        {(["like", "strength"] as const).map((k) => <label key={k} className="demo-slider">
-          <span>{k === "like" ? t.smell.like : t.smell.strength}<output>{r ? r[k] : "-"}</output></span>
-          <input type="range" min={1} max={5} step={1} value={r?.[k] ?? 3} className={r ? "" : "is-unset"} onChange={(e) => set(k, Number(e.target.value))}
-            aria-label={t.smell.rateAria(letter, k === "like" ? t.smell.like : t.smell.strength)} />
+  const vials: Vial[] = [1, 2, 3, 4];
+  const intensityRow = (vial: Vial, current = false) => <div className={current ? "demo-smell-current" : "demo-smell-history-row"} key={vial} role="group" aria-label={t.smell.vial(vial)}>
+    <DemoVial label={String(vial)} active={ladderAnswerComplete(s.ladder[vial])} size={current ? "large" : "small"} />
+    <div className="demo-smell-response"><p className="demo-label">{t.smell.vial(vial)}</p>
+      <div className="demo-segments">{t.smell.levels.map((label, level) => <button type="button" key={level} aria-pressed={s.ladder[vial] === level}
+        onClick={() => patch({ ladder: { ...s.ladder, [vial]: level as 0 | 1 | 2 | 3 }, result: undefined })}>{label}</button>)}</div>
+    </div>
+  </div>;
+  const baseRow = (letter: Letter, current = false) => {
+    const r = s.ratings[letter];
+    const set = (key: keyof Rating, value: number) => patch({ ratings: { ...s.ratings, [letter]: { ...r, [key]: value } }, top2: [], pick: undefined, result: undefined });
+    return <div className={current ? "demo-smell-current" : "demo-smell-history-row"} key={letter}>
+      <DemoVial label={letter} active={ratingComplete(r)} size={current ? "large" : "small"} />
+      <div className="demo-smell-response"><p className="demo-label">{words.baseLabel(letter)}</p>
+        {(["like", "strength"] as const).map((k) => <fieldset key={k} className="demo-rating">
+          <legend>{k === "like" ? t.smell.like : t.smell.strength}<output>{r?.[k] ?? "-"}</output></legend>
+          <div>{[1, 2, 3, 4, 5].map((value) => <button key={value} type="button" aria-label={lab.ratingLabel(letter, k === "like" ? t.smell.like : t.smell.strength, value)} aria-pressed={r?.[k] === value} onClick={() => set(k, value)}>{value}</button>)}</div>
           <small><span>{(k === "like" ? t.smell.likeEnds : t.smell.strengthEnds)[0]}</span><span>{(k === "like" ? t.smell.likeEnds : t.smell.strengthEnds)[1]}</span></small>
-        </label>)}
-      </div>;
-    })}</div>
-  </>;
-  switch (s.sub) {
-    case 0: return {
+        </fieldset>)}
+      </div>
+    </div>;
+  };
+  if (s.sub <= 1) {
+    const intensity = s.sub === 0;
+    const kind = intensity ? "intensity" : "bases";
+    const sequence = s.smell[kind];
+    const count = intensity ? vials.length : LETTERS.length;
+    const current = Math.min(sequence.index, count - 1);
+    const answered = intensity ? vials.map(v => ladderAnswerComplete(s.ladder[v])) : LETTERS.map(letter => ratingComplete(s.ratings[letter]));
+    const left = gapSeconds(sequence, now);
+    const canContinue = canAdvanceSequence(sequence, answered, now);
+    const label = intensity ? t.smell.vial(vials[current]) : words.baseLabel(LETTERS[current]);
+    const title = left > 0
+      ? intensity ? words.pauseVial(vials[current]) : words.pauseBase(LETTERS[current])
+      : intensity ? words.smellVial(vials[current]) : words.smellBase(LETTERS[current]);
+    const previous = intensity ? vials.slice(0, current).map(vial => <details className="demo-smell-history-item" key={vial}>
+      <summary><span>{t.smell.vial(vial)}</span><strong>{s.ladder[vial] === undefined ? "–" : t.smell.levels[s.ladder[vial]!]}</strong><span className="demo-smell-edit">{words.edit}</span></summary>
+      {intensityRow(vial)}
+    </details>) : LETTERS.slice(0, current).map(letter => <details className="demo-smell-history-item" key={letter}>
+      <summary><span>{words.baseLabel(letter)}</span><strong>{t.smell.like} {s.ratings[letter]?.like ?? "–"}/5 · {t.smell.strength} {s.ratings[letter]?.strength ?? "–"}/5</strong><span className="demo-smell-edit">{words.edit}</span></summary>
+      {baseRow(letter)}
+    </details>);
+    return {
       body: <>
-        {h1(t.smell.ladderTitle)}
-        <p className="demo-lead">{t.smell.ladderLead}</p>
-        <div className="demo-ladder">{([1, 2, 3, 4] as Vial[]).map((vial) => <div key={vial} className="demo-vial" role="group" aria-label={t.smell.vial(vial)}>
-          <p>{t.smell.vial(vial)}</p>
-          <div className="demo-segments">{t.smell.levels.map((label, level) => <button type="button" key={level} aria-pressed={s.ladder[vial] === level}
-            onClick={() => patch({ ladder: { ...s.ladder, [vial]: level as 0 | 1 | 2 | 3 } })}>{label}</button>)}</div>
-        </div>)}</div>
-      </>, primary: next,
+        {h1(title)}
+        <p className="demo-lead">{left > 0 ? words.pauseLead : intensity ? words.intensityLead : words.baseLead}</p>
+        {s.mode === "sample" && <p className="demo-context-note">{words.sampleNote}</p>}
+        {!intensity && <Tutorial kind="scent" locale={locale} />}
+        <CompletionNote count={answered.filter(Boolean).length} total={count} locale={locale} />
+        <div className="demo-smell-sequence">
+          <p className="demo-label">{words.current(current + 1, count)}</p>
+          {left > 0 ? <div className="demo-smell-gap">
+            <div className="demo-smell-timer" role="timer" aria-live="off"><strong>{left}</strong><span>{t.seconds}</span></div>
+            <div><h2>{words.gapTitle}</h2><p>{words.gapLead}</p><small>{words.next(label)}</small></div>
+          </div> : intensity ? intensityRow(vials[current], true) : baseRow(LETTERS[current], true)}
+          {previous.length > 0 && <div className="demo-smell-history"><p className="demo-label">{words.previous(previous.length)}</p><div className="demo-smell-history-list">{previous}</div></div>}
+        </div>
+      </>,
+      primary: {
+        label: current === count - 1 ? t.continue : intensity ? words.nextVial : words.nextBase,
+        disabled: !canContinue,
+        onClick: () => {
+          const next = advanceSequence(sequence, answered, intensity ? INTENSITY_PAUSE_SECONDS : BASE_PAUSE_SECONDS, Date.now());
+          patch({ smell: { ...s.smell, [kind]: next.index === count ? { index: count - 1 } : next } });
+          if (next.index === count) go(6, s.sub + 1);
+        },
+      },
+      secondary: s.mode === "sample" && left > 0 ? { label: words.skipPause, onClick: () => patch({ smell: { ...s.smell, [kind]: skipDemoGap(sequence, s.mode, Date.now()) } }) } : undefined,
+      note: left > 0 ? words.gapGate(left) : !canContinue ? intensity ? words.intensityGate : words.baseGate : undefined,
     };
-    case 1: case 3: return { body: <Pause t={t} heading={heading} />, primary: { label: t.smell.pauseReady, onClick: next.onClick } };
-    case 2: return { body: rate(["A", "B", "C"]), primary: next };
-    case 4: return { body: rate(["D", "E", "F"]), primary: next };
-    case 5: return {
+  }
+  switch (s.sub) {
+    case 2: return {
       body: <>
         {h1(t.smell.top2Title)}
         <p className="demo-lead">{t.smell.top2Lead}</p>
-        <div className="demo-picks">{byLike.map((letter) => <button type="button" key={letter} aria-pressed={s.top2.includes(letter)}
+        <p className="demo-completion" role="status">{lab.topSelection(s.top2.length)}</p>
+        <div className="demo-picks demo-vial-picks">{byLike.map((letter) => <button type="button" key={letter} aria-pressed={s.top2.includes(letter)}
           onClick={() => patch({ top2: s.top2.includes(letter) ? s.top2.filter((x) => x !== letter) : [...s.top2, letter].slice(-2), pick: undefined })}>
-          <span className="demo-letter">{letter}</span><small>{s.ratings[letter] ? `${t.smell.like} ${s.ratings[letter]!.like}/5` : ""}</small>
+          <DemoVial label={letter} active={s.top2.includes(letter)} size="small" /><span className="demo-pick-label">{words.baseLabel(letter)}</span><small>{s.ratings[letter]?.like !== undefined ? `${t.smell.like} ${s.ratings[letter]!.like}/5` : ""}</small>
         </button>)}</div>
       </>,
-      primary: { label: t.continue, onClick: () => { patch({ top2: [...s.top2, ...byLike.filter((l) => !s.top2.includes(l))].slice(0, 2) }); go(6, 6); } },
+      primary: { label: t.continue, disabled: !pairComplete(s.top2) || !ratingsComplete(LETTERS, s.ratings), onClick: () => go(6, 3) },
+      note: !pairComplete(s.top2) ? lab.topGate : undefined,
     };
     default: {
-      const pair = s.top2.length ? s.top2 : byLike.slice(0, 2);
+      const pair = s.top2;
       return {
         body: <>
           {h1(t.smell.finalTitle)}
           <p className="demo-lead">{t.smell.finalLead}</p>
-          <div className="demo-picks demo-final">{pair.map((letter) => <button type="button" key={letter} aria-pressed={(s.pick ?? pair[0]) === letter} onClick={() => patch({ pick: letter })}>
-            <span className="demo-letter">{letter}</span><small>{t.smell.choose}</small>
+          <div className="demo-picks demo-final demo-vial-picks">{pair.map((letter) => <button type="button" key={letter} aria-pressed={s.pick === letter} onClick={() => patch({ pick: letter })}>
+            <DemoVial label={letter} active={s.pick === letter} size="small" /><span className="demo-pick-label">{words.baseLabel(letter)}</span><small>{t.smell.choose}</small>
           </button>)}</div>
         </>,
         // The result request starts here, so the model works while the building screen plays.
-        primary: { label: t.continue, onClick: () => { requestResult({ ...s, pick: s.pick ?? pair[0] }, locale); patch({ pick: s.pick ?? pair[0], result: undefined }); go(7); } },
+        primary: { label: t.continue, disabled: !s.pick || !pairComplete(pair) || !pair.includes(s.pick) || !ratingsComplete(LETTERS, s.ratings) || !ladderComplete(s.ladder), onClick: () => { requestResult(s, locale); patch({ result: undefined }); go(7); } },
+        note: !s.pick ? lab.finalGate : undefined,
       };
     }
   }
-}
-
-function Pause({ t, heading }: { t: Copy; heading: RefObject<HTMLHeadingElement | null> }) {
-  const left = useCountdown(30, true);
-  return <div className="demo-timer">
-    <h1 ref={heading} tabIndex={-1}>{t.smell.pauseTitle}</h1>
-    <div className="demo-breath" aria-hidden="true"><span /></div>
-    <p className="demo-ring-time" role="timer">{left}<small>{t.seconds}</small></p>
-    <p className="demo-lead" role="status">{left === 0 ? t.smell.pauseDone : t.smell.pauseLead}</p>
-  </div>;
 }
 
 function Building({ s, t, locale, heading, onResult, onProgress }: { s: State; t: Copy; locale: Locale; heading: RefObject<HTMLHeadingElement | null>; onResult: (r: Result) => void; onProgress: (ready: boolean[]) => void }) {
@@ -650,27 +790,20 @@ function Building({ s, t, locale, heading, onResult, onProgress }: { s: State; t
   const blot = usable(s.blot)?.blot, ph = usable(s.ph)?.ph;
   const names = chipLabels(s.answers, locale);
   const details = [
-    blot ? t.blot.oil(blot.step) : null,
-    ph ? `pH ${ph.skin.toFixed(1)}` : null,
-    Object.keys(d.likes).length || s.answers.length || Object.keys(s.ladder).length ? d.nose.name[locale] : null,
+    [blot ? t.blot.oil(blot.step) : null, ph ? `pH ${ph.skin.toFixed(1)}` : null].filter(Boolean).join(" · ") || null,
+    d.nose.name[locale],
+    BASES[d.base].name[locale],
     d.tags.length ? d.tags.map((tag) => tagLabel(tag, locale, names[tag])).join(" · ") : null,
   ];
   // Sources behind each bar, numbered in bar order so the numbers never shift as bars fill.
   const cite = citer(t);
-  const sources: CiteId[][] = [blot ? [CITES.skin] : [], ph ? [CITES.ph] : [], details[2] ? [CITES.nose, ...(Object.keys(s.ladder).length ? [CITES.sensitivity] : [])] : [], []];
+  const sources: CiteId[][] = [[...(blot ? [CITES.skin] : []), ...(ph ? [CITES.ph] : [])], [CITES.nose, ...(Object.keys(s.ladder).length ? [CITES.sensitivity] : [])], [], []];
   const marks = sources.map((ids) => ids.map((id) => <span key={id}>{cite(id)}</span>));
   const all = ready.every(Boolean);
   return <>
-    <img className={`demo-emblem ${all ? "" : "is-working"}`} src="/media/element-e.webp" alt="" width="470" height="533" />
     <h1 ref={heading} tabIndex={-1}>{t.building.title}</h1>
-    <ul className="demo-build">{t.building.bars.map((label, i) => {
-      const skipped = ready[i] && !details[i] && i < 2;
-      return <li key={label} className={ready[i] ? (skipped ? "is-skipped" : "is-ready") : ""}>
-        <p><span>{label}</span><span>{ready[i] ? (skipped ? t.building.skipped : t.building.done) : t.building.working}</span></p>
-        <div className="demo-build-bar"><span /></div>
-        <small>{ready[i] && details[i] ? <>{details[i]}{marks[i]}</> : ""}</small>
-      </li>;
-    })}</ul>
+    <FormulaProcessing locale={locale} ready={ready} base={BASES[d.base].name[locale]} details={details} ai={!!s.result?.explanations?.length} />
+    <p className="demo-muted">{marks.flat()}</p>
     <p className="demo-based" aria-live="polite">{all ? t.building.basedOn(s.name.trim()) : ""}</p>
   </>;
 }
@@ -728,7 +861,7 @@ function Gauge({ title, value, zones, widths, at, zone, here, badge }: { title: 
   </div>;
 }
 
-function ResultView({ r, t, locale, pick, ph, blot: oil, sensitivity, heading }: { r: Result; t: Copy; locale: Locale; pick: Letter; ph?: Reading; blot?: Reading; sensitivity: "high" | "medium" | "low" | "unknown"; heading: RefObject<HTMLHeadingElement | null> }) {
+function ResultView({ r, t, locale, mode, pick, ph, blot: oil, sensitivity, heading }: { r: Result; t: Copy; locale: Locale; mode: State["mode"]; pick: Letter; ph?: Reading; blot?: Reading; sensitivity: "high" | "medium" | "low" | "unknown"; heading: RefObject<HTMLHeadingElement | null> }) {
   const base = BASES[r.base];
   // Shown percents are whole numbers summing to 100; sentences quote the shown number, not the internal 0.1 weight.
   const shown = displayPercents(r.formula.notes);
@@ -751,6 +884,7 @@ function ResultView({ r, t, locale, pick, ph, blot: oil, sensitivity, heading }:
     <p className="demo-reveal">{t.result.reveal(pick)}</p>
     <h1 ref={heading} tabIndex={-1} className="demo-base-name">{base.name[locale]}</h1>
     <p className="demo-meta"><span>{t.families[base.family]}</span><span className="demo-badge">{t.result.sampleFormula}</span></p>
+    {mode === "sample" && <p className="demo-context-note">{labCopy[locale].sampleNote}</p>}
     <NoteGraph r={r} t={t} locale={locale} />
     {visible.length ? <ul className="demo-reasons">{visible.map(({ c, i }) => <li key={c.note}>
       <strong>{NOTE_NAMES[c.note]?.[locale] ?? c.note}</strong><span className="demo-fromto">{c.from} → {to(c)}</span>
@@ -761,7 +895,7 @@ function ResultView({ r, t, locale, pick, ph, blot: oil, sensitivity, heading }:
       <Gauge title={t.result.oilTitle} here={t.result.here} zones={t.result.oilZones} widths={[35, 30, 35]} badge={oil?.sample ? t.sample : undefined}
         value={oil?.blot ? <>{t.blot.oil(oil.blot.step)}{cite(CITES.skin)}</> : t.building.skipped}
         at={oil?.blot?.oil} zone={oil?.blot ? oilZone(oil.blot.oil) : undefined} />
-      <Gauge title={t.result.sensTitle} here={t.result.here} zones={t.result.sensZones}
+      <Gauge title={t.result.sensTitle} here={t.result.here} zones={t.result.sensZones} badge={mode === "sample" ? t.result.sampleFormula : undefined}
         value={sens >= 0 ? <>{t.result.sensZones[sens]}{cite(CITES.sensitivity)}</> : t.building.skipped}
         at={sens >= 0 ? (sens + 0.5) / 3 : undefined} zone={sens} />
       <div className="demo-gauge">
@@ -779,27 +913,11 @@ function ResultView({ r, t, locale, pick, ph, blot: oil, sensitivity, heading }:
     </dl>
     {ph?.ph && <p className="demo-muted">{t.result.phLine(ph.ph.skin.toFixed(1))}{cite(CITES.ph)}</p>}
     <p className="demo-perfumer">{t.perfumer}{cite(CITES.review)}</p>
-    <div className="demo-order">
-      <a className="demo-primary demo-inline" href="/shop?source=element-order#newsletter">{t.result.order}</a>
-      <a className="demo-secondary" href="/shop?source=element-gift#newsletter">{t.result.gift}</a>
-    </div>
-    <p className="demo-muted">{t.result.orderNote}</p>
+    <p className="demo-context-note">{labCopy[locale].noOrder}</p>
+    <a className="demo-methods" href="/element">{labCopy[locale].explore}</a>
     <p className="demo-muted">{t.medical}</p>
     <p className="demo-muted"><a className="demo-methods" href="/element/tech#methods" target="_blank" rel="noopener">{t.result.methods}</a></p>
   </>;
-}
-
-// Label art drawn from the person's family likes, so every card is different without a network call.
-function LabelArt({ filled }: { filled: Record<Family, number> }) {
-  return <svg className="demo-label-art" viewBox="0 0 200 120" aria-hidden="true">
-    {FAMILIES.map((fam, i) => {
-      const v = filled[fam] ?? 3;
-      return <g key={fam}>
-        <circle cx="100" cy="132" r={30 + i * 16} fill="none" stroke={v >= 4 ? "#d8a443" : "currentColor"} strokeOpacity={0.15 + v * 0.13} strokeWidth={0.6 + v * 0.35} />
-      </g>;
-    })}
-    <path d="M100 30c-9 14-15 23-15 31a15 15 0 0 0 30 0c0-8-6-17-15-31Z" fill="#d8a443" />
-  </svg>;
 }
 
 const oilZone = (oil: number) => (oil < 0.35 ? 0 : oil > 0.65 ? 2 : 1); // same thresholds as tune()
@@ -808,15 +926,16 @@ const oilZone = (oil: number) => (oil < 0.35 ? 0 : oil > 0.65 ? 2 : 1); // same 
 // assistive tech; everything it shows is also in the main column. Images load lazily so phones (bench hidden) skip them.
 function Bench({ s, t, locale, picked, buildReady }: { s: State; t: Copy; locale: Locale; picked: string[]; buildReady: boolean[] }) {
   let art: ReactNode, caption: string | undefined, badge: string | undefined;
-  const lid = () => { art = <img className="bench-photo bench-lid" src="/kit/lid-board.svg" alt="" loading="lazy" />; caption = t.bench.lid; };
-  const mark = () => { art = <img className="bench-photo bench-mark" src="/media/element-e.webp" alt="" width="470" height="533" loading="lazy" />; };
+  const lid = () => { art = <img className="bench-photo bench-lid" src="/media/element-final-board.webp" width="1543" height="1254" alt="" loading="lazy" />; caption = labCopy[locale].reference; };
+  const mark = () => { art = <ElementSignature className="bench-signature" />; };
   switch (s.step) {
-    case 0: case 2: lid(); break;
+    case 0: art = <LabStudy locale={locale} />; break;
+    case 2: lid(); break;
     case 3: case 4: {
       const zone: Zone = s.step === 3 ? "blot" : "ph";
       const r = s[zone];
-      if (s.mode === "kit" && !r?.sample) lid();
-      else { art = <img className="bench-photo" src={`/kit/sample/${zone}.webp`} alt="" loading="lazy" />; caption = t.stepLabels[s.step]; badge = t.sample; }
+      if (!r?.sample) lid();
+      else { art = <DemoPhoto className="bench-photo" src={r.image ?? `/kit/sample/${zone}.webp`} />; caption = sequentialCopy[locale].olderPhoto; badge = t.sample; }
       if (zone === "blot" && r?.blot) art = <>{art}<Gauge title={t.result.oilTitle} here={t.result.here} zones={t.result.oilZones} widths={[35, 30, 35]}
         value={t.blot.oil(r.blot.step)} at={r.blot.oil} zone={oilZone(r.blot.oil)} /></>;
       break;
@@ -831,13 +950,13 @@ function Bench({ s, t, locale, picked, buildReady }: { s: State; t: Copy; locale
       break;
     }
     case 6: {
-      const pick = s.sub >= 6 ? s.pick ?? s.top2[0] : undefined;
+      const pick = s.sub >= 3 ? s.pick : undefined;
       art = <div className="bench-smell">
         <p className="demo-label">{t.bench.vials}</p>
         <div className="bench-vials">{([1, 2, 3, 4] as Vial[]).map((v) => {
           const level = s.ladder[v];
           return <div key={v} className={level === undefined ? "" : "is-set"}>
-            <span className="bench-vial"><i style={{ "--level": (level ?? 0) / 3 } as CSSProperties} /></span>
+            <DemoVial label={String(v)} active={level !== undefined} size="small" />
             <small>{t.smell.vial(v)}</small><small>{level === undefined ? "-" : t.smell.levels[level]}</small>
           </div>;
         })}</div>
@@ -854,26 +973,15 @@ function Bench({ s, t, locale, picked, buildReady }: { s: State; t: Copy; locale
       break;
     }
     case 7: {
-      const skipped = [!usable(s.blot), !usable(s.ph), false, false];
-      art = <svg className="bench-pipe" viewBox="0 0 400 300">
-        {t.building.bars.map((label, i) => {
-          const y = 60 + i * 60;
-          return <g key={label} className={buildReady[i] ? (skipped[i] ? "is-skipped" : "is-on") : ""}>
-            <text x="96" y={y + 4} textAnchor="end">{label}</text>
-            <path d={`M116 ${y} C 200 ${y}, 200 150, 272 150`} pathLength={1} />
-            <rect x="106" y={y - 5} width="10" height="10" />
-          </g>;
-        })}
-        <image href="/media/element-e.webp" x="282" y="95" width="97" height="110" className={buildReady.every(Boolean) ? "is-on" : ""} />
-      </svg>;
-      caption = t.bench.pipeline;
+      art = <LabStudy locale={locale} />;
+      caption = buildReady.every(Boolean) ? motionCopy[locale].complete : motionCopy[locale].stages[Math.max(0, buildReady.findIndex(value => !value))];
       break;
     }
     case 8: {
       const shots = (["blot", "ph"] as Zone[]).map((zone, i) => ({ zone, r: usable(s[zone]), label: t.stepLabels[3 + i] })).filter((x) => x.r?.image);
       if (!shots.length) { mark(); break; }
       art = <div className="bench-evidence">{shots.map(({ zone, r, label }) => <figure key={zone}>
-        <img src={r!.image} alt="" loading="lazy" />
+        <DemoPhoto src={r!.image!} />
         <figcaption><span>{label}</span><span className="demo-badge">{r!.sample ? t.sample : t.bench.yourPhoto}</span></figcaption>
       </figure>)}</div>;
       caption = t.result.readings;
@@ -888,74 +996,4 @@ function Bench({ s, t, locale, picked, buildReady }: { s: State; t: Copy; locale
       {caption && <figcaption><span>{caption}</span>{badge && <span className="demo-badge">{badge}</span>}</figcaption>}
     </figure>
   </aside>;
-}
-
-type Match = { percent: number; shared: Family; differ: Family; sentence?: string; sentenceLocale?: Locale };
-
-function Share({ r, s, t, locale, heading }: { r: Result; s: State; t: Copy; locale: Locale; heading: RefObject<HTMLHeadingElement | null> }) {
-  const [copied, setCopied] = useState(false);
-  const [match, setMatch] = useState<Match | null>(null);
-  const [comparing, setComparing] = useState(false);
-  const [scan, setScan] = useState(false);
-  // The share link exists only once the server has marked the profile shared; until then (or offline) the card shows without it.
-  const [sharedId, setSharedId] = useState<string | null>(null);
-  useEffect(() => {
-    if (!r.resultId) return;
-    let alive = true;
-    callApi<{ shareId?: string; shared?: boolean }>("profile", { resultId: r.resultId, shared: true }, 5000)
-      .then((p) => { if (alive && p?.shared && typeof p.shareId === "string") setSharedId(p.shareId); });
-    return () => { alive = false; };
-  }, [r.resultId]);
-  const origin = typeof window === "undefined" ? "https://yatlifestyle.com" : window.location.origin;
-  const link = sharedId ? `${origin}/element/p/${sharedId}` : null;
-  const top = [...FAMILIES].sort((a, b) => (r.nose.filled[b] ?? 0) - (r.nose.filled[a] ?? 0)).slice(0, 3);
-  const tags = [...new Set(s.answers.flatMap((a) => a.tags))].filter((tag) => /^[a-z0-9-]{1,32}$/.test(tag)).slice(0, 40);
-  const likes = Object.fromEntries(FAMILIES.map((f) => [f, Math.min(5, Math.max(1, r.nose.filled[f] ?? 3))])) as Record<Family, number>;
-  async function share() {
-    if (!link) return;
-    try {
-      if (navigator.share) return await navigator.share({ title: "Element · YAT.lifestyle", url: link });
-      await navigator.clipboard.writeText(link); setCopied(true);
-    } catch { /* cancelled */ }
-  }
-  // The server compares against the seeded founder row, so this matches /element/compare; local maths only if it is unreachable.
-  async function compareFounder() {
-    setComparing(true);
-    const remote = await callApi<Match>("compare", { locale, a: { likes, tags }, b: "founder" }, 6000);
-    setMatch(remote && typeof remote.percent === "number" && FAMILIES.includes(remote.shared) && FAMILIES.includes(remote.differ)
-      ? { ...remote, sentenceLocale: locale } : compare({ likes, tags }, FOUNDER_FALLBACK));
-    setComparing(false);
-  }
-  return <>
-    <h1 ref={heading} tabIndex={-1}>{t.share.title}</h1>
-    <article className="demo-card">
-      <LabelArt filled={r.nose.filled} />
-      <div className="demo-card-body">
-        <p className="demo-card-brand"><img src="/media/element-e.webp" alt="" width="470" height="533" />Element</p>
-        {s.name.trim() && <p className="demo-card-name">{s.name.trim()}</p>}
-        <p className="demo-label">{t.result.nose}</p>
-        <p className="demo-card-nose">{r.nose.name[locale]}</p>
-        <p className="demo-label">{t.share.families}</p>
-        <p>{top.map((f) => t.families[f]).join(" · ")}</p>
-        <p className="demo-card-base">{BASES[r.base].name[locale]} · {r.concentration}</p>
-      </div>
-    </article>
-    {link && <div className="demo-share">
-      <StyledQr value={link} size={148} />
-      <div>
-        <p className="demo-label">{t.share.linkLabel}</p>
-        <p className="demo-link">{link}</p>
-        <button type="button" className="demo-primary demo-inline" onClick={share}>{copied ? t.share.copied : t.share.share}</button>
-        <p className="demo-muted">{t.share.friendsTry}</p>
-      </div>
-    </div>}
-    <div className="demo-social">
-      {r.resultId && <a className="demo-secondary" href={`/element/login?result=${encodeURIComponent(r.resultId)}`}>{t.share.saveAccount}</a>}
-      <button type="button" className="demo-secondary" aria-expanded={!!match} disabled={comparing} onClick={compareFounder}>{t.share.compareFounder}</button>
-      {match && <div className="demo-match" role="status"><p className="demo-match-pct">{match.percent}%</p><p>{t.share.compareResult}</p>
-        <p className="demo-muted">{match.sentence && match.sentenceLocale === locale ? match.sentence : t.share.compareLine(t.families[match.shared], t.families[match.differ])}</p></div>}
-      <button type="button" className="demo-secondary" aria-expanded={scan} onClick={() => setScan(!scan)}>{t.share.scanFriend}</button>
-      {scan && <p className="demo-muted">{t.share.scanHint}</p>}
-    </div>
-  </>;
 }

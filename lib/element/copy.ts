@@ -49,7 +49,7 @@ const en = {
   },
   setup: {
     title: "Set up your space.",
-    lead: "Tap each one when it's done. You can carry on either way.",
+    lead: "Check each item when your space is ready.",
     items: ["A still room, no fan blowing on you", "No perfume or scented lotion today", "Daylight by a window, flash off", "A glass of water and the small glass dish nearby"],
   },
   blot: {
@@ -87,7 +87,7 @@ const en = {
     blur: "The photo is blurred. Hold the phone still and try again.",
     glare: "Glare is covering the lid. Tilt away from the light and try again.",
     "no-sheet": "Place the blue sheet on the black box, then take the photo again.",
-    timeout: "We couldn't read this photo in time, so we're using an estimated reading.",
+    timeout: "We couldn't read this photo. Try again in even daylight, use the sample, or skip this measurement.",
   },
   survey: {
     title: "Your days.",
@@ -111,7 +111,7 @@ const en = {
     vial: (n: number) => `Vial ${n}`,
     levels: ["Nothing", "Faint", "Clear", "Strong"],
     pauseTitle: "Give your nose 30 seconds.",
-    pauseLead: "Breathe slowly and smell your inner elbow. Your own skin resets your nose.",
+    pauseLead: "Rest in fresh, unscented air before the next group of bases.",
     pauseReady: "I'm ready",
     pauseDone: "Ready for the next smell.",
     rateTitle: (range: string) => `Blind bases ${range}.`,
@@ -245,7 +245,7 @@ const zhHant: DemoCopy = {
   },
   setup: {
     title: "準備好你的空間。",
-    lead: "完成一項就點一下。未完成也可以繼續。",
+    lead: "準備好一項就勾選確認。",
     items: ["安靜的房間，沒有風扇對著你吹", "今天沒有用香水或香味潤膚露", "窗邊自然光，關掉閃光燈", "一杯水和小玻璃碟放在旁邊"],
   },
   blot: {
@@ -283,7 +283,7 @@ const zhHant: DemoCopy = {
     blur: "相片模糊，請拿穩手機再試。",
     glare: "蓋板反光，請避開光源再試。",
     "no-sheet": "請把藍色吸油紙放在黑色方格上，然後再拍一次。",
-    timeout: "未能及時讀取這張相片，我們會使用估算讀數。",
+    timeout: "未能讀取這張相片。請在均勻日光下重拍、使用示範相片，或跳過這項量度。",
   },
   survey: {
     title: "你的日常。",
@@ -307,7 +307,7 @@ const zhHant: DemoCopy = {
     vial: (n) => `第 ${n} 瓶`,
     levels: ["沒有", "微弱", "清楚", "強烈"],
     pauseTitle: "讓鼻子休息 30 秒。",
-    pauseLead: "慢慢呼吸，聞一聞手肘內側。自己的皮膚氣味能讓鼻子重新歸零。",
+    pauseLead: "在沒有香氣的清新空氣中休息，再試下一組基調。",
     pauseReady: "我準備好了",
     pauseDone: "可以聞下一款了。",
     rateTitle: (range) => `盲測基調 ${range}。`,
@@ -437,7 +437,7 @@ const zhHans: DemoCopy = {
   },
   setup: {
     title: "准备好你的空间。",
-    lead: "完成一项就点一下。未完成也可以继续。",
+    lead: "准备好一项就勾选确认。",
     items: ["安静的房间，没有风扇对着你吹", "今天没有用香水或香味润肤露", "窗边自然光，关掉闪光灯", "一杯水和小玻璃碟放在旁边"],
   },
   blot: {
@@ -475,7 +475,7 @@ const zhHans: DemoCopy = {
     blur: "照片模糊，请拿稳手机再试。",
     glare: "盖板反光，请避开光源再试。",
     "no-sheet": "请把蓝色吸油纸放在黑色方格上，然后再拍一次。",
-    timeout: "未能及时读取这张照片，我们会使用估算读数。",
+    timeout: "未能读取这张照片。请在均匀日光下重拍、使用示范照片，或跳过这项测量。",
   },
   survey: {
     title: "你的日常。",
@@ -499,7 +499,7 @@ const zhHans: DemoCopy = {
     vial: (n) => `第 ${n} 瓶`,
     levels: ["没有", "微弱", "清楚", "强烈"],
     pauseTitle: "让鼻子休息 30 秒。",
-    pauseLead: "慢慢呼吸，闻一闻手肘内侧。自己的皮肤气味能让鼻子重新归零。",
+    pauseLead: "在没有香气的清新空气中休息，再试下一组基调。",
     pauseReady: "我准备好了",
     pauseDone: "可以闻下一款了。",
     rateTitle: (range) => `盲测基调 ${range}。`,

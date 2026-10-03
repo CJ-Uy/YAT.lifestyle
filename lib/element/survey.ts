@@ -5,7 +5,7 @@ export { BANNED, BANNED_ZH };
 
 export type SurveyState = {
   // options: every chip label shown, in the person's language; picked: the labels they chose. Optional for older clients.
-  answered: { id: string; text: string; chips: string[]; tags: string[]; source: "bank" | "ai"; options?: string[]; picked?: string[] }[];
+  answered: { id: string; text: string; answerText?: string; chips: string[]; tags: string[]; source: "bank" | "ai"; options?: string[]; picked?: string[] }[];
   aiFollowUps: number;
 };
 

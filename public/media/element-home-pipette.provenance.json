@@ -1,0 +1,10 @@
+{
+  "asset": "element-home-pipette.png",
+  "purpose": "Reuse the photographed home-page pipette on the white Element landing page",
+  "source": "public/media/drop-sequence/frame-030.webp",
+  "tool": "Built-in image_gen",
+  "operation": "Background extraction; remove the hanging perfume drop to permit a separate scroll-driven drop",
+  "prompt": "Background extraction edit of this exact photographed HOME pipette. Preserve the identical glass pipette body, its original photographed silver/glass reflections, the tapered neck and exact original outline. Remove ALL dark background and all city bokeh. Remove the amber hanging perfume drop BELOW the glass tip (the website will animate its own drop). Keep the glass tip itself. Crop tightly to the glass pipette only, upright vertical centered, with small transparent margin. Keep the original top cut off as shown, no rubber bulb invented, no extra objects, no letters, no additional hardware. Lighting adapted minimally so transparent real glass reads on white. Genuine transparent alpha outside the glass. This is the same pipette as our existing homepage, not a new pipette design.",
+  "sourcePreservation": "The original home frame and generated source remain intact",
+  "displayCrop": { "x": 283, "y": 0, "width": 378, "height": 1198 }
+}

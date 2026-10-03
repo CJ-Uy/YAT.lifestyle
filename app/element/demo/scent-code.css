@@ -1,0 +1,6 @@
+.scent-code { background: #fff; flex: none; position: relative; }
+.scent-code-outline { display: block; height: 100%; inset: 0; position: absolute; width: 100%; }
+.scent-code-contour { fill: none; stroke: #223541; stroke-width: 2.5; }
+.scent-code-echo { fill: none; stroke: #93a4af; stroke-width: 1; }
+.scent-code-outline circle { fill: #223541; }
+.scent-code-qr { background: #fff; left: 50%; position: absolute; top: 50%; transform: translate(-50%, -50%); }

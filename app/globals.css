@@ -443,8 +443,6 @@ footer > a:last-child { align-items: center; color: #d8c7a5; display: flex; just
   linear-gradient(var(--c), var(--c)) bottom left / 22px 2px, linear-gradient(var(--c), var(--c)) bottom left / 2px 22px,
   linear-gradient(var(--c), var(--c)) bottom right / 22px 2px, linear-gradient(var(--c), var(--c)) bottom right / 2px 22px; background-repeat: no-repeat; }
 .demo-frame.is-reading > img { filter: saturate(.6) brightness(.75); }
-.demo-scan { animation: demo-scan 1.4s ease-in-out infinite alternate; background: linear-gradient(90deg, transparent, var(--gold), transparent); box-shadow: 0 0 18px 2px rgba(216, 164, 67, .55); height: 2px; left: 0; position: absolute; right: 0; top: 0; }
-@keyframes demo-scan { from { top: 0; } to { top: calc(100% - 2px); } }
 .demo-hint { color: var(--muted); font-size: .85rem; line-height: 1.55; margin: 0; }
 .demo-capture-actions { display: grid; gap: .6rem; }
 .demo-hidden-input { height: 1px; opacity: 0; overflow: hidden; position: absolute; width: 1px; }
@@ -603,7 +601,7 @@ html:has(.demo) { scroll-padding-bottom: 10rem; }
   .demo-share { grid-template-columns: 1fr; justify-items: start; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .demo-scan, .demo-build-bar::after { display: none; }
+  .demo-build-bar::after { display: none; }
   .demo-breath span { transform: scale(.8); }
 }
 
@@ -781,3 +779,19 @@ html:has(.demo) { scroll-padding-bottom: 10rem; }
 /* Home: single link from the Element collection to /element. */
 .element-home-link { align-items: center; color: var(--gold); display: flex; margin-bottom: .75rem; width: max-content; font-family: var(--display); gap: .5rem; min-height: 44px; text-decoration: underline; text-decoration-color: currentColor; text-underline-offset: 5px; }
 .element-home-link:hover { color: var(--warm); }
+
+/* Two destinations stay visible at every width. */
+.site-header-simple { grid-template-columns: 1fr auto auto; gap: clamp(1rem, 3vw, 3rem); }
+.site-header-simple .primary-nav { display: flex; gap: clamp(1.4rem, 3vw, 3rem); }
+.site-header-simple .primary-nav a[aria-current] { color: var(--gold); border-bottom-color: var(--gold); }
+.site-header-simple .language-select summary { font-size: .82rem; }
+@media (max-width: 680px) {
+  .site-header-simple { gap: 1.15rem; }
+  .site-header-simple .primary-nav { gap: 1.3rem; }
+  .site-header-simple .primary-nav a { font-size: .8rem; min-height: 44px; }
+  .site-header-simple .language-select summary { font-size: .78rem; }
+}
+@media (max-width: 360px) {
+  .site-header-simple { gap: .6rem; padding-inline: .8rem; }
+  .site-header-simple .primary-nav { gap: 1rem; }
+}

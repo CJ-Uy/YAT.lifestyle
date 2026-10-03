@@ -173,6 +173,21 @@ test("element api: survey falls back to the bank when the AI writes banned or in
   }
 });
 
+test("element api: typed survey replies reach the next-question context with bounded input", async () => {
+  let prompt: Record<string, unknown> = {};
+  const { deps } = setup(async (_model, input) => { prompt = input; return { response: { questionId: "unknown" } }; });
+  const answer = { id: "routine", text: "What does your day look like?", answerText: "I cycle to the office, then walk by the sea.", chips: [], tags: [], source: "bank" as const };
+  const state = { answered: [answer], aiFollowUps: 0 };
+  assert.equal((await handle("survey", post("survey", { locale: "en", state }), deps)).status, 200);
+  const context = JSON.parse((prompt.messages as { content: string }[])[1].content);
+  assert.equal(context.lastAnswer.answerText, answer.answerText);
+  assert.equal(context.asked[0].question, answer.text, "question history stays distinct from the person's reply");
+  assert.deepEqual(context.lastAnswer.picked, []);
+  for (const answerText of [42, "a".repeat(501)]) {
+    assert.equal((await handle("survey", post("survey", { locale: "en", state: { ...state, answered: [{ ...answer, answerText }] } }), deps)).status, 400);
+  }
+});
+
 test("element api: photo route rejects non-JPEG and oversize files, stores good ones, survives a failed vision check", async () => {
   const { db, deps, objects } = setup();
   const sessionId = await session(deps);

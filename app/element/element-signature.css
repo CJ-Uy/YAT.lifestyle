@@ -1,0 +1,18 @@
+/* Original gold artwork, never reconstructed with a font or substitute E. */
+.element-signature { display: inline-block; width: 300px; max-width: 100%; vertical-align: middle; line-height: 0; }
+.element-signature-full { display: block; position: relative; width: 100%; aspect-ratio: 1146 / 860; overflow: hidden; }
+.element-signature-full > img { position: absolute; width: 109.4241%; max-width: none; height: auto; left: -4.7993%; top: -24.4186%; filter: brightness(1.04); }
+.element-signature-target { position: absolute; left: 49.48%; top: 29.06%; width: 7.94%; height: 19.07%; }
+.element-signature:has(.element-signature-compact) { width: auto; }
+.element-signature-compact { display: inline-flex; align-items: center; gap: 9px; height: 48px; }
+.element-brand-monogram, .element-brand-lettering { display: block; position: relative; overflow: hidden; flex: none; }
+.element-brand-monogram { width: 36px; aspect-ratio: 480 / 526; }
+.element-brand-lettering { width: 108px; aspect-ratio: 1146 / 195; }
+.element-brand-monogram > img { position: absolute; width: 261.25%; max-width: none; height: auto; left: -83.3333%; top: -40.6844%; filter: brightness(1.04); }
+.element-brand-lettering > img { position: absolute; width: 109.4241%; max-width: none; height: auto; left: -4.712%; top: -402.0513%; filter: brightness(1.04); }
+.site-header-element { color-scheme: light; background: rgba(255,255,255,.96); border-bottom-color: #d3dcdf; color: #223541; --gold: #223541; --carbon: #ffffff; --rule: #d3dcdf; }
+.site-header-element .primary-nav a[aria-current] { color: #223541; border-bottom-color: #223541; }
+.site-header-element .language-options { color: #223541; }
+.site-header-element .language-options button:hover { background: #edf1f2; }
+.site-header-element :focus-visible { outline-color: #223541; }
+@media (max-width: 380px) { .site-header-element .element-brand-monogram { width: 29px; }.site-header-element .element-brand-lettering { width: 88px; }.site-header-element .element-signature-compact { gap: 6px; } }
