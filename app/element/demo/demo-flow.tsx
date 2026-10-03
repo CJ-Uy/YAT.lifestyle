@@ -341,7 +341,9 @@ export default function DemoFlow() {
         body = <>{h1(t.survey.title)}<InlineProcessing locale={locale} kind="question" /></>;
       } else if (q === null) {
         const tags = [...new Set(s.answers.flatMap((a) => a.tags))];
-        body = <>{h1(t.survey.title)}<p className="demo-label">{t.survey.tags}</p><TagList tags={tags} locale={locale} names={chipLabels(s.answers, locale)} /></>;
+        const typed = s.answers.map((a) => a.answerText?.trim()).filter((x): x is string => !!x);
+        body = <>{h1(t.survey.title)}<p className="demo-label">{t.survey.tags}</p><TagList tags={tags} locale={locale} names={chipLabels(s.answers, locale)} />
+          {typed.length > 0 && <><p className="demo-label">{t.survey.typed}</p><ul className="demo-tags">{typed.map((x, i) => <li key={i}>{x}</li>)}</ul></>}</>;
         primary = { label: t.continue, onClick: () => go(6) };
       } else {
         body = <Survey key={q.id} q={q} n={s.answers.length + 1} t={t} locale={locale} picked={picked} setPicked={setPicked} answerText={s.surveyText} onText={(surveyText) => patch({ surveyText })} heading={heading} sessionId={s.sessionId}

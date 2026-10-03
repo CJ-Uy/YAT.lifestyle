@@ -1,5 +1,6 @@
 /* Element shares the demo's white, slate laboratory palette. */
 .e-editorial { --e-rule: #d3dcdf; --rule: #d3dcdf; --ink: #fff; --carbon: #f5f7f7; --warm: #223541; --muted: #53636d; --gold: #223541; background: #fff; color: #223541; color-scheme: light; }
+html:has(.e-editorial) { background: #fff; color-scheme: light; }
 body:has(.e-editorial) { background: #fff; color: #223541; }
 .e-editorial :focus-visible { outline-color: #223541; }
 .e-editorial h1, .e-editorial h2, .e-editorial h3 { text-wrap: balance; }
