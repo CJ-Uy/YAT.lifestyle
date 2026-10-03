@@ -1,16 +1,16 @@
 # Graph Report - YAT.lifestyle  (2026-10-04)
 
 ## Corpus Check
-- 219 files · ~3,081,016 words
+- 220 files · ~3,084,889 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1151 nodes · 1806 edges · 103 communities (72 shown, 31 thin omitted)
+- 1158 nodes · 1812 edges · 104 communities (71 shown, 33 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 14 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `7aa8c0e7`
+- Built from commit: `2054bb6e`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -62,6 +62,7 @@
 - [[_COMMUNITY_Community 49|Community 49]]
 - [[_COMMUNITY_Community 50|Community 50]]
 - [[_COMMUNITY_Community 51|Community 51]]
+- [[_COMMUNITY_Community 52|Community 52]]
 - [[_COMMUNITY_Community 53|Community 53]]
 - [[_COMMUNITY_Community 54|Community 54]]
 - [[_COMMUNITY_Community 55|Community 55]]
@@ -107,6 +108,7 @@
 - [[_COMMUNITY_Community 99|Community 99]]
 - [[_COMMUNITY_Community 100|Community 100]]
 - [[_COMMUNITY_Community 102|Community 102]]
+- [[_COMMUNITY_Community 103|Community 103]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `Locale` - 21 edges
@@ -135,7 +137,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (103 total, 31 thin omitted)
+## Communities (104 total, 33 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.10
@@ -146,16 +148,16 @@ Cohesion: 0.18
 Nodes (18): ASPECT_RATIOS, authorization(), generateSeedanceVideo(), HiggsfieldResponse, normalizeSeedanceInput(), parseResponse(), pollHiggsfieldRequest(), PollOptions (+10 more)
 
 ### Community 2 - "Community 2"
-Cohesion: 0.09
-Nodes (26): BUDGET, digest(), ElementEnv, FAMILIES, FORM_ROUTES, HttpError, JSON_ROUTES, LANGUAGE (+18 more)
+Cohesion: 0.05
+Nodes (77): action(), deps(), GET(), POST(), script(), ai(), BUDGET, compareProfiles() (+69 more)
 
 ### Community 3 - "Community 3"
 Cohesion: 0.06
 Nodes (33): dependencies, @fontsource/bodoni-moda, js-aruco2, qr-code-styling, react, react-dom, react-server-dom-webpack, vinext (+25 more)
 
 ### Community 4 - "Community 4"
-Cohesion: 0.29
-Nodes (8): DeliveryPreview(), DELIVERY_AREAS, DeliveryArea, deliveryComplete(), DeliveryState, emptyDelivery, normaliseDelivery(), example
+Cohesion: 0.24
+Nodes (10): deliveryCopy, DeliveryPreview(), Props, DELIVERY_AREAS, DeliveryArea, deliveryComplete(), DeliveryState, emptyDelivery (+2 more)
 
 ### Community 5 - "Community 5"
 Cohesion: 0.18
@@ -191,7 +193,7 @@ Nodes (46): metadata, NotFound(), ArucoGlobal, detectMarkers(), Detector, loadRe
 
 ### Community 22 - "Community 22"
 Cohesion: 0.05
-Nodes (26): callApi(), deliveryCopy, Action, Answer, AskedQuestion, CiteId, Copy, FAMILIES (+18 more)
+Nodes (24): callApi(), Action, Answer, AskedQuestion, CiteId, Copy, FAMILIES, initial (+16 more)
 
 ### Community 23 - "Community 23"
 Cohesion: 0.05
@@ -199,11 +201,11 @@ Nodes (37): 1. Does any candidate actually "reset" the nose? (efficacy baseline 
 
 ### Community 24 - "Community 24"
 Cohesion: 0.07
-Nodes (20): metadata, CompareView(), copy, LoginView(), Match, MeView(), Profile, SharedView() (+12 more)
+Nodes (19): metadata, CompareView(), copy, LoginView(), Match, MeView(), Profile, SharedView() (+11 more)
 
 ### Community 25 - "Community 25"
-Cohesion: 0.06
-Nodes (55): BASES, compare(), FAMILIES, ALL_NOTES, changeLine(), CLOSING, L, matchingReasons() (+47 more)
+Cohesion: 0.21
+Nodes (17): BASES, BASE_IDS, CONTENTS, kitKey(), LETTERS, rng(), shuffle(), LadderAnswer (+9 more)
 
 ### Community 26 - "Community 26"
 Cohesion: 0.06
@@ -239,7 +241,7 @@ Nodes (20): _bounds(), detect_markers(), _lab(), _luma(), _median(), _patch(), _
 
 ### Community 34 - "Community 34"
 Cohesion: 0.11
-Nodes (14): ElementFooter(), LabTabs(), references, same(), t(), techCopy, TechEntry, TechReference (+6 more)
+Nodes (13): ElementFooter(), LabTabs(), references, same(), t(), techCopy, TechEntry, TechReference (+5 more)
 
 ### Community 35 - "Community 35"
 Cohesion: 0.11
@@ -254,16 +256,16 @@ Cohesion: 0.12
 Nodes (16): 1. Photo reader (on the phone, OpenCV.js), 2. Vision check (Workers AI), 3. Survey engine, 4. Nose model (trained, served on Cloudflare), 5. Note graph and tuning, 6. Explainer (Workers AI LLM, constrained), 7. Profile, compare and label art, Build order (+8 more)
 
 ### Community 38 - "Community 38"
-Cohesion: 0.11
-Nodes (12): metadata, ScentError(), useLocale(), text(), ElementExperience(), ai, ClaimLink(), LabNotes() (+4 more)
+Cohesion: 0.15
+Nodes (12): metadata, ScentError(), useLocale(), Shell(), elementCopy, text(), ElementExperience(), ai (+4 more)
 
 ### Community 39 - "Community 39"
 Cohesion: 0.17
-Nodes (8): languages, Locale, navigation, Props, ElementJourney(), ElementSignature(), journeyCopy, landingCopy
+Nodes (10): languages, Locale, navigation, en, LabCopy, zhHans, zhHant, ElementJourney() (+2 more)
 
 ### Community 40 - "Community 40"
-Cohesion: 0.22
-Nodes (6): metadata, baseNames, elementCopy, elementOg(), Translation, metadata
+Cohesion: 0.15
+Nodes (7): metadata, baseNames, elementOg(), Translation, ClaimLink(), landingCopy, metadata
 
 ### Community 41 - "Community 41"
 Cohesion: 0.20
@@ -290,16 +292,16 @@ Cohesion: 0.14
 Nodes (13): 00:28 | element-hackathon, 00:34 | element-hackathon, 00:51 | element-hackathon, 01:18 | element-hackathon, 01:45 | element-hackathon, 01:54 | element-hackathon, 02:28 | element-hackathon, 02:50 | element-hackathon (+5 more)
 
 ### Community 48 - "Community 48"
-Cohesion: 0.26
-Nodes (8): collectionImages, copy, HomeExperience(), SiteHeader(), clamp(), dropTipGeometry(), ease(), storyMotion()
+Cohesion: 0.29
+Nodes (7): collectionImages, copy, HomeExperience(), clamp(), dropTipGeometry(), ease(), storyMotion()
 
 ### Community 49 - "Community 49"
 Cohesion: 0.29
 Nodes (6): Data preparation and choices, Element nose model, Limits, Observed evaluation, Reproduction, TypeScript inference
 
 ### Community 50 - "Community 50"
-Cohesion: 0.40
-Nodes (3): metadata, copy, PrivacyContent()
+Cohesion: 0.33
+Nodes (4): SiteHeader(), metadata, copy, PrivacyContent()
 
 ### Community 53 - "Community 53"
 Cohesion: 0.40
@@ -318,20 +320,20 @@ Cohesion: 0.50
 Nodes (3): Adversarial claims review, Five claims most exposed in judge Q&A, Internal contradictions and unresolved assumptions
 
 ### Community 57 - "Community 57"
-Cohesion: 0.17
-Nodes (19): script(), ai(), compareProfiles(), embed(), explain(), jsonFrom(), labelArt(), localeOf() (+11 more)
+Cohesion: 0.16
+Nodes (16): ALL_NOTES, changeLine(), CLOSING, Explanations, L, matchingReasons(), NOTE_NAMES, noteName() (+8 more)
 
 ### Community 59 - "Community 59"
 Cohesion: 0.50
 Nodes (3): Confirmed video decisions — 4 October 2026, Files kept consistent, Sensitivity test: resolved context
 
 ### Community 61 - "Community 61"
-Cohesion: 0.20
-Nodes (14): AiChoice, available(), BANK, BANNED, BANNED_ZH, c(), L, loc() (+6 more)
+Cohesion: 0.21
+Nodes (13): AiChoice, available(), BANK, BANNED, BANNED_ZH, c(), L, loc() (+5 more)
 
 ### Community 65 - "Community 65"
-Cohesion: 0.26
-Nodes (16): authLogout(), authRequest(), authVerify(), cookieOf(), emailOf(), hex(), json(), localeOf() (+8 more)
+Cohesion: 0.20
+Nodes (11): compare(), FAMILIES, HARMONY, NOTE_TIER, TRAIT_EFFECTS, activeTraits(), Change, displayPercents() (+3 more)
 
 ### Community 82 - "Community 82"
 Cohesion: 0.22
@@ -358,8 +360,8 @@ Cohesion: 0.50
 Nodes (3): Footage selections, Long tutorial: IMG_7275, Source locations and rights check
 
 ### Community 91 - "Community 91"
-Cohesion: 0.36
-Nodes (10): action(), deps(), GET(), POST(), fail(), handle(), json(), label() (+2 more)
+Cohesion: 0.19
+Nodes (10): REASONS, CITES, ClaimVerdict, entries, Localized, noseDataset, ResearchClaim, researchClaims (+2 more)
 
 ### Community 92 - "Community 92"
 Cohesion: 0.36
@@ -370,36 +372,36 @@ Cohesion: 0.44
 Nodes (7): advanceSequence(), canAdvanceSequence(), gapSeconds(), normaliseSequence(), previousInSequence(), skipDemoGap(), SmellSequence
 
 ### Community 94 - "Community 94"
-Cohesion: 0.36
-Nodes (6): Mail, codeIn(), demoResult(), post(), signIn(), verify()
+Cohesion: 0.38
+Nodes (4): families, inferNose(), families, Family
 
 ### Community 95 - "Community 95"
-Cohesion: 0.40
-Nodes (4): en, LabCopy, zhHans, zhHant
+Cohesion: 0.33
+Nodes (5): ceiling, fidelity, keep, material_fixes, persistence
 
 ### Community 96 - "Community 96"
-Cohesion: 0.40
-Nodes (4): Deps, post(), session(), SurveyState
+Cohesion: 0.50
+Nodes (3): post(), session(), SurveyState
 
 ## Knowledge Gaps
-- **503 isolated node(s):** `Profile`, `Match`, `copy`, `metadata`, `metadata` (+498 more)
+- **509 isolated node(s):** `Profile`, `Match`, `copy`, `metadata`, `metadata` (+504 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **31 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **33 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `readZone()` connect `Community 18` to `Community 25`, `Community 22`?**
   _High betweenness centrality (0.032) - this node is a cross-community bridge._
-- **Why does `Locale` connect `Community 39` to `Community 32`, `Community 65`, `Community 2`, `Community 34`, `Community 38`, `Community 40`, `Community 8`, `Community 84`, `Community 22`, `Community 24`, `Community 25`, `Community 61`, `Community 95`?**
-  _High betweenness centrality (0.029) - this node is a cross-community bridge._
-- **Why does `useLocale()` connect `Community 38` to `Community 34`, `Community 39`, `Community 8`, `Community 41`, `Community 48`, `Community 50`, `Community 22`, `Community 24`?**
+- **Why does `Locale` connect `Community 39` to `Community 32`, `Community 2`, `Community 34`, `Community 4`, `Community 38`, `Community 40`, `Community 8`, `Community 84`, `Community 22`, `Community 24`, `Community 57`, `Community 61`, `Community 25`?**
+  _High betweenness centrality (0.028) - this node is a cross-community bridge._
+- **Why does `useLocale()` connect `Community 38` to `Community 34`, `Community 39`, `Community 40`, `Community 41`, `Community 8`, `Community 48`, `Community 50`, `Community 22`, `Community 24`?**
   _High betweenness centrality (0.012) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `survey()` (e.g. with `script()` and `same()`) actually correct?**
   _`survey()` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `Profile`, `Match`, `copy` to the rest of the system?**
-  _516 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _522 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.09523809523809523 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
-  _Cohesion score 0.08994708994708994 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05421686746987952 - nodes in this community are weakly interconnected._

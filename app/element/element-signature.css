@@ -10,7 +10,7 @@
 .element-brand-lettering { width: 108px; aspect-ratio: 1146 / 195; }
 .element-brand-monogram > img { position: absolute; width: 261.25%; max-width: none; height: auto; left: -83.3333%; top: -40.6844%; filter: brightness(1.04); }
 .element-brand-lettering > img { position: absolute; width: 109.4241%; max-width: none; height: auto; left: -4.712%; top: -402.0513%; filter: brightness(1.04); }
-.site-header-element { color-scheme: light; background: rgba(255,255,255,.96); border-bottom-color: #d3dcdf; color: #223541; --gold: #223541; --carbon: #ffffff; --rule: #d3dcdf; }
+.site-header.site-header-element { color-scheme: light; background: rgba(255,255,255,.96); border-bottom-color: #d3dcdf; color: #223541; --gold: #223541; --carbon: #ffffff; --rule: #d3dcdf; }
 .site-header-element .primary-nav a[aria-current] { color: #223541; border-bottom-color: #223541; }
 .site-header-element .language-options { color: #223541; }
 .site-header-element .language-options button:hover { background: #edf1f2; }
