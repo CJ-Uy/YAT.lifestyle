@@ -10,6 +10,7 @@ import {
   BASES, NOTE_TIER, StyledQr, compare, displayPercents, inferNose, kitKey, loadOpenCv, nextFromBank, readZone, scoreLadder, tune,
   type BaseId, type Change, type Family, type Formula, type LadderAnswer, type Letter, type Localised, type Question, type Vial, type ZoneResult,
 } from "./stubs";
+import "./demo-bench.css";
 
 type Copy = (typeof demoCopy)["en"];
 type Action = { label: string; onClick?: () => void; href?: string; disabled?: boolean };
@@ -147,6 +148,7 @@ export default function DemoFlow() {
   const loaded = useRef(false);
   const heading = useRef<HTMLHeadingElement>(null);
   const [picked, setPicked] = useState<string[]>([]);
+  const [buildReady, setBuildReady] = useState([false, false, false, false]);
 
   // iOS may reload the page after the camera closes, so the walkthrough survives a reload.
   useEffect(() => {
@@ -301,13 +303,13 @@ export default function DemoFlow() {
       ({ body, primary, secondary } = smellStep(s, t, locale, patch, go, heading));
       break;
     case 7:
-      body = <Building s={s} t={t} locale={locale} heading={heading} onResult={(result) => patch({ result })} />;
+      body = <Building s={s} t={t} locale={locale} heading={heading} onResult={(result) => patch({ result })} onProgress={setBuildReady} />;
       primary = { label: t.building.see, disabled: !s.result, onClick: () => go(8) };
       break;
     case 8: {
       const r = s.result ?? localResult(s);
       const d = derive(s);
-      body = <ResultView r={r} t={t} locale={locale} pick={d.pick} ph={usable(s.ph)} heading={heading} />;
+      body = <ResultView r={r} t={t} locale={locale} pick={d.pick} ph={usable(s.ph)} blot={usable(s.blot)} sensitivity={d.ladder.sensitivity} heading={heading} />;
       primary = { label: t.result.shareCard, onClick: () => go(9) };
       break;
     }
@@ -339,6 +341,7 @@ export default function DemoFlow() {
           {secondary && <button type="button" className="demo-secondary" onClick={secondary.onClick}>{secondary.label}</button>}
         </div>
       </div>
+      <Bench s={s} t={t} locale={locale} picked={picked} buildReady={buildReady} />
     </main>
   </>;
 }
@@ -624,8 +627,9 @@ function Pause({ t, heading }: { t: Copy; heading: RefObject<HTMLHeadingElement 
   </div>;
 }
 
-function Building({ s, t, locale, heading, onResult }: { s: State; t: Copy; locale: Locale; heading: RefObject<HTMLHeadingElement | null>; onResult: (r: Result) => void }) {
+function Building({ s, t, locale, heading, onResult, onProgress }: { s: State; t: Copy; locale: Locale; heading: RefObject<HTMLHeadingElement | null>; onResult: (r: Result) => void; onProgress: (ready: boolean[]) => void }) {
   const [ready, setReady] = useState([false, false, false, false]);
+  useEffect(() => onProgress(ready), [ready]); // eslint-disable-line react-hooks/exhaustive-deps
   const d = derive(s);
   useEffect(() => {
     let alive = true;
@@ -709,13 +713,29 @@ function NoteGraph({ r, t, locale }: { r: Result; t: Copy; locale: Locale }) {
   </figure>;
 }
 
-function ResultView({ r, t, locale, pick, ph, heading }: { r: Result; t: Copy; locale: Locale; pick: Letter; ph?: Reading; heading: RefObject<HTMLHeadingElement | null> }) {
+// A horizontal scale with a "You are here" pin (after the Hers pattern). The pin and zones are visual; the value line carries the reading.
+function Gauge({ title, value, zones, widths, at, zone, here, badge }: { title: string; value: ReactNode; zones: string[]; widths?: number[]; at?: number; zone?: number; here: string; badge?: string }) {
+  const cols = (widths ?? zones.map(() => 1)).map((w) => `${w}fr`).join(" ");
+  return <div className="demo-gauge">
+    <p className="demo-gauge-head"><span>{title}</span>{badge && <span className="demo-badge">{badge}</span>}</p>
+    <p className="demo-gauge-value">{value}</p>
+    {at !== undefined && <div className="demo-gauge-scale" aria-hidden="true" style={{ "--at": Math.min(1, Math.max(0, at)) } as CSSProperties}>
+      <span className="demo-gauge-here">{here}</span>
+      <span className="demo-gauge-pin" />
+      <div className="demo-gauge-track" style={{ gridTemplateColumns: cols }}>{zones.map((z, i) => <span key={z} className={i === zone ? "is-on" : ""} />)}</div>
+      <div className="demo-gauge-zones" style={{ gridTemplateColumns: cols }}>{zones.map((z, i) => <span key={z} className={i === zone ? "is-on" : ""}>{z}</span>)}</div>
+    </div>}
+  </div>;
+}
+
+function ResultView({ r, t, locale, pick, ph, blot: oil, sensitivity, heading }: { r: Result; t: Copy; locale: Locale; pick: Letter; ph?: Reading; blot?: Reading; sensitivity: "high" | "medium" | "low" | "unknown"; heading: RefObject<HTMLHeadingElement | null> }) {
   const base = BASES[r.base];
   // Shown percents are whole numbers summing to 100; sentences quote the shown number, not the internal 0.1 weight.
   const shown = displayPercents(r.formula.notes);
   const to = (c: Change) => shown[c.note] ?? 0;
   const visible = r.changes.map((c, i) => ({ c, i })).filter(({ c }) => to(c) !== c.from);
   const cite = citer(t);
+  const sens = ["low", "medium", "high"].indexOf(sensitivity);
   // matchingReasons keeps only traits that pushed the note the way it moved (same rule as the server's sentences).
   const reason = (c: Change, i: number) => {
     const matched = matchingReasons(c);
@@ -736,10 +756,26 @@ function ResultView({ r, t, locale, pick, ph, heading }: { r: Result; t: Copy; l
       <strong>{NOTE_NAMES[c.note]?.[locale] ?? c.note}</strong><span className="demo-fromto">{c.from} → {to(c)}</span>
       <p>{reason(c, i)}{matchingReasons(c).some((x) => x === "dry-skin" || x === "oily-skin") && cite(CITES.skin)}</p>
     </li>)}</ul> : <p className="demo-muted">{t.result.noChanges}</p>}
+    <section className="demo-readings" aria-labelledby="demo-readings-title">
+      <h2 className="demo-label" id="demo-readings-title">{t.result.readings}</h2>
+      <Gauge title={t.result.oilTitle} here={t.result.here} zones={t.result.oilZones} widths={[35, 30, 35]} badge={oil?.sample ? t.sample : undefined}
+        value={oil?.blot ? <>{t.blot.oil(oil.blot.step)}{cite(CITES.skin)}</> : t.building.skipped}
+        at={oil?.blot?.oil} zone={oil?.blot ? oilZone(oil.blot.oil) : undefined} />
+      <Gauge title={t.result.sensTitle} here={t.result.here} zones={t.result.sensZones}
+        value={sens >= 0 ? <>{t.result.sensZones[sens]}{cite(CITES.sensitivity)}</> : t.building.skipped}
+        at={sens >= 0 ? (sens + 0.5) / 3 : undefined} zone={sens} />
+      <div className="demo-gauge">
+        <p className="demo-gauge-head"><span>{t.result.nose}</span></p>
+        <p className="demo-gauge-value">{r.nose.name[locale]}{cite(CITES.nose)}</p>
+        <div className="demo-lean" role="img" aria-label={FAMILIES.map((f) => `${t.families[f]} ${Math.round((r.nose.filled[f] ?? 3) * 10) / 10}/5`).join(", ")}>
+          {FAMILIES.map((f) => <div key={f}><span>{t.families[f]}</span><i style={{ "--at": ((r.nose.filled[f] ?? 3) - 1) / 4 } as CSSProperties} /></div>)}
+          <small><span>{t.smell.likeEnds[0]}</span><span>{t.smell.likeEnds[1]}</span></small>
+        </div>
+      </div>
+    </section>
     <dl className="demo-facts">
       <div><dt>{t.result.concentration}</dt><dd>{r.concentration} · {t.result.concentrations[r.concentration]}</dd></div>
       <div><dt>{t.result.projection}</dt><dd>{t.result.projections[r.projection]}</dd></div>
-      <div><dt>{t.result.nose}</dt><dd>{r.nose.name[locale]}{cite(CITES.nose)}</dd></div>
     </dl>
     {ph?.ph && <p className="demo-muted">{t.result.phLine(ph.ph.skin.toFixed(1))}{cite(CITES.ph)}</p>}
     <p className="demo-perfumer">{t.perfumer}{cite(CITES.review)}</p>
@@ -764,6 +800,94 @@ function LabelArt({ filled }: { filled: Record<Family, number> }) {
     })}
     <path d="M100 30c-9 14-15 23-15 31a15 15 0 0 0 30 0c0-8-6-17-15-31Z" fill="#d8a443" />
   </svg>;
+}
+
+const oilZone = (oil: number) => (oil < 0.35 ? 0 : oil > 0.65 ? 2 : 1); // same thresholds as tune()
+
+// Desktop-only lab bench: a visual for the current step from real assets and live state. Decorative, so hidden from
+// assistive tech; everything it shows is also in the main column. Images load lazily so phones (bench hidden) skip them.
+function Bench({ s, t, locale, picked, buildReady }: { s: State; t: Copy; locale: Locale; picked: string[]; buildReady: boolean[] }) {
+  let art: ReactNode, caption: string | undefined, badge: string | undefined;
+  const lid = () => { art = <img className="bench-photo bench-lid" src="/kit/lid-board.svg" alt="" loading="lazy" />; caption = t.bench.lid; };
+  const mark = () => { art = <img className="bench-photo bench-mark" src="/media/element-e.webp" alt="" width="470" height="533" loading="lazy" />; };
+  switch (s.step) {
+    case 0: case 2: lid(); break;
+    case 3: case 4: {
+      const zone: Zone = s.step === 3 ? "blot" : "ph";
+      const r = s[zone];
+      if (s.mode === "kit" && !r?.sample) lid();
+      else { art = <img className="bench-photo" src={`/kit/sample/${zone}.webp`} alt="" loading="lazy" />; caption = t.stepLabels[s.step]; badge = t.sample; }
+      if (zone === "blot" && r?.blot) art = <>{art}<Gauge title={t.result.oilTitle} here={t.result.here} zones={t.result.oilZones} widths={[35, 30, 35]}
+        value={t.blot.oil(r.blot.step)} at={r.blot.oil} zone={oilZone(r.blot.oil)} /></>;
+      break;
+    }
+    case 5: {
+      const current = s.current ? s.current.chips.filter((c) => picked.includes(c.id)) : [];
+      const names = chipLabels(s.answers, locale);
+      for (const c of current) for (const tag of c.tags) names[tag] ??= c.label[locale];
+      const tags = [...new Set([...s.answers.flatMap((a) => a.tags), ...current.flatMap((c) => c.tags)])];
+      art = tags.length ? <div className="bench-tags"><TagList tags={tags} locale={locale} names={names} /></div> : <p className="bench-empty">{t.bench.tagsEmpty}</p>;
+      caption = t.bench.tags;
+      break;
+    }
+    case 6: {
+      const pick = s.sub >= 6 ? s.pick ?? s.top2[0] : undefined;
+      art = <div className="bench-smell">
+        <p className="demo-label">{t.bench.vials}</p>
+        <div className="bench-vials">{([1, 2, 3, 4] as Vial[]).map((v) => {
+          const level = s.ladder[v];
+          return <div key={v} className={level === undefined ? "" : "is-set"}>
+            <span className="bench-vial"><i style={{ "--level": (level ?? 0) / 3 } as CSSProperties} /></span>
+            <small>{t.smell.vial(v)}</small><small>{level === undefined ? "-" : t.smell.levels[level]}</small>
+          </div>;
+        })}</div>
+        <p className="demo-label">{t.bench.bases}</p>
+        <div className="bench-letters">{LETTERS.map((letter) => {
+          const like = s.ratings[letter]?.like;
+          return <div key={letter} className={[s.top2.includes(letter) && "is-top", pick === letter && "is-pick"].filter(Boolean).join(" ")}>
+            <span className="demo-letter">{letter}</span>
+            <span className="bench-dots">{[1, 2, 3, 4, 5].map((i) => <i key={i} className={like && i <= like ? "on" : ""} />)}</span>
+          </div>;
+        })}</div>
+      </div>;
+      caption = t.stepLabels[6];
+      break;
+    }
+    case 7: {
+      const skipped = [!usable(s.blot), !usable(s.ph), false, false];
+      art = <svg className="bench-pipe" viewBox="0 0 400 300">
+        {t.building.bars.map((label, i) => {
+          const y = 60 + i * 60;
+          return <g key={label} className={buildReady[i] ? (skipped[i] ? "is-skipped" : "is-on") : ""}>
+            <text x="96" y={y + 4} textAnchor="end">{label}</text>
+            <path d={`M116 ${y} C 200 ${y}, 200 150, 272 150`} pathLength={1} />
+            <rect x="106" y={y - 5} width="10" height="10" />
+          </g>;
+        })}
+        <image href="/media/element-e.webp" x="282" y="95" width="97" height="110" className={buildReady.every(Boolean) ? "is-on" : ""} />
+      </svg>;
+      caption = t.bench.pipeline;
+      break;
+    }
+    case 8: {
+      const shots = (["blot", "ph"] as Zone[]).map((zone, i) => ({ zone, r: usable(s[zone]), label: t.stepLabels[3 + i] })).filter((x) => x.r?.image);
+      if (!shots.length) { mark(); break; }
+      art = <div className="bench-evidence">{shots.map(({ zone, r, label }) => <figure key={zone}>
+        <img src={r!.image} alt="" loading="lazy" />
+        <figcaption><span>{label}</span><span className="demo-badge">{r!.sample ? t.sample : t.bench.yourPhoto}</span></figcaption>
+      </figure>)}</div>;
+      caption = t.result.readings;
+      break;
+    }
+    default: mark();
+  }
+  return <aside className="demo-bench" aria-hidden="true">
+    <figure className="bench-plate" key={s.step}>
+      <div className="bench-stage">{art}</div>
+      <span className="demo-frame-corners" />
+      {caption && <figcaption><span>{caption}</span>{badge && <span className="demo-badge">{badge}</span>}</figcaption>}
+    </figure>
+  </aside>;
 }
 
 type Match = { percent: number; shared: Family; differ: Family; sentence?: string; sentenceLocale?: Locale };
