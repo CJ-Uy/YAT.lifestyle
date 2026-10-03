@@ -10,3 +10,5 @@ next-env.d.ts
 .playwright-mcp/
 *.tsbuildinfo
 .superpowers/
+public/kit/rendered-board-test.png
+public/kit/synthetic-board-test.png
