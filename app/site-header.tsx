@@ -8,9 +8,9 @@ const languages: { id: Locale; name: string }[] = [
   { id: "en", name: "English" }, { id: "zh-Hant", name: "繁體中文" }, { id: "zh-Hans", name: "简体中文" },
 ];
 const navigation = {
-  en: { home: "Home", collections: "Regular lines", process: "Process", about: "About", shop: "Shop", menu: "Menu", language: "Language", demo: "Try the demo", primary: "Primary navigation", mobile: "Mobile navigation" },
-  "zh-Hant": { home: "首頁", collections: "常規系列", process: "過程", about: "關於", shop: "商店", menu: "選單", language: "語言", demo: "體驗示範", primary: "主要導覽", mobile: "手機導覽" },
-  "zh-Hans": { home: "首页", collections: "常规系列", process: "过程", about: "关于", shop: "商店", menu: "菜单", language: "语言", demo: "体验演示", primary: "主要导航", mobile: "手机导航" },
+  en: { home: "Home", collections: "Collections", regular: "Regular lines", process: "Process", about: "About", shop: "Shop", menu: "Menu", language: "Language", demo: "Try the demo", primary: "Primary navigation", mobile: "Mobile navigation" },
+  "zh-Hant": { home: "首頁", collections: "系列", regular: "常規系列", process: "過程", about: "關於", shop: "商店", menu: "選單", language: "語言", demo: "體驗示範", primary: "主要導覽", mobile: "手機導覽" },
+  "zh-Hans": { home: "首页", collections: "系列", regular: "常规系列", process: "过程", about: "关于", shop: "商店", menu: "菜单", language: "语言", demo: "体验演示", primary: "主要导航", mobile: "手机导航" },
 };
 
 export function useLocale() {
@@ -32,7 +32,7 @@ export function useLocale() {
 
 export default function SiteHeader({ locale, onLocaleChange, shop = false, subpage = false }: { locale: Locale; onLocaleChange: (locale: Locale) => void; shop?: boolean; subpage?: boolean }) {
   const pathname = usePathname();
-  const elementPage = pathname === "/" || pathname?.startsWith("/element");
+  const elementPage = pathname?.startsWith("/element") ?? false;
   const languageRef = useRef<HTMLDetailsElement>(null);
   useEffect(() => {
     const dismiss = (event: PointerEvent) => {
@@ -48,10 +48,10 @@ export default function SiteHeader({ locale, onLocaleChange, shop = false, subpa
     <a className="wordmark" href={`${home}#top`} aria-label={`YAT.lifestyle · ${t.home}`}>
       <img className="brand-drop" src="/brand-emblem.svg" alt="" width="64" height="100" />
     </a>
-    <nav aria-label={t.primary} className="primary-nav"><a href="/element" aria-current={pathname === "/element" ? "page" : undefined}>Element</a><details className="regular-nav"><summary>{t.collections}</summary><div><a href="/#collections">{t.collections}</a><a href="/#hours">Hours</a><a href="/#afterimage">Afterimage</a></div></details>{links.filter(([id]) => id === "process" || id === "about").map(([id, label]) => <a href={`${home}#${id}`} key={id}>{label}</a>)}</nav>
+    {elementPage ? <nav aria-label={t.primary} className="primary-nav"><a href="/element" aria-current={pathname === "/element" ? "page" : undefined}>Element</a><details className="regular-nav"><summary>{t.regular}</summary><div><a href="/#collections">{t.regular}</a><a href="/#hours">Hours</a><a href="/#afterimage">Afterimage</a></div></details>{links.filter(([id]) => id === "process" || id === "about").map(([id, label]) => <a href={`${home}#${id}`} key={id}>{label}</a>)}</nav> : <nav aria-label={t.primary} className="primary-nav">{links.filter(([id]) => id !== "top").map(([id, label]) => <a href={`${home}#${id}`} key={id}>{label}</a>)}</nav>}
     <details className="mobile-nav">
       <summary>{t.menu}<svg aria-hidden="true" width="16" height="12" viewBox="0 0 16 12"><path d="M1 2h14M1 10h14" stroke="currentColor" /></svg></summary>
-      <nav aria-label={t.mobile}><a href="/element" onClick={(event) => event.currentTarget.closest("details")?.removeAttribute("open")}>Element</a>{links.filter(([id]) => id === "top" || id === "collections").map(([id, label]) => <a href={`${home}#${id}`} key={id} onClick={(event) => event.currentTarget.closest("details")?.removeAttribute("open")}>{label}</a>)}<a className="regular-child" href="/#hours" onClick={(event) => event.currentTarget.closest("details")?.removeAttribute("open")}>Hours</a><a className="regular-child" href="/#afterimage" onClick={(event) => event.currentTarget.closest("details")?.removeAttribute("open")}>Afterimage</a>{links.filter(([id]) => id === "process" || id === "about").map(([id, label]) => <a href={`${home}#${id}`} key={id} onClick={(event) => event.currentTarget.closest("details")?.removeAttribute("open")}>{label}</a>)}</nav>
+      {elementPage ? <nav aria-label={t.mobile}><a href="/element" onClick={(event) => event.currentTarget.closest("details")?.removeAttribute("open")}>Element</a>{links.filter(([id]) => id === "top" || id === "collections").map(([id, label]) => <a href={`${home}#${id}`} key={id} onClick={(event) => event.currentTarget.closest("details")?.removeAttribute("open")}>{label}</a>)}<a className="regular-child" href="/#hours" onClick={(event) => event.currentTarget.closest("details")?.removeAttribute("open")}>Hours</a><a className="regular-child" href="/#afterimage" onClick={(event) => event.currentTarget.closest("details")?.removeAttribute("open")}>Afterimage</a>{links.filter(([id]) => id === "process" || id === "about").map(([id, label]) => <a href={`${home}#${id}`} key={id} onClick={(event) => event.currentTarget.closest("details")?.removeAttribute("open")}>{label}</a>)}</nav> : <nav aria-label={t.mobile}>{links.map(([id, label]) => <a href={`${home}#${id}`} key={id} onClick={(event) => event.currentTarget.closest("details")?.removeAttribute("open")}>{label}</a>)}</nav>}
     </details>
     <div className="header-tools">
       <details className="language-select" ref={languageRef} onBlur={(event) => {
