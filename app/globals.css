@@ -779,3 +779,7 @@ html:has(.demo) { scroll-padding-bottom: 10rem; }
   .tech-abstract { padding: 1rem; }.tech-steps li { grid-template-columns: 2.5rem minmax(0, 1fr); gap: .6rem; padding: 1.5rem 0; }.tech-step-n { font-size: 1.2rem; }.tech-steps h3 { font-size: 1.35rem; }
   .tech-build, .tech-results, .tech-entries { grid-template-columns: 1fr; }.tech-entry h3 { font-size: 1.3rem; }.tech-refs li { grid-template-columns: 2.6rem minmax(0, 1fr); gap: .5rem; }
 }
+
+/* Home: single link from the Element collection to /element. */
+.element-home-link { align-items: center; color: var(--gold); display: flex; margin-bottom: .75rem; width: max-content; font-family: var(--display); gap: .5rem; min-height: 44px; text-decoration: underline; text-decoration-color: currentColor; text-underline-offset: 5px; }
+.element-home-link:hover { color: var(--warm); }
