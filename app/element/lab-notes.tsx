@@ -3,6 +3,7 @@
 import SiteHeader, { type Locale, useLocale } from "../site-header";
 import { elementCopy as c, text } from "./content";
 import { noseDataset, researchClaims, verdictLabels } from "../../lib/element/research";
+import { techCopy } from "../../lib/element/tech-content";
 
 export function ClaimLink({ id, locale }: { id: string; locale: Locale }) {
   const claim = [...researchClaims, noseDataset].find(item => item.id === id);
@@ -10,7 +11,7 @@ export function ClaimLink({ id, locale }: { id: string; locale: Locale }) {
 }
 
 export function LabTabs({ locale, active }: { locale: Locale; active?: string }) {
-  return <nav className="lab-tabs" aria-label={c.notes[locale]}>{["ai", "science", "research"].map((route, index) => <a key={route} href={`/element/${route}`} aria-current={active === route ? "page" : undefined}>{c.tabs[index][locale]}<span aria-hidden="true">↗</span></a>)}</nav>;
+  return <nav className="lab-tabs" aria-label={c.notes[locale]}>{["ai", "science", "research", "tech"].map((route, index) => <a key={route} href={`/element/${route}`} aria-current={active === route ? "page" : undefined}>{[...c.tabs, techCopy.tab][index][locale]}<span aria-hidden="true">↗</span></a>)}</nav>;
 }
 
 export function ElementFooter({ locale }: { locale: Locale }) {
@@ -65,7 +66,7 @@ export default function LabNotes({ page }: { page: "ai" | "science" | "research"
           <section className="lab-section"><h2>{ai.noseHeading[locale]}</h2><p>{ai.noseBody[locale]}</p><ClaimLink id="nose-dataset" locale={locale} /><aside className="evaluation-note"><h3>{ai.evaluation[locale]}</h3><p>{ai.evalBody[locale]}</p><ClaimLink id="nose-dataset" locale={locale} /></aside></section>
           <section className="lab-section lab-graph-section"><div><h2>{ai.rulesHeading[locale]}</h2><p>{ai.rulesBody[locale]}</p><ClaimLink id="kit-validation" locale={locale} /></div><NoteGraph locale={locale} /></section>
           <section className="lab-section"><h2>{ai.languageHeading[locale]}</h2><p>{ai.languageBody[locale]}</p><p>{c.review[locale]}</p><ClaimLink id="kit-validation" locale={locale} /></section>
-          <section className="lab-section"><h2>{ai.stackHeading[locale]}</h2><p>{ai.stackBody[locale]}</p><ClaimLink id="ai-costs" locale={locale} /></section>
+          <section className="lab-section"><h2>{ai.stackHeading[locale]}</h2><p>{ai.stackBody[locale]}</p><div className="claim-links"><ClaimLink id="ai-costs" locale={locale} /><a className="claim-link" href="/element/tech">{techCopy.link[locale]} ↗</a></div></section>
         </>}
         {page === "science" && scienceSections.map(([title, body, ids], i) => <section className="lab-section" key={i}><span className="eyebrow">0{i + 1} / {c.tabs[index][locale]}</span><h2>{title[locale]}</h2><p>{body[locale]}</p><div className="claim-links">{ids.map(id => <ClaimLink key={id} id={id} locale={locale} />)}</div></section>)}
         {page === "research" && <>
