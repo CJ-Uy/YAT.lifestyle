@@ -33,17 +33,34 @@ export function tune(base: BaseId, traits: Traits) {
     }
   }
   // Cap each change at 20% of the original (accents at 6 points) so it stays the same base.
-  for (const [note, w] of weights) {
-    const from = start.find((s) => s.note === note)?.weight ?? 0;
-    const cap = Math.max(from * 0.2, 6);
-    weights.set(note, Math.max(0, Math.min(from + cap, Math.max(from - cap, w))));
-  }
-  const total = [...weights.values()].reduce((s, w) => s + w, 0);
-  const notes = [...weights].filter(([, w]) => w > 0).map(([note, w]) => ({ note, tier: NOTE_TIER[note] ?? "heart", weight: round((w / total) * 100) }));
+  const fromOf = (note: string) => start.find((s) => s.note === note)?.weight ?? 0;
+  const capOf = (note: string) => Math.max(fromOf(note) * 0.2, 6);
+  const lo = (note: string) => Math.max(0, fromOf(note) - capOf(note));
+  const hi = (note: string) => fromOf(note) + capOf(note);
+  const clamp = (note: string, w: number) => Math.max(lo(note), Math.min(hi(note), w));
+  for (const [note, w] of weights) weights.set(note, clamp(note, w));
+  // Absorb the residual so weights sum to 100 without fighting any trait: notes with no reasons first
+  // (proportionally), else only reasoned notes already pushed the same way as the residual.
+  for (let pass = 0; pass < 20; pass++) {
+    const need = 100 - [...weights.values()].reduce((s, w) => s + w, 0);
+    if (Math.abs(need) < 0.01) break;
+    const room = ([note, w]: [string, number]) => (need > 0 ? w < hi(note) - 1e-9 : w > lo(note) + 1e-9);
+    const pool = [...weights].filter((e) => !reasons.has(e[0]) && room(e));
+    const poolSum = pool.reduce((s, [, w]) => s + w, 0);
+    if (poolSum) { for (const [note, w] of pool) weights.set(note, clamp(note, w + (need * w) / poolSum)); continue; }
+    // Untouched notes are used up: shrink (never flip) the deltas of reasoned notes pushed the same way as the excess.
+    const pushed = [...weights].filter(([note, w]) => reasons.has(note) && Math.sign(w - fromOf(note)) === -Math.sign(need));
+    const moved = pushed.reduce((s, [note, w]) => s + Math.abs(w - fromOf(note)), 0);
+    if (!moved) break;
+    const keep = Math.max(0, 1 - Math.abs(need) / moved);
+    for (const [note, w] of pushed) weights.set(note, fromOf(note) + (w - fromOf(note)) * keep);
+  }  // Round to 0.1 but stay inside the cap, so the cap holds on the published weights.
+  const inside = (note: string, w: number) => Math.max(Math.ceil(lo(note) * 10 - 1e-9) / 10, Math.min(Math.floor(hi(note) * 10 + 1e-9) / 10, round(w)));
+  const notes = [...weights].map(([note, w]) => ({ note, tier: NOTE_TIER[note] ?? "heart", weight: inside(note, w) })).filter((n) => n.weight > 0);
   const formula: Formula = { base, notes };
   const changes = notes
-    .map((n) => ({ note: n.note, from: start.find((s) => s.note === n.note)?.weight ?? 0, to: n.weight, reasons: reasons.get(n.note) ?? [] }))
-    .filter((c) => c.reasons.length && Math.abs(c.to - c.from) >= 0.5);
+    .map((n) => ({ note: n.note, from: fromOf(n.note), to: n.weight, reasons: reasons.get(n.note) ?? ["rebalance"] }))
+    .filter((c) => Math.abs(c.to - c.from) >= 0.5);
   const concentration = traits.sensitivity === "low" || (traits.oil ?? 0.5) < 0.35 ? "EDP" as const : "EDT" as const;
   const projection = traits.tags.includes("close-quarters") || traits.sensitivity === "high" ? "close" as const : traits.tags.includes("nightlife") ? "carrying" as const : "moderate" as const;
   return { formula, changes, concentration, projection };

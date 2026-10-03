@@ -25,4 +25,6 @@ test("ladder: blank smelled is a false alarm, missed strong flags, weakest detec
   assert.equal(scoreLadder([ans(1, true), ans(2, true), ans(3, true), ans(4, false)], vials).falseAlarm, true);
   assert.equal(scoreLadder([ans(1, false), ans(2, false), ans(3, false), ans(4, false)], vials).missedStrong, true);
   assert.equal(scoreLadder([], vials).sensitivity, "unknown");
+  const partial = scoreLadder([ans(2, false)], vials);
+  assert.deepEqual([partial.sensitivity, partial.trust], ["unknown", 0.5]);
 });
