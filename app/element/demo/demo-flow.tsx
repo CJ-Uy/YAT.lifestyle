@@ -3,10 +3,10 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from "react";
 import SiteHeader, { useLocale, type Locale } from "../../site-header";
 import { demoCopy, tagLabel } from "../../../lib/element/copy";
-import { changeLine, NOTE_NAMES } from "../../../lib/element/explain";
+import { changeLine, matchingReasons, NOTE_NAMES } from "../../../lib/element/explain";
 import { callApi } from "./api";
 import {
-  BASES, NOTE_TIER, StyledQr, TRAIT_EFFECTS, compare, inferNose, kitKey, loadOpenCv, nextFromBank, readZone, scoreLadder, tune,
+  BASES, NOTE_TIER, StyledQr, compare, inferNose, kitKey, loadOpenCv, nextFromBank, readZone, scoreLadder, tune,
   type BaseId, type Change, type Family, type Formula, type LadderAnswer, type Letter, type Localised, type Question, type Vial, type ZoneResult,
 } from "./stubs";
 
@@ -23,7 +23,7 @@ type Rating = { like: number; strength: number };
 type Nose = { type: string; name: Localised; filled: Record<Family, number> };
 type Result = {
   base: BaseId; formula: Formula; changes: Change[]; explanations?: string[]; explLocale?: Locale;
-  concentration: "EDT" | "EDP"; projection: "close" | "moderate" | "carrying"; nose: Nose; shareId?: string; source: "api" | "local";
+  concentration: "EDT" | "EDP"; projection: "close" | "moderate" | "carrying"; nose: Nose; shareId?: string; resultId?: string; source: "api" | "local";
 };
 type State = {
   step: number; sub: number; mode: "sample" | "kit"; name: string; email: string; demoAccount: boolean; kitCode: string; adult: boolean; consent: boolean;
@@ -37,7 +37,8 @@ const FAMILIES: Family[] = ["citrus", "green", "water", "floral", "woody", "ambe
 const LAST_SUB: Record<number, number> = { 3: 1, 4: 2, 6: 6 };
 const SAMPLE_BLOT = { oil: 0.28, step: 2, clearArea: 0.14 };
 const SAMPLE_PH = { skin: 5.3, control: 6.9, diff: -1.6, confidence: 0.72 };
-const FOUNDER = { likes: { citrus: 4, green: 5, water: 3, floral: 2, woody: 5, amber: 2 } as Record<Family, number>, tags: ["trail-memory", "aircon-office"] };
+// Copy of the founder row seeded in migrations/0004_element_accounts.sql; used only when /api/element/compare is unreachable.
+const FOUNDER_FALLBACK = { likes: { citrus: 3, green: 5, water: 3, floral: 5, woody: 3, amber: 2 } as Record<Family, number>, tags: ["trail-memory", "aircon-office"] };
 const initial: State = { step: 0, sub: 0, mode: "sample", name: "", email: "", demoAccount: false, kitCode: "DEMO", adult: false, consent: false, setup: [false, false, false, false], answers: [], ladder: {}, ratings: {}, top2: [] };
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -75,7 +76,7 @@ function fromApi(raw: unknown, s: State, locale: Locale): Result | null {
     base: r.base, formula: r.formula as Formula, changes: r.changes, explanations: lines, explLocale: locale,
     concentration: r.concentration === "EDP" ? "EDP" : r.concentration === "EDT" ? "EDT" : local.concentration,
     projection: r.projection && ["close", "moderate", "carrying"].includes(r.projection) ? r.projection : local.projection,
-    nose: r.nose?.name?.en && r.nose.filled ? r.nose as Nose : local.nose, shareId: typeof r.shareId === "string" ? r.shareId : undefined, source: "api",
+    nose: r.nose?.name?.en && r.nose.filled ? r.nose as Nose : local.nose, shareId: typeof r.shareId === "string" ? r.shareId : undefined, resultId: typeof r.resultId === "string" ? r.resultId : undefined, source: "api",
   };
 }
 
@@ -366,15 +367,17 @@ function Capture({ zone, t, locale, mode, reading, onReading, hint, sessionId }:
       // ponytail: a fixed 6 s budget for OpenCV load + read; tune if real phones need longer.
       result = await Promise.race([loadOpenCv().then(async () => readZone(canvas, zone, await lidLayout())), wait(6000).then(() => null)]);
     } catch { result = null; }
-    if (result && !result.ok) {
+    // A judge's own photo gets a retake message; the sample photo always continues (with estimated values if unread).
+    if (result && !result.ok && !sample) {
       setStatus("retake"); setProblem(t.retake[result.reason]);
       return;
     }
+    if (result && !result.ok) result = null;
     const image = result?.ok ? result.warped.toDataURL("image/jpeg", 0.82) : src.startsWith("blob:") ? undefined : src;
     const next: Reading = result?.ok
       ? { sample, estimated: false, image, flags: result.flags, blot: result.blot, ph: result.ph }
       : { sample, estimated: true, image, flags: [], ...(zone === "blot" ? { blot: SAMPLE_BLOT } : { ph: SAMPLE_PH }) };
-    if (!result) setProblem(t.retake.timeout);
+    if (!result && !sample) setProblem(t.retake.timeout);
     setStatus("idle");
     onReading(next);
     // Store the straightened photo and run the server vision check; extra flags arrive later if the API answers.
@@ -652,14 +655,12 @@ function NoteGraph({ r, t, locale }: { r: Result; t: Copy; locale: Locale }) {
 
 function ResultView({ r, t, locale, pick, ph, heading }: { r: Result; t: Copy; locale: Locale; pick: Letter; ph?: Reading; heading: RefObject<HTMLHeadingElement | null> }) {
   const base = BASES[r.base];
-  // A note can have several reasons pulling different ways; only reasons whose effect on this note (its tier or the note
-  // itself) has the same sign as the change are shown. Sentences come from lib/element/explain.ts so UI and server match.
-  const push = (id: string, c: Change) => Math.sign(c.to - c.from) * ((TRAIT_EFFECTS[id]?.notes?.[c.note] ?? 0) + (TRAIT_EFFECTS[id]?.tier?.[NOTE_TIER[c.note] ?? "heart"] ?? 0));
+  // matchingReasons keeps only traits that pushed the note the way it moved (same rule as the server's sentences).
   const reason = (c: Change, i: number) => {
-    const matched = c.reasons.filter((id) => id !== "rebalance" && push(id, c) > 0);
-    if (!matched.length) return t.result.balanced;
+    const matched = matchingReasons(c);
+    if (matched[0] === "rebalance") return t.result.balanced;
     if (r.explLocale === locale && r.explanations?.[i] && matched.length === c.reasons.length) return r.explanations[i];
-    return changeLine({ ...c, reasons: matched }, locale);
+    return changeLine(c, locale);
   };
   return <>
     <p className="demo-eyebrow">{t.result.eyebrow}</p>
@@ -699,19 +700,41 @@ function LabelArt({ filled }: { filled: Record<Family, number> }) {
   </svg>;
 }
 
+type Match = { percent: number; shared: Family; differ: Family; sentence?: string; sentenceLocale?: Locale };
+
 function Share({ r, s, t, locale, heading }: { r: Result; s: State; t: Copy; locale: Locale; heading: RefObject<HTMLHeadingElement | null> }) {
   const [copied, setCopied] = useState(false);
-  const [match, setMatch] = useState<ReturnType<typeof compare> | null>(null);
+  const [match, setMatch] = useState<Match | null>(null);
+  const [comparing, setComparing] = useState(false);
   const [scan, setScan] = useState(false);
+  // The share link exists only once the server has marked the profile shared; until then (or offline) the card shows without it.
+  const [sharedId, setSharedId] = useState<string | null>(null);
+  useEffect(() => {
+    if (!r.resultId) return;
+    let alive = true;
+    callApi<{ shareId?: string; shared?: boolean }>("profile", { resultId: r.resultId, shared: true }, 5000)
+      .then((p) => { if (alive && p?.shared && typeof p.shareId === "string") setSharedId(p.shareId); });
+    return () => { alive = false; };
+  }, [r.resultId]);
   const origin = typeof window === "undefined" ? "https://yatlifestyle.com" : window.location.origin;
-  const link = r.shareId ? `${origin}/element/p/${r.shareId}` : `${origin}/element/demo`;
+  const link = sharedId ? `${origin}/element/p/${sharedId}` : null;
   const top = [...FAMILIES].sort((a, b) => (r.nose.filled[b] ?? 0) - (r.nose.filled[a] ?? 0)).slice(0, 3);
-  const tags = [...new Set(s.answers.flatMap((a) => a.tags))];
+  const tags = [...new Set(s.answers.flatMap((a) => a.tags))].filter((tag) => /^[a-z0-9-]{1,32}$/.test(tag)).slice(0, 40);
+  const likes = Object.fromEntries(FAMILIES.map((f) => [f, Math.min(5, Math.max(1, r.nose.filled[f] ?? 3))])) as Record<Family, number>;
   async function share() {
+    if (!link) return;
     try {
       if (navigator.share) return await navigator.share({ title: "Element · YAT.lifestyle", url: link });
       await navigator.clipboard.writeText(link); setCopied(true);
     } catch { /* cancelled */ }
+  }
+  // The server compares against the seeded founder row, so this matches /element/compare; local maths only if it is unreachable.
+  async function compareFounder() {
+    setComparing(true);
+    const remote = await callApi<Match>("compare", { locale, a: { likes, tags }, b: "founder" }, 6000);
+    setMatch(remote && typeof remote.percent === "number" && FAMILIES.includes(remote.shared) && FAMILIES.includes(remote.differ)
+      ? { ...remote, sentenceLocale: locale } : compare({ likes, tags }, FOUNDER_FALLBACK));
+    setComparing(false);
   }
   return <>
     <h1 ref={heading} tabIndex={-1}>{t.share.title}</h1>
@@ -727,7 +750,7 @@ function Share({ r, s, t, locale, heading }: { r: Result; s: State; t: Copy; loc
         <p className="demo-card-base">{BASES[r.base].name[locale]} · {r.concentration}</p>
       </div>
     </article>
-    <div className="demo-share">
+    {link && <div className="demo-share">
       <StyledQr value={link} size={148} />
       <div>
         <p className="demo-label">{t.share.linkLabel}</p>
@@ -735,11 +758,12 @@ function Share({ r, s, t, locale, heading }: { r: Result; s: State; t: Copy; loc
         <button type="button" className="demo-primary demo-inline" onClick={share}>{copied ? t.share.copied : t.share.share}</button>
         <p className="demo-muted">{t.share.friendsTry}</p>
       </div>
-    </div>
+    </div>}
     <div className="demo-social">
-      <button type="button" className="demo-secondary" aria-expanded={!!match} onClick={() => setMatch(compare({ likes: r.nose.filled, tags }, FOUNDER))}>{t.share.compareFounder}</button>
+      {r.resultId && <a className="demo-secondary" href={`/element/login?result=${encodeURIComponent(r.resultId)}`}>{t.share.saveAccount}</a>}
+      <button type="button" className="demo-secondary" aria-expanded={!!match} disabled={comparing} onClick={compareFounder}>{t.share.compareFounder}</button>
       {match && <div className="demo-match" role="status"><p className="demo-match-pct">{match.percent}%</p><p>{t.share.compareResult(match.percent)}</p>
-        <p className="demo-muted">{t.share.compareShared(t.families[match.shared])} {t.share.compareDiffer(t.families[match.differ])}</p></div>}
+        <p className="demo-muted">{match.sentence && match.sentenceLocale === locale ? match.sentence : `${t.share.compareShared(t.families[match.shared])} ${t.share.compareDiffer(t.families[match.differ])}`}</p></div>}
       <button type="button" className="demo-secondary" aria-expanded={scan} onClick={() => setScan(!scan)}>{t.share.scanFriend}</button>
       {scan && <p className="demo-muted">{t.share.scanHint}</p>}
     </div>

@@ -1,6 +1,6 @@
 import type { Locale } from "../../app/site-header.tsx";
 import { BASES } from "./bases.ts";
-import { NOTE_TIER } from "./graph.ts";
+import { NOTE_TIER, TRAIT_EFFECTS } from "./graph.ts";
 import { clean } from "./survey.ts";
 import type { Change } from "./tune.ts";
 import type { BaseId, Family, Localised } from "./types.ts";
@@ -20,7 +20,7 @@ export const REASONS: Record<string, Localised> = {
   "close-quarters": loc(["you are often in close quarters, so it stays nearer the skin", "你常與人近距離相處，香味宜貼近皮膚", "你常与人近距离相处，香味宜贴近皮肤"]),
   "musk-quiet": loc(["your nose picks up musks faintly, so other notes carry the base", "你對麝香較不敏感，改由其他香調支撐", "你对麝香较不敏感，改由其他香调支撑"]),
   "trail-memory": loc(["it echoes your trail memory", "呼應你記憶中的山徑", "呼应你记忆中的山径"]),
-  rebalance: loc(["it balances the other changes", "為了平衡其他調整", "为了平衡其他调整"]),
+  rebalance: loc(["it keeps the blend balanced, so it still smells like your base", "保持整體平衡，讓它依然是你選的基調", "保持整体平衡，让它依然是你选的基调"]),
 };
 
 export const NOTE_NAMES: Record<string, Localised> = Object.fromEntries(Object.entries({
@@ -41,8 +41,17 @@ const PROJECTION = { close: loc(["close to the skin", "貼近皮膚", "贴近皮
 type Projection = keyof typeof PROJECTION;
 
 const noteName = (note: string, locale: Locale) => NOTE_NAMES[note]?.[locale] ?? note;
+/** Reasons whose trait effect on this note (the note itself plus its tier) pushed it the way it moved.
+ *  A trait can touch a note in the opposite direction (dry skin lowers top notes) and still be listed by tune(); those are
+ *  dropped here so a sentence never says "because your skin reads dry" about a top note that went up. Nothing left means rebalance. */
+export function matchingReasons(c: Change): string[] {
+  const dir = Math.sign(c.to - c.from), tier = NOTE_TIER[c.note] ?? "heart";
+  const kept = c.reasons.filter((id) => id !== "rebalance" && dir * ((TRAIT_EFFECTS[id]?.notes?.[c.note] ?? 0) + (TRAIT_EFFECTS[id]?.tier?.[tier] ?? 0)) > 0);
+  return kept.length ? kept : ["rebalance"];
+}
+
 const reasonText = (c: Change, locale: Locale) => {
-  const parts = c.reasons.map((r) => (REASONS[r] ?? REASONS.rebalance)[locale]);
+  const parts = matchingReasons(c).map((r) => (REASONS[r] ?? REASONS.rebalance)[locale]);
   return locale === "en" ? parts.join(" and ") : parts.join("，而且");
 };
 

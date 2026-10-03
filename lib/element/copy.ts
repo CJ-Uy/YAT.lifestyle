@@ -162,6 +162,7 @@ const en = {
     share: "Share",
     copy: "Copy link",
     copied: "Link copied",
+    saveAccount: "Save to your account",
     compareFounder: "Compare with the founder",
     compareResult: (pct: number) => `${pct}% match with the founder`,
     compareShared: (fam: string) => `You both like ${fam}.`,
@@ -337,6 +338,7 @@ const zhHant: DemoCopy = {
     share: "分享",
     copy: "複製連結",
     copied: "已複製連結",
+    saveAccount: "儲存到你的帳戶",
     compareFounder: "與創辦人比較",
     compareResult: (pct) => `與創辦人相似度 ${pct}%`,
     compareShared: (fam) => `你們都喜歡${fam}。`,
@@ -507,6 +509,7 @@ const zhHans: DemoCopy = {
     share: "分享",
     copy: "复制链接",
     copied: "已复制链接",
+    saveAccount: "保存到你的账户",
     compareFounder: "与创始人比较",
     compareResult: (pct) => `与创始人相似度 ${pct}%`,
     compareShared: (fam) => `你们都喜欢${fam}。`,
@@ -549,7 +552,8 @@ const TAGS: Record<string, [en: string, zhHant: string, zhHans: string]> = {
   walking: ["Walking", "步行", "步行"], "wants-niche": ["Wants something unusual", "想要獨特", "想要独特"], "warm-lover": ["Loves warm scents", "喜歡溫暖香氣", "喜欢温暖香气"],
   "warm-spice": ["Warm spice", "暖辛香", "暖辛香"], water: ["Water", "水生", "水生"], "weekend-active": ["Active weekends", "活躍週末", "活跃周末"], woody: ["Woody", "木質", "木质"],
   "no-sheet": ["No sheet seen", "看不到吸油紙", "看不到吸油纸"], "outside-guide": ["Outside the guide", "超出框線", "超出框线"],
-  "dry-pads": ["Pads look dry", "試紙看來是乾的", "试纸看来是干的"], glare: ["Glare", "反光", "反光"],
+  "dry-pads": ["Pads look dry", "試紙看來是乾的", "试纸看来是干的"], glare: ["Some glare", "有少許反光", "有少许反光"],
+  shadow: ["Uneven light", "光線不均", "光线不均"],
 };
 const LOCALE_INDEX: Record<Locale, 0 | 1 | 2> = { en: 0, "zh-Hant": 1, "zh-Hans": 2 };
 export function tagLabel(id: string, locale: Locale) {
