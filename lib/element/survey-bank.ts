@@ -121,7 +121,7 @@ export const BANK: Question[] = [
   ]),
 
   // social
-  q("dimsum", "social", ["How often is there a family dim sum lunch?", "家人一起飲茶，大概多久一次？", "家人一起饮茶，大概多久一次？"], [
+  q("dimsum", "social", ["How often is there a family dim sum lunch?", "家人一起飲茶，大概多久一次？", "家人一起喝早茶，大概多久一次？"], [
     c("weekly", ["Almost every weekend", "幾乎每個週末", "几乎每个周末"], ["family", "food-aroma"]),
     c("monthly", ["About once a month", "大概一個月一次", "大概一个月一次"], ["family"]),
     c("festivals", ["Mostly at festivals", "主要是節日", "主要是节日"], ["family"]),
