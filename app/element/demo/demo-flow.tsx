@@ -163,7 +163,7 @@ export default function DemoFlow() {
       const state = { answered, aiFollowUps: answered.filter((a) => a.source === "ai").length };
       let next: AskedQuestion | null = null;
       if (answered.length < surveyCap) {
-        next = normaliseQuestion(await callApi("survey", { sessionId: s.sessionId, locale, state }, 3500), answered.length);
+        next = normaliseQuestion(await callApi("survey", { sessionId: s.sessionId, locale, state }, 5500), answered.length);
         if (next && answered.some((a) => a.id === next!.id)) next = null;
         if (!next) { const bank = nextFromBank(state); next = bank ? { ...bank, source: "bank" } : null; }
       }

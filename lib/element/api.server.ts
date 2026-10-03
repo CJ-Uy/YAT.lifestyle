@@ -42,7 +42,7 @@ const MODELS = {
   text: "@cf/meta/llama-3.3-70b-instruct-fp8-fast", vision: "@cf/meta/llama-4-scout-17b-16e-instruct",
   voice: "@cf/openai/whisper-large-v3-turbo", embed: "@cf/baai/bge-m3", art: "@cf/black-forest-labs/flux-1-schnell",
 };
-const BUDGET = { vision: 4000, survey: 3000, voice: 6000, explain: 6000, art: 10000, seed: 30000 };
+const BUDGET = { vision: 4000, survey: 4500, voice: 6000, explain: 6000, art: 10000, seed: 30000 };
 // The phone sends the straightened zone at most 1024 px on the long side, so 1.5 MB is generous and keeps the vision call fast.
 const JSON_LIMIT = 16 * 1024, PHOTO_LIMIT = 1.5 * 1024 * 1024, AUDIO_LIMIT = 2 * 1024 * 1024;
 const LOCALES: Locale[] = ["en", "zh-Hant", "zh-Hans"];
