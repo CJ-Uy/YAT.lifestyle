@@ -14,3 +14,6 @@ public/kit/rendered-board-test.png
 public/kit/synthetic-board-test.png
 scripts/data/
 scripts/__pycache__/
+
+# Pitch video footage (local only)
+/videos/
