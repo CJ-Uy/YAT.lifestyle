@@ -11,7 +11,7 @@ const ORIGIN = "https://yat.cjuy.dev";
 
 function setup(ai: Deps["ai"]["run"] = async () => { throw new Error("AI down"); }) {
   const db = new DatabaseSync(":memory:");
-  for (const file of ["0001_newsletter.sql", "0002_element.sql", "0003_newsletter_sources.sql", "0004_element_accounts.sql"]) {
+  for (const file of ["0001_newsletter.sql", "0002_element.sql", "0003_newsletter_sources.sql", "0004_element_accounts.sql", "0005_founder_nose.sql"]) {
     db.exec(readFileSync(new URL(`../../migrations/${file}`, import.meta.url), "utf8"));
   }
   const objects = new Map<string, Uint8Array<ArrayBuffer>>();
@@ -21,6 +21,7 @@ function setup(ai: Deps["ai"]["run"] = async () => { throw new Error("AI down");
   const upserts: { id: string; values: number[] }[][] = [];
   const deps: Deps = {
     limiter: { limit: async ({ key }) => { limits.keys.push(key); return { success: limits.allowed }; } },
+    authLimiter: { limit: async () => ({ success: true }) },
     adminKey: "test-admin-key",
     ai: { run: async (model, input, options) => { calls.push({ model, options }); return ai(model, input, options); } },
     db: { prepare: (sql) => ({ bind: (...v) => ({

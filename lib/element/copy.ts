@@ -19,7 +19,7 @@ const en = {
     lead: "Test your skin and your nose at home. AI reads the results and tunes a perfume to you.",
     measureTitle: "What we measure",
     measures: [
-      ["Skin oil", "A blotting sheet shows how long scent will hold on you."],
+      ["Skin oil", "A blotting sheet hints at how long scent may hold on you."],
       ["Skin pH", "A test strip, recorded for your profile."],
       ["Your nose", "Four vials find your sensitivity. Six blind bases find what you like."],
       ["Your days", "Quick questions about where you wear scent."],
@@ -62,7 +62,7 @@ const en = {
     corners: "Corners found, photo straightened",
     oil: (step: number) => `Oil level ${step} of 6`,
     clear: (pct: number) => `${pct}% of the sheet turned clear`,
-    oilMeaning: { low: "Drier skin: scent fades sooner, so base notes matter more.", mid: "Balanced skin: the base holds as written.", high: "Oilier skin holds scent longer, so heavy notes can ease off." },
+    oilMeaning: { low: "Drier skin: scent may fade sooner, so base notes matter more.", mid: "Balanced skin: the base holds as written.", high: "Oilier skin may hold scent longer, so heavy notes can ease off." },
   },
   ph: {
     title: "Skin pH.",
@@ -195,7 +195,7 @@ const zhHant: DemoCopy = {
     lead: "在家測試你的皮膚和嗅覺。AI 讀取結果，為你調整一款香水。",
     measureTitle: "我們會量度",
     measures: [
-      ["皮膚油分", "吸油紙顯示香氣能在你身上停留多久。"],
+      ["皮膚油分", "吸油紙提示香氣在你身上可能停留多久。"],
       ["皮膚 pH", "以試紙記錄，存入你的檔案。"],
       ["你的嗅覺", "四支小瓶找出敏感度，六款盲測基調找出你的喜好。"],
       ["你的日常", "幾條簡單問題，了解你在哪裡用香。"],
@@ -238,7 +238,7 @@ const zhHant: DemoCopy = {
     corners: "已找到四角，相片已拉正",
     oil: (step) => `油分等級 ${step} / 6`,
     clear: (pct) => `吸油紙有 ${pct}% 變透明`,
-    oilMeaning: { low: "皮膚較乾：香氣較快消散，基調更重要。", mid: "皮膚油分均衡：基調照原樣保留。", high: "皮膚較油，留香較久，濃重香調可以減輕。" },
+    oilMeaning: { low: "皮膚較乾：香氣可能較快消散，基調更重要。", mid: "皮膚油分均衡：基調照原樣保留。", high: "皮膚較油，可能留香較久，濃重香調可以減輕。" },
   },
   ph: {
     title: "皮膚 pH。",
@@ -368,7 +368,7 @@ const zhHans: DemoCopy = {
     lead: "在家测试你的皮肤和嗅觉。AI 读取结果，为你调整一款香水。",
     measureTitle: "我们会测量",
     measures: [
-      ["皮肤油分", "吸油纸显示香气能在你身上停留多久。"],
+      ["皮肤油分", "吸油纸提示香气在你身上可能停留多久。"],
       ["皮肤 pH", "用试纸记录，存入你的档案。"],
       ["你的嗅觉", "四支小瓶找出敏感度，六款盲测基调找出你的喜好。"],
       ["你的日常", "几道简单问题，了解你在哪里用香。"],
@@ -411,7 +411,7 @@ const zhHans: DemoCopy = {
     corners: "已找到四角，照片已拉正",
     oil: (step) => `油分等级 ${step} / 6`,
     clear: (pct) => `吸油纸有 ${pct}% 变透明`,
-    oilMeaning: { low: "皮肤偏干：香气较快消散，后调更重要。", mid: "皮肤油分均衡：基调照原样保留。", high: "皮肤偏油，留香较久，浓重香调可以减轻。" },
+    oilMeaning: { low: "皮肤偏干：香气可能较快消散，后调更重要。", mid: "皮肤油分均衡：基调照原样保留。", high: "皮肤偏油，可能留香较久，浓重香调可以减轻。" },
   },
   ph: {
     title: "皮肤 pH。",

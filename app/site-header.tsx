@@ -74,7 +74,7 @@ export default function SiteHeader({ locale, onLocaleChange, shop = false, subpa
           languageRef.current?.querySelector("summary")?.focus();
         }}>{language.name}<svg aria-hidden="true" width="14" height="12" viewBox="0 0 14 12"><path d="m2 6 3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.3" /></svg></button>)}</div>
       </details>
-      <a className={`shop-link${elementPage ? " header-demo" : ""}`} href={elementPage ? "/element/demo" : "/shop"} aria-current={shop ? "page" : undefined}>{elementPage ? t.demo : t.shop}<svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14"><path d="M2 12 12 2M3 2h9v9" fill="none" stroke="currentColor" /></svg></a>
+      {!pathname?.startsWith("/element/demo") && <a className={`shop-link${elementPage ? " header-demo" : ""}`} href={elementPage ? "/element/demo" : "/shop"} aria-current={shop ? "page" : undefined}>{elementPage ? t.demo : t.shop}<svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14"><path d="M2 12 12 2M3 2h9v9" fill="none" stroke="currentColor" /></svg></a>}
     </div>
   </header>;
 }

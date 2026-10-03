@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import SiteHeader, { useLocale, type Locale } from "../site-header";
+import { tagLabel } from "../../lib/element/copy";
 import { FAMILY_NAMES } from "../../lib/element/explain";
 import type { Family, Localised } from "../../lib/element/types";
 import { StyledQr } from "./styled-qr";
@@ -120,7 +121,7 @@ function ProfileBody({ p, t, locale }: { p: Profile; t: Copy; locale: Locale }) 
     <dl className="element-facts">
       <div><dt>{t.p.nose}</dt><dd className="element-nose">{p.noseName[locale] ?? p.noseType}</dd></div>
       <div><dt>{t.p.families}</dt><dd><Families likes={p.likes} locale={locale} /></dd></div>
-      {p.tags.length > 0 && <div><dt>{t.p.tags}</dt><dd><ul className="element-tags">{p.tags.map((tag) => <li key={tag}>{tag.replaceAll("-", " ")}</li>)}</ul></dd></div>}
+      {p.tags.length > 0 && <div><dt>{t.p.tags}</dt><dd><ul className="element-tags">{p.tags.map((tag) => <li key={tag}>{tagLabel(tag, locale)}</li>)}</ul></dd></div>}
     </dl>
     <p className="element-muted">{t.p.privacy}</p>
   </>;

@@ -1,4 +1,5 @@
 import { Buffer } from "node:buffer";
+import { createHash, timingSafeEqual } from "node:crypto";
 import type { Locale } from "../../app/site-header.tsx";
 import { authLogout, authRequest, authVerify, profile, profileVector, publicProfile, viewerEmail } from "./auth.server.ts";
 import { BASES, CARRIER } from "./bases.ts";
@@ -30,7 +31,7 @@ export type Mail = { to: string; subject: string; text: string; html: string };
 type Nose = { type: string; name: Localised; filled: Record<Family, number>; muskQuiet: boolean };
 export type Deps = {
   ai: ElementEnv["AI"]; db: ElementEnv["DB"]; bucket: ElementEnv["BUCKET"]; vectorize: ElementEnv["TAGS"];
-  limiter: ElementEnv["ELEMENT_RATE_LIMITER"]; adminKey?: string;
+  limiter: ElementEnv["ELEMENT_RATE_LIMITER"]; authLimiter: ElementEnv["ELEMENT_RATE_LIMITER"]; adminKey?: string;
   now: () => number;
   inferNose: (likes: Partial<Record<Family, number>>, sensitivity: "high" | "medium" | "low" | "unknown") => Nose;
   waitUntil: (promise: Promise<unknown>) => void;
@@ -233,8 +234,11 @@ const embed = async (deps: Deps, text: string[], ms = BUDGET.voice) =>
 
 // Run once before the demo (and after the bank changes):
 // curl -X POST https://<host>/api/element/seed-tags -H "x-element-admin: $ELEMENT_ADMIN_KEY"
+// Hash first so lengths always match, then compare in constant time.
+const digest = (s: string) => createHash("sha256").update(s).digest();
+const sameSecret = (a: string, b: string) => timingSafeEqual(digest(a), digest(b));
 async function seedTags(request: Request, deps: Deps) {
-  if (!deps.adminKey || request.headers.get("x-element-admin") !== deps.adminKey) return fail(403);
+  if (!deps.adminKey || !sameSecret(request.headers.get("x-element-admin") ?? "", deps.adminKey)) return fail(403);
   const tags = tagDescriptions();
   const vectors = await embed(deps, tags.map((t) => t.text), BUDGET.seed);
   await deps.vectorize.upsert(tags.map((t, i) => ({ id: t.tag, values: vectors[i] })));
@@ -383,7 +387,9 @@ export async function handle(action: string, request: Request, deps: Deps): Prom
     if (request.headers.get("origin") !== new URL(request.url).origin) return fail(403);
     // ponytail: a per-IP key can catch a whole event Wi-Fi; raise the limit if the demo room trips it.
     const ip = request.headers.get("cf-connecting-ip") || "local";
-    if (!(await deps.limiter.limit({ key: `yat-element:${ip}` })).success) {
+    const auth = action === "auth-request" || action === "auth-verify";
+    if (!(await deps.limiter.limit({ key: `yat-element:${ip}` })).success
+      || (auth && !(await deps.authLimiter.limit({ key: `yat-element-auth:${ip}` })).success)) {
       return Response.json({ ok: false }, { status: 429, headers: { "Cache-Control": "no-store", "Retry-After": "60" } });
     }
     return form ? await FORM_ROUTES[action](request, deps) : await JSON_ROUTES[action](await readJson(request), deps, request);

@@ -8,13 +8,15 @@ const ORIGIN = "https://yat.cjuy.dev";
 
 function setup(ai: Deps["ai"]["run"] = async () => { throw new Error("AI down"); }) {
   const db = new DatabaseSync(":memory:");
-  for (const file of ["0001_newsletter.sql", "0002_element.sql", "0003_newsletter_sources.sql", "0004_element_accounts.sql"]) {
+  for (const file of ["0001_newsletter.sql", "0002_element.sql", "0003_newsletter_sources.sql", "0004_element_accounts.sql", "0005_founder_nose.sql"]) {
     db.exec(readFileSync(new URL(`../../migrations/${file}`, import.meta.url), "utf8"));
   }
   const mail: Mail[] = [];
   const clock = { t: Date.parse("2026-10-04T02:00:00Z") };
+  const authLimits = { allowed: true, keys: [] as string[] };
   const deps: Deps = {
     limiter: { limit: async () => ({ success: true }) },
+    authLimiter: { limit: async ({ key }) => { authLimits.keys.push(key); return { success: authLimits.allowed }; } },
     ai: { run: ai },
     db: { prepare: (sql) => ({ bind: (...v) => ({
       run: async () => { db.prepare(sql).run(...v); return { success: true }; },
@@ -29,7 +31,7 @@ function setup(ai: Deps["ai"]["run"] = async () => { throw new Error("AI down");
     pepper: "test-pepper",
     sendEmail: async (m) => { mail.push(m); },
   };
-  return { db, deps, mail, clock };
+  return { db, deps, mail, clock, authLimits };
 }
 
 const post = (action: string, body: unknown, headers: Record<string, string> = {}) => new Request(`${ORIGIN}/api/element/${action}`, {
@@ -50,6 +52,20 @@ async function demoResult(deps: Deps) {
   const res = await (await handle("result", post("result", { sessionId, locale: "en", base: "tea", oil: 0.7, sensitivity: "low", likes: { green: 5, floral: 4 }, tags: ["office"] }), deps)).json();
   return { sessionId, resultId: res.resultId as string, shareId: res.shareId as string };
 }
+
+test("element auth: sign-in routes use the stricter per-IP limiter", async () => {
+  const { deps, mail, authLimits } = setup();
+  const ip = { "cf-connecting-ip": "203.0.113.9" };
+  await handle("auth-request", post("auth-request", { email: "a@example.com", locale: "en" }, ip), deps);
+  await handle("auth-verify", post("auth-verify", { email: "a@example.com", code: "000000" }, ip), deps);
+  await handle("session", post("session", { mode: "demo", locale: "en", adult: true, consent: true }, ip), deps);
+  assert.deepEqual(authLimits.keys, ["yat-element-auth:203.0.113.9", "yat-element-auth:203.0.113.9"], "only auth routes hit it");
+  authLimits.allowed = false;
+  const sent = mail.length;
+  assert.equal((await handle("auth-request", post("auth-request", { email: "a@example.com", locale: "en" }, ip), deps)).status, 429);
+  assert.equal((await handle("auth-verify", post("auth-verify", { email: "a@example.com", code: "000000" }, ip), deps)).status, 429);
+  assert.equal(mail.length, sent, "no code is sent once limited");
+});
 
 test("element auth: a code expires after 10 minutes", async () => {
   const { deps, mail, clock, db } = setup();
@@ -112,7 +128,7 @@ test("element auth: shared profile JSON never carries oil, pH or any reading", a
     assert.doesNotMatch(JSON.stringify(body), /5\.3|0\.7/);
   }
   const founder = await (await get("founder")).json();
-  assert.equal(founder.noseType, "floral");
+  assert.equal(founder.noseType, "nose-2", "0005 sets what inferNose returns for the founder's likes");
   assert.equal(founder.likes.floral, 5);
 
   const match = await (await handle("compare", post("compare", { a: shareId, b: "founder", locale: "en" }), deps)).json();

@@ -41,6 +41,8 @@ const SAMPLE_PH = { skin: 5.3, control: 6.9, diff: -1.6, confidence: 0.72 };
 const FOUNDER_FALLBACK = { likes: { citrus: 3, green: 5, water: 3, floral: 5, woody: 3, amber: 2 } as Record<Family, number>, tags: ["trail-memory", "aircon-office"] };
 const initial: State = { step: 0, sub: 0, mode: "sample", name: "", email: "", demoAccount: false, kitCode: "DEMO", adult: false, consent: false, setup: [false, false, false, false], answers: [], ladder: {}, ratings: {}, top2: [] };
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+// A sample reading stands in for the sample photo; an estimate substituted for a person's own failed photo is not theirs, so it never drives tuning or claims.
+const usable = (r?: Reading) => (r && (r.sample || !r.estimated) ? r : undefined);
 
 // Everything the tuning needs, derived from answers so a skipped step simply contributes nothing.
 function derive(s: State) {
@@ -54,7 +56,7 @@ function derive(s: State) {
   const byLike = [...LETTERS].sort((a, b) => (s.ratings[b]?.like ?? 0) - (s.ratings[a]?.like ?? 0));
   const pick = s.pick ?? s.top2[0] ?? byLike[0];
   const base = key.letters[pick];
-  const traits = { oil: s.blot?.blot?.oil, sensitivity: ladder.sensitivity, tags, muskQuiet: nose.muskQuiet, trust: ladder.trust };
+  const traits = { oil: usable(s.blot)?.blot?.oil, sensitivity: ladder.sensitivity, tags, muskQuiet: nose.muskQuiet, trust: ladder.trust };
   return { key, ladderAnswers, ladder, likes, nose, tags, pick, base, traits, byLike };
 }
 
@@ -279,7 +281,7 @@ export default function DemoFlow() {
     case 8: {
       const r = s.result ?? localResult(s);
       const d = derive(s);
-      body = <ResultView r={r} t={t} locale={locale} pick={d.pick} ph={s.ph} heading={heading} />;
+      body = <ResultView r={r} t={t} locale={locale} pick={d.pick} ph={usable(s.ph)} heading={heading} />;
       primary = { label: t.result.shareCard, onClick: () => go(9) };
       break;
     }
@@ -374,8 +376,10 @@ function Capture({ zone, t, locale, mode, reading, onReading, hint, sessionId }:
     }
     if (result && !result.ok) result = null;
     const image = result?.ok ? result.warped.toDataURL("image/jpeg", 0.82) : src.startsWith("blob:") ? undefined : src;
+    // The sample photo always shows a clear pH; a low-confidence read of it falls back to the known sample values.
+    const weakSamplePh = sample && zone === "ph" && result?.ok && (result.ph?.confidence ?? 0) < 0.4;
     const next: Reading = result?.ok
-      ? { sample, estimated: false, image, flags: result.flags, blot: result.blot, ph: result.ph }
+      ? weakSamplePh ? { sample, estimated: true, image, flags: result.flags, ph: SAMPLE_PH } : { sample, estimated: false, image, flags: result.flags, blot: result.blot, ph: result.ph }
       : { sample, estimated: true, image, flags: [], ...(zone === "blot" ? { blot: SAMPLE_BLOT } : { ph: SAMPLE_PH }) };
     if (!result && !sample) setProblem(t.retake.timeout);
     setStatus("idle");
@@ -594,9 +598,10 @@ function Building({ s, t, locale, heading, onResult }: { s: State; t: Copy; loca
     })();
     return () => { alive = false; timers.forEach(clearTimeout); };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const blot = usable(s.blot)?.blot, ph = usable(s.ph)?.ph;
   const details = [
-    s.blot?.blot ? t.blot.oil(s.blot.blot.step) : null,
-    s.ph?.ph ? `pH ${s.ph.ph.skin.toFixed(1)}` : null,
+    blot ? t.blot.oil(blot.step) : null,
+    ph ? `pH ${ph.skin.toFixed(1)}` : null,
     Object.keys(d.likes).length || s.answers.length || Object.keys(s.ladder).length ? d.nose.name[locale] : null,
     d.tags.length ? d.tags.map((tag) => tagLabel(tag, locale)).join(" · ") : null,
   ];
