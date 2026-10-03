@@ -32,7 +32,7 @@
   }, {
     "name": "ELEMENT_RATE_LIMITER",
     "namespace_id": "92624002",
-    "simple": { "limit": 60, "period": 60 }
+    "simple": { "limit": 300, "period": 60 }
   }],
   "ai": { "binding": "AI" },
   "vectorize": [{ "binding": "TAGS", "index_name": "element-tags" }]
