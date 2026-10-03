@@ -1,0 +1,63 @@
+import type { Locale } from "../../app/site-header.tsx";
+import { BANK, BANNED, type Question } from "./survey-bank.ts";
+
+export { BANNED };
+
+export type SurveyState = {
+  answered: { id: string; text: string; chips: string[]; tags: string[]; source: "bank" | "ai" }[];
+  aiFollowUps: number;
+};
+
+export const MAX_ANSWERS = 12;
+const MAX_AI_FOLLOWUPS = 3;
+
+const triggered = (q: Question, state: SurveyState) =>
+  !!q.followsFrom && state.answered.some((a) => a.id === q.followsFrom!.question && a.chips.includes(q.followsFrom!.chip));
+
+const available = (state: SurveyState) => BANK.filter((q) => !state.answered.some((a) => a.id === q.id));
+
+/** Follow-ups first, then the least-covered topic (ties by bank order). Null once 12 are answered. */
+export function nextFromBank(state: SurveyState): Question | null {
+  if (state.answered.length >= MAX_ANSWERS) return null;
+  const open = available(state);
+  const followUp = open.find((q) => triggered(q, state));
+  if (followUp) return followUp;
+  const roots = open.filter((q) => !q.followsFrom);
+  const covered = (topic: string) => state.answered.filter((a) => BANK.find((q) => q.id === a.id)?.topic === topic).length;
+  return roots.reduce<Question | null>((best, q) => (!best || covered(q.topic) < covered(best.topic) ? q : best), null);
+}
+
+const SLUG = /^[a-z0-9-]{1,32}$/;
+const clean = (s: string) => !BANNED.some((b) => s.toLowerCase().includes(b));
+
+export type AiChoice =
+  | { kind: "bank"; question: Question }
+  | { kind: "followup"; text: string; chips: { id: string; label: string; tags: string[] }[] };
+
+/** Validates the model's pick. Anything off returns null so the caller falls back to nextFromBank. */
+export function validateAiChoice(raw: unknown, state: SurveyState, _locale: Locale): AiChoice | null {
+  if (typeof raw === "string") {
+    try { raw = JSON.parse(raw); } catch { return null; }
+  }
+  if (!raw || typeof raw !== "object") return null;
+  const { questionId, followup } = raw as { questionId?: unknown; followup?: { text?: unknown; chips?: unknown } };
+
+  if (typeof questionId === "string") {
+    const question = available(state).find((q) => q.id === questionId && (!q.followsFrom || triggered(q, state)));
+    return question ? { kind: "bank", question } : null;
+  }
+
+  if (!followup || state.aiFollowUps >= MAX_AI_FOLLOWUPS) return null;
+  const { text, chips } = followup;
+  if (typeof text !== "string" || !text.trim() || text.length > 120 || !clean(text)) return null;
+  if (!Array.isArray(chips) || chips.length < 2 || chips.length > 5) return null;
+  const out: { id: string; label: string; tags: string[] }[] = [];
+  for (const chip of chips) {
+    const { id, label, tags } = (chip ?? {}) as { id?: unknown; label?: unknown; tags?: unknown };
+    if (typeof id !== "string" || !SLUG.test(id) || out.some((o) => o.id === id)) return null;
+    if (typeof label !== "string" || !label.trim() || label.length > 40 || !clean(label)) return null;
+    if (!Array.isArray(tags) || tags.length > 4 || !tags.every((t) => typeof t === "string" && SLUG.test(t) && clean(t))) return null;
+    out.push({ id, label, tags });
+  }
+  return { kind: "followup", text, chips: out };
+}
