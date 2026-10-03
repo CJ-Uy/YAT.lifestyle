@@ -1,5 +1,6 @@
 import { Buffer } from "node:buffer";
 import type { Locale } from "../../app/site-header.tsx";
+import { authLogout, authRequest, authVerify, profile, profileVector, publicProfile, viewerEmail } from "./auth.server.ts";
 import { BASES, CARRIER } from "./bases.ts";
 import { compare, type ProfileVector } from "./compare.ts";
 import { FAMILY_NAMES, REASONS, templateExplanations, validateExplanations, type Explanations } from "./explain.ts";
@@ -22,7 +23,10 @@ export type ElementEnv = {
   };
   ELEMENT_RATE_LIMITER: { limit(options: { key: string }): Promise<{ success: boolean }> };
   ELEMENT_ADMIN_KEY?: string;
+  EMAIL: { send(message: { to: string; from: { email: string; name: string }; subject: string; text: string; html: string }): Promise<unknown> };
+  ELEMENT_CODE_PEPPER?: string;
 };
+export type Mail = { to: string; subject: string; text: string; html: string };
 type Nose = { type: string; name: Localised; filled: Record<Family, number>; muskQuiet: boolean };
 export type Deps = {
   ai: ElementEnv["AI"]; db: ElementEnv["DB"]; bucket: ElementEnv["BUCKET"]; vectorize: ElementEnv["TAGS"];
@@ -30,6 +34,7 @@ export type Deps = {
   now: () => number;
   inferNose: (likes: Partial<Record<Family, number>>, sensitivity: "high" | "medium" | "low" | "unknown") => Nose;
   waitUntil: (promise: Promise<unknown>) => void;
+  sendEmail?: (mail: Mail) => Promise<unknown>; pepper?: string;
 };
 
 const MODELS = {
@@ -314,25 +319,41 @@ async function result(body: Record<string, unknown>, deps: Deps) {
   return json({ resultId, shareId, base: input.base, formula, changes, explanations, concentration, projection, nose, materials: BASES[input.base].materials, carrier: CARRIER, sample: true });
 }
 
-async function profileOf(deps: Deps, v: unknown): Promise<ProfileVector> {
+async function profileOf(deps: Deps, v: unknown, viewer: string | null): Promise<ProfileVector> {
   if (typeof v === "string") {
-    const row = v.length <= 40 ? await deps.db.prepare("SELECT likes, tags FROM element_profiles WHERE share_id = ?").bind(v).first<{ likes: string; tags: string }>() : null;
-    if (!row) throw new HttpError(404);
-    return { likes: JSON.parse(row.likes), tags: JSON.parse(row.tags) };
+    const p = await profileVector(deps, v, viewer);
+    if (!p) throw new HttpError(404);
+    return p;
   }
   const p = v as ProfileVector | null;
   if (!p || typeof p.likes !== "object" || !FAMILIES.every((f) => typeof p.likes[f] === "number" && p.likes[f] >= 1 && p.likes[f] <= 5) || !strings(p.tags, 40, 32)) throw new HttpError(400);
   return { likes: Object.fromEntries(FAMILIES.map((f) => [f, p.likes[f]])) as Record<Family, number>, tags: p.tags };
 }
 
-async function compareProfiles(body: Record<string, unknown>, deps: Deps) {
+async function compareProfiles(body: Record<string, unknown>, deps: Deps, request: Request) {
   const locale = localeOf(body.locale);
-  const r = compare(await profileOf(deps, body.a), await profileOf(deps, body.b));
+  const viewer = typeof body.a === "string" || typeof body.b === "string" ? await viewerEmail(request, deps) : null;
+  const r = compare(await profileOf(deps, body.a, viewer), await profileOf(deps, body.b, viewer));
   const s = FAMILY_NAMES[r.shared][locale], d = FAMILY_NAMES[r.differ][locale];
-  const sentence = locale === "en" ? (r.shared === r.differ ? `You both lean ${s}, though not equally.` : `You both love ${s}; you differ most on ${d}.`)
+  const template = locale === "en" ? (r.shared === r.differ ? `You both lean ${s}, though not equally.` : `You both love ${s}; you differ most on ${d}.`)
     : locale === "zh-Hant" ? (r.shared === r.differ ? `你們都偏愛${s}，但程度不同。` : `你們都喜歡${s}；最大分歧在${d}。`)
       : (r.shared === r.differ ? `你们都偏爱${s}，但程度不同。` : `你们都喜欢${s}；最大分歧在${d}。`);
-  return json({ ...r, sentence });
+  try {
+    const out = await ai(deps, MODELS.text, {
+      messages: [
+        { role: "system", content: `Write exactly one warm, plain sentence in ${LANGUAGE[locale]} telling two friends how their scent profiles compare. Mention the family they share and the family where they differ most, and nothing else: no other scent families, no numbers, no health or skin claims. Never use em dashes. Reply with JSON only: {"sentence": "..."}.` },
+        { role: "user", content: JSON.stringify({ match: r.percent >= 70 ? "close" : r.percent >= 45 ? "partial" : "different", shared: s, differMost: d }) },
+      ],
+      response_format: { type: "json_schema", json_schema: { type: "object", required: ["sentence"], properties: { sentence: { type: "string" } } } },
+      max_tokens: 120,
+    }, BUDGET.survey);
+    const sentence = (jsonFrom(responseOf(out)) as { sentence?: unknown } | null)?.sentence;
+    const others = FAMILIES.filter((f) => f !== r.shared && f !== r.differ).map((f) => FAMILY_NAMES[f][locale]);
+    // Grounded or nothing: names the shared family, no other family, no digits, right script, one short sentence.
+    if (typeof sentence === "string" && sentence.length <= 200 && sentence.includes(s) && !others.some((o) => sentence.toLowerCase().includes(o.toLowerCase()))
+      && !/[0-9—]/.test(sentence) && /[㐀-鿿]/.test(sentence) === (locale !== "en")) return json({ ...r, sentence, by: "ai" });
+  } catch { /* slow or failed model: template */ }
+  return json({ ...r, sentence: template, by: "template" });
 }
 
 async function label(request: Request, deps: Deps) {
@@ -343,12 +364,18 @@ async function label(request: Request, deps: Deps) {
   return new Response(object.body, { headers: { "Content-Type": "image/jpeg", "Cache-Control": "public, max-age=86400" } });
 }
 
-const JSON_ROUTES: Record<string, (body: Record<string, unknown>, deps: Deps) => Promise<Response>> = { session, survey, result, compare: compareProfiles };
+const JSON_ROUTES: Record<string, (body: Record<string, unknown>, deps: Deps, request: Request) => Promise<Response>> = {
+  session, survey, result, compare: compareProfiles, profile, "auth-request": authRequest, "auth-verify": authVerify, "auth-logout": authLogout,
+};
 const FORM_ROUTES: Record<string, (request: Request, deps: Deps) => Promise<Response>> = { photo, voice };
 
 export async function handle(action: string, request: Request, deps: Deps): Promise<Response> {
   try {
     if (action === "label") return request.method === "GET" ? await label(request, deps) : fail(405);
+    if (action === "profile" && request.method === "GET") {
+      const shared = await publicProfile(deps, new URL(request.url).searchParams.get("share") ?? "");
+      return shared ? json(shared) : fail(404);
+    }
     const form = Object.hasOwn(FORM_ROUTES, action);
     if (!form && !Object.hasOwn(JSON_ROUTES, action) && action !== "seed-tags") return fail(404);
     if (request.method !== "POST") return fail(405);
@@ -359,7 +386,7 @@ export async function handle(action: string, request: Request, deps: Deps): Prom
     if (!(await deps.limiter.limit({ key: `yat-element:${ip}` })).success) {
       return Response.json({ ok: false }, { status: 429, headers: { "Cache-Control": "no-store", "Retry-After": "60" } });
     }
-    return form ? await FORM_ROUTES[action](request, deps) : await JSON_ROUTES[action](await readJson(request), deps);
+    return form ? await FORM_ROUTES[action](request, deps) : await JSON_ROUTES[action](await readJson(request), deps, request);
   } catch (error) {
     // Never log bodies, photos or readings. The demo falls back to local logic on any non-200.
     return fail(error instanceof HttpError ? error.status : 503);

@@ -4,7 +4,8 @@ import { inferNose } from "../../../../lib/element/nose";
 
 const deps = (): Deps => ({
   ai: env.AI, db: env.DB, bucket: env.BUCKET, vectorize: env.TAGS, limiter: env.ELEMENT_RATE_LIMITER,
-  adminKey: env.ELEMENT_ADMIN_KEY, now: Date.now, inferNose, waitUntil,
+  adminKey: env.ELEMENT_ADMIN_KEY, now: Date.now, inferNose, waitUntil, pepper: env.ELEMENT_CODE_PEPPER,
+  sendEmail: (mail) => env.EMAIL.send({ ...mail, from: { email: "codes@yatlifestyle.com", name: "YAT.lifestyle Element" } }),
 });
 const action = (request: Request) => new URL(request.url).pathname.split("/").filter(Boolean).pop() ?? "";
 

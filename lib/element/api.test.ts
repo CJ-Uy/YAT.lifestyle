@@ -11,7 +11,7 @@ const ORIGIN = "https://yat.cjuy.dev";
 
 function setup(ai: Deps["ai"]["run"] = async () => { throw new Error("AI down"); }) {
   const db = new DatabaseSync(":memory:");
-  for (const file of ["0001_newsletter.sql", "0002_element.sql", "0003_newsletter_sources.sql"]) {
+  for (const file of ["0001_newsletter.sql", "0002_element.sql", "0003_newsletter_sources.sql", "0004_element_accounts.sql"]) {
     db.exec(readFileSync(new URL(`../../migrations/${file}`, import.meta.url), "utf8"));
   }
   const objects = new Map<string, Uint8Array<ArrayBuffer>>();

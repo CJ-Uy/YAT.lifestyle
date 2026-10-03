@@ -30,7 +30,7 @@ export default function NewsletterForm({ locale }: { locale: Locale }) {
     } catch { setState(controller.signal.aborted ? "timeout" : "error"); }
     finally { clearTimeout(timer); pending.current = false; }
   }
-  return <section className="newsletter" aria-labelledby="newsletter-heading">
+  return <section className="newsletter" id="newsletter" aria-labelledby="newsletter-heading">
     <h2 id="newsletter-heading">{t.title}</h2>
     <p className="newsletter-intro">{t.intro}</p>
     <form method="post" action="/api/newsletter" onSubmit={submit} aria-busy={state === "sending"}>
