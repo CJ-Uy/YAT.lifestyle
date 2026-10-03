@@ -1,0 +1,10 @@
+import type { Locale } from "../../app/site-header";
+export type Family = "citrus" | "green" | "water" | "floral" | "woody" | "amber";
+export type BaseId = "dawn" | "tea" | "harbour" | "noon" | "forest" | "night";
+export type Tier = "top" | "heart" | "base";
+export type NoteWeight = { note: string; tier: Tier; weight: number };
+export type Formula = { base: BaseId; notes: NoteWeight[] };
+export type Letter = "A" | "B" | "C" | "D" | "E" | "F";
+export type Vial = 1 | 2 | 3 | 4;
+export type VialContent = "blank" | "weak" | "medium" | "strong";
+export type Localised = Record<Locale, string>;
