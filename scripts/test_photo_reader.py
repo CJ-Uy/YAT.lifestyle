@@ -23,6 +23,23 @@ def test_markers_on_real_photos():
             assert result == {"ok": False, "reason": "markers", "missing": [0, 3]}, result
 
 
+def test_v12_lid_photos():
+    """The current printed lid: a clean sheet, an oily sheet, and the empty black box."""
+    for name in ["v12-clean-blot.webp", "v12-oily-blot.webp", "v12-no-blot.webp"]:
+        image = cv2.imread(str(HERE / name))
+        assert image is not None, name
+        assert set(range(8)) <= set(detect_markers(image)), name
+        blot, ph = read_zone(image, "blot", LAYOUT), read_zone(image, "ph", LAYOUT)
+        print(f"{name}: blot {blot.get('blot', blot.get('reason'))}; ph {ph.get('ph', ph.get('reason'))}")
+        if name == "v12-no-blot.webp":
+            assert blot == {"ok": False, "reason": "no-sheet"}, blot
+        else:
+            assert blot["ok"] and blot["blot"]["oil"] < 0.2, blot
+    clean = read_zone(cv2.imread(str(HERE / "v12-clean-blot.webp")), "blot", LAYOUT)["blot"]
+    oily = read_zone(cv2.imread(str(HERE / "v12-oily-blot.webp")), "blot", LAYOUT)["blot"]
+    assert oily["oil"] > clean["oil"], (clean, oily)
+
+
 def paint(image, rect, colour):
     x, y, w, h = [round(rect[k] * 10) for k in ("x", "y", "w", "h")]
     rgb = tuple(int(colour[i:i + 2], 16) for i in (1, 3, 5))
@@ -91,6 +108,7 @@ def test_missing_and_quality():
 
 if __name__ == "__main__":
     test_markers_on_real_photos()
+    test_v12_lid_photos()
     test_readings_on_rendered_board()
     test_missing_and_quality()
     print("ok")

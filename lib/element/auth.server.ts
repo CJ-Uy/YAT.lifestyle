@@ -64,8 +64,14 @@ export async function authVerify(body: Record<string, unknown>, deps: Deps) {
   if (typeof body.resultId === "string" && body.resultId.length <= 40) {
     await deps.db.prepare("UPDATE element_profiles SET email = ? WHERE result_id = ? AND email IS NULL").bind(email, body.resultId).run();
   }
-  return json({ ok: true }, 200, { "Set-Cookie": `${COOKIE}=${id}; Path=/; Max-Age=${LOGIN_TTL / 1000}; HttpOnly; Secure; SameSite=Lax` });
+  return withCookies({ ok: true }, [`${COOKIE}=${id}; Path=/; Max-Age=${LOGIN_TTL / 1000}; HttpOnly; Secure; SameSite=Lax`, `${HINT}=1; Path=/; Max-Age=${LOGIN_TTL / 1000}; Secure; SameSite=Lax`]);
 }
+
+// A readable "signed in" hint next to the HttpOnly session cookie, so pages only ask for /profile when it can succeed.
+// It carries no secret: forging it only makes the page ask and get a 401.
+const HINT = "yat_element_in";
+const withCookies = (body: unknown, cookies: string[]) =>
+  Response.json(body, { headers: [["Cache-Control", "no-store"], ...cookies.map((c): [string, string] => ["Set-Cookie", c])] });
 
 const cookieOf = (request: Request) => request.headers.get("cookie")?.match(/(?:^|;\s*)yat_element=([A-Za-z0-9_-]{43})(?:;|$)/)?.[1];
 
@@ -79,16 +85,16 @@ export async function viewerEmail(request: Request, deps: Deps) {
 export async function authLogout(_body: Record<string, unknown>, deps: Deps, request: Request) {
   const id = cookieOf(request);
   if (id) await deps.db.prepare("DELETE FROM element_logins WHERE id_hash = ?").bind(await hex(id)).run();
-  return json({ ok: true }, 200, { "Set-Cookie": `${COOKIE}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax` });
+  return withCookies({ ok: true }, [`${COOKIE}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax`, `${HINT}=; Path=/; Max-Age=0; Secure; SameSite=Lax`]);
 }
 
 type Row = { share_id: string; first_name: string | null; likes: string; nose_type: string; nose_name: string; tags: string; shared: number };
 const COLUMNS = "share_id, first_name, likes, nose_type, nose_name, tags, shared";
 // The only shape a profile ever leaves the server in. Built field by field so skin, oil or pH can never ride along.
-const view = (r: Row) => ({
-  shareId: r.share_id, firstName: r.first_name, noseType: r.nose_type, noseName: JSON.parse(r.nose_name),
-  likes: JSON.parse(r.likes), tags: JSON.parse(r.tags), shared: r.shared === 1,
-});
+const view = (r: Row) => {
+  const { tagLabels = {}, ...noseName } = JSON.parse(r.nose_name) as Record<string, unknown> & { tagLabels?: Record<string, string> };
+  return { shareId: r.share_id, firstName: r.first_name, noseType: r.nose_type, noseName, likes: JSON.parse(r.likes), tags: JSON.parse(r.tags), tagLabels, shared: r.shared === 1 };
+};
 
 export async function publicProfile(deps: Deps, shareId: string) {
   if (!/^[a-z0-9-]{1,40}$/.test(shareId)) return null;

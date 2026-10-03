@@ -65,3 +65,15 @@ export function tune(base: BaseId, traits: Traits) {
   const projection = traits.tags.includes("close-quarters") || traits.sensitivity === "high" ? "close" as const : traits.tags.includes("nightlife") ? "carrying" as const : "moderate" as const;
   return { formula, changes, concentration, projection };
 }
+
+/** Whole percents for display that sum to exactly 100 (largest remainder; ties go to the heavier note). Internal weights stay as tuned. */
+export function displayPercents(notes: { note: string; weight: number }[]): Record<string, number> {
+  const total = notes.reduce((s, n) => s + n.weight, 0);
+  if (!total) return Object.fromEntries(notes.map((n) => [n.note, 0]));
+  const exact = notes.map((n) => ({ note: n.note, v: (n.weight * 100) / total, floor: Math.floor((n.weight * 100) / total + 1e-9) }));
+  const out: Record<string, number> = Object.fromEntries(exact.map((n) => [n.note, n.floor]));
+  const order = [...exact].sort((a, b) => b.v - b.floor - (a.v - a.floor) || b.v - a.v);
+  let left = 100 - exact.reduce((s, n) => s + n.floor, 0);
+  for (let i = 0; left > 0; left--, i++) out[order[i % order.length].note]++;
+  return out;
+}

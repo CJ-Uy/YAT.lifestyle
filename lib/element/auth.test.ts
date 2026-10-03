@@ -95,8 +95,9 @@ test("element auth: the right code issues a session cookie once and claims the d
   assert.equal((await verify(deps, "c@example.com", wrong(code))).status, 400, "one wrong try does not lock");
   const res = await verify(deps, "c@example.com", code, { resultId });
   assert.equal(res.status, 200);
-  const cookie = res.headers.get("set-cookie")!;
+  const [cookie, hint] = res.headers.getSetCookie();
   assert.match(cookie, /^yat_element=[A-Za-z0-9_-]{43}; Path=\/; Max-Age=\d+; HttpOnly; Secure; SameSite=Lax$/);
+  assert.match(hint, /^yat_element_in=1; Path=\/; Max-Age=\d+; Secure; SameSite=Lax$/, "a readable signed-in hint with no secret");
   const raw = cookie.split(";")[0].split("=")[1];
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM element_logins WHERE id_hash = ?").get(raw)!.n, 0, "the cookie value is stored hashed");
   assert.equal((await verify(deps, "c@example.com", code)).status, 400, "a used code cannot be reused");
@@ -108,8 +109,21 @@ test("element auth: the right code issues a session cookie once and claims the d
   assert.equal((await handle("profile", post("profile", {}, { Cookie: "yat_element=" + "x".repeat(43) }), deps)).status, 401);
 
   const out = await handle("auth-logout", post("auth-logout", {}, { Cookie: cookie.split(";")[0] }), deps);
-  assert.match(out.headers.get("set-cookie")!, /Max-Age=0/);
+  assert.ok(out.headers.getSetCookie().length === 2 && out.headers.getSetCookie().every((c) => /Max-Age=0/.test(c)), "logout clears both cookies");
   assert.equal((await handle("profile", post("profile", {}, { Cookie: cookie.split(";")[0] }), deps)).status, 401);
+});
+
+test("element profile: AI tag labels are stored with the profile and shown instead of slugs", async () => {
+  const { deps } = setup();
+  const sessionId = (await (await handle("session", post("session", { mode: "demo", locale: "zh-Hant", firstName: "Sam", adult: true, consent: true }), deps)).json()).sessionId;
+  const base = { sessionId, locale: "zh-Hant", base: "tea", likes: { green: 5 }, tags: ["office", "commute"] };
+  assert.equal((await handle("result", post("result", { ...base, tagLabels: { other: "x" } }), deps)).status, 400, "labels only for sent tags");
+  assert.equal((await handle("result", post("result", { ...base, tagLabels: { commute: "<b>" } }), deps)).status, 400);
+  const r = await (await handle("result", post("result", { ...base, tagLabels: { commute: "通勤" } }), deps)).json();
+  const p = await (await handle("profile", post("profile", { resultId: r.resultId, shared: true }), deps)).json();
+  assert.deepEqual(p.tagLabels, { commute: "通勤" });
+  assert.equal(p.noseName.tagLabels, undefined, "the nose name stays a plain localised name");
+  assert.ok(p.noseName.en);
 });
 
 test("element auth: shared profile JSON never carries oil, pH or any reading", async () => {
@@ -165,5 +179,10 @@ test("element compare: AI sentence is used only when grounded in the two familie
   const b = { likes: { citrus: 4, green: 4, water: 3, floral: 1, woody: 5, amber: 5 }, tags: [] };
   const ask = async (sentence: string) => (await (await handle("compare", post("compare", { a, b, locale: "en" }), setup(async () => ({ response: { sentence } })).deps)).json());
   assert.equal((await ask("You both reach for woody warmth, but amber is where you part ways.")).by, "ai");
-  for (const bad of ["You both love woody and citrus.", "You are 80% alike in woody.", "Nothing in common."]) assert.equal((await ask(bad)).by, "template", bad);
+  for (const bad of ["You both love woody and citrus.", "You are 80% alike in woody.", "Nothing in common.", "You two friends share a similar woody scent profile, but amber sets you apart."])
+    assert.equal((await ask(bad)).by, "template", bad);
+  const founder = await (await handle("compare", post("compare", { a, b: "founder", locale: "en" }), setup(async () => { throw new Error("down"); }).deps)).json();
+  assert.match(founder.sentence, /^You and the founder both lean \w+; you differ most on \w+\.$/);
+  const zh = await (await handle("compare", post("compare", { a, b: "founder", locale: "zh-Hant" }), setup(async () => { throw new Error("down"); }).deps)).json();
+  assert.match(zh.sentence, /^你和創辦人都偏愛.+；最大分別在.+。$/);
 });

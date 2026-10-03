@@ -4,9 +4,10 @@ import { useEffect, useRef, useState, type CSSProperties, type ReactNode, type R
 import SiteHeader, { useLocale, type Locale } from "../../site-header";
 import { demoCopy, tagLabel } from "../../../lib/element/copy";
 import { changeLine, matchingReasons, NOTE_NAMES } from "../../../lib/element/explain";
+import { CITES } from "../../../lib/element/research";
 import { callApi } from "./api";
 import {
-  BASES, NOTE_TIER, StyledQr, compare, inferNose, kitKey, loadOpenCv, nextFromBank, readZone, scoreLadder, tune,
+  BASES, NOTE_TIER, StyledQr, compare, displayPercents, inferNose, kitKey, loadOpenCv, nextFromBank, readZone, scoreLadder, tune,
   type BaseId, type Change, type Family, type Formula, type LadderAnswer, type Letter, type Localised, type Question, type Vial, type ZoneResult,
 } from "./stubs";
 
@@ -63,6 +64,28 @@ function derive(s: State) {
 function localResult(s: State): Result {
   const d = derive(s);
   return { ...tune(d.base, d.traits), base: d.base, nose: d.nose, source: "local" };
+}
+
+// The chip label (already in the person's language) behind each tag they picked, so AI tags never show as bare slugs.
+function chipLabels(answers: Answer[], locale: Locale) {
+  const out: Record<string, string> = {};
+  for (const a of answers) for (const c of a.q?.chips ?? []) if (a.chips.includes(c.id)) for (const tag of c.tags) out[tag] ??= c.label[locale];
+  return out;
+}
+
+const RESULT_TIMEOUT = 8000;
+let pendingResult: { key: string; promise: Promise<Result> } | null = null;
+// Starts (or reuses) the result request for this exact state, so it can run while the building screen plays.
+function requestResult(s: State, locale: Locale): Promise<Result> {
+  const d = derive(s);
+  const names = chipLabels(s.answers, locale);
+  const tags = d.tags.filter((tag) => /^[a-z0-9-]{1,32}$/.test(tag)).slice(0, 40);
+  const tagLabels = Object.fromEntries(tags.filter((tag) => names[tag] && !/[\p{Cc}<>]/u.test(names[tag])).map((tag) => [tag, names[tag].slice(0, 40)]));
+  // pH is deliberately not sent: it is recorded with the photo, never a tuning input.
+  const body = { sessionId: s.sessionId, locale, base: d.base, likes: d.likes, sensitivity: d.ladder.sensitivity, oil: d.traits.oil, trust: d.ladder.trust, tags, tagLabels };
+  const key = JSON.stringify(body);
+  if (pendingResult?.key !== key) pendingResult = { key, promise: callApi("result", body, RESULT_TIMEOUT).then((raw) => fromApi(raw, s, locale) ?? localResult(s)) };
+  return pendingResult.promise;
 }
 
 // Accept the API result only when it has the shape we render; anything else falls back to local tuning.
@@ -158,8 +181,11 @@ export default function DemoFlow() {
     if (s.step !== 5 || s.current !== undefined) return;
     let alive = true;
     (async () => {
-      // Server limits: 5 chips and 8 tags per answer, 200 characters of text.
-      const answered = s.answers.map(({ id, text, chips, tags, source }) => ({ id, text: text.slice(0, 200), chips: chips.slice(0, 5), tags: tags.slice(0, 8), source }));
+      // Server limits: 5 chips, 5 options and 8 tags per answer, 200 characters of text, 40 per label.
+      // options and picked are the exact chip labels shown and chosen, so the AI can build on them and never repeat them.
+      const labels = (chips: AskedQuestion["chips"]) => chips.slice(0, 5).map((c) => c.label[locale].slice(0, 40));
+      const answered = s.answers.map(({ id, text, chips, tags, source, q }) => ({ id, text: text.slice(0, 200), chips: chips.slice(0, 5), tags: tags.slice(0, 8), source,
+        options: labels(q?.chips ?? []), picked: labels((q?.chips ?? []).filter((c) => chips.includes(c.id))) }));
       const state = { answered, aiFollowUps: answered.filter((a) => a.source === "ai").length };
       let next: AskedQuestion | null = null;
       if (answered.length < surveyCap) {
@@ -248,7 +274,7 @@ export default function DemoFlow() {
         primary = { label: t.ph.startTimer, onClick: () => go(4, 1) };
         secondary = { label: t.ph.skipTimer, onClick: () => go(4, 2) };
       } else if (s.sub === 1) {
-        body = <Timer seconds={60} title={t.ph.timerTitle} hint={t.ph.timerHint} done={t.ph.timerDone} heading={heading} />;
+        body = <Timer seconds={60} unit={t.seconds} title={t.ph.timerTitle} hint={t.ph.timerHint} done={t.ph.timerDone} heading={heading} />;
         primary = { label: t.continue, onClick: () => go(4, 2) };
       } else {
         body = <>{h1(t.ph.photoTitle)}<Capture zone="ph" t={t} locale={locale} mode={s.mode} reading={s.ph} sessionId={s.sessionId} onReading={(r) => patch((prev) => ({ ph: r && prev.ph && r.image === prev.ph.image ? { ...prev.ph, ...r } : r }))} hint={t.ph.frameHint} /></>;
@@ -261,7 +287,7 @@ export default function DemoFlow() {
         body = <>{h1(t.survey.title)}<p className="demo-wait" role="status"><span className="demo-pulse" aria-hidden="true" />{t.survey.loading}</p></>;
       } else if (q === null) {
         const tags = [...new Set(s.answers.flatMap((a) => a.tags))];
-        body = <>{h1(t.survey.title)}<p className="demo-label">{t.survey.tags}</p><TagList tags={tags} locale={locale} /></>;
+        body = <>{h1(t.survey.title)}<p className="demo-label">{t.survey.tags}</p><TagList tags={tags} locale={locale} names={chipLabels(s.answers, locale)} /></>;
         primary = { label: t.continue, onClick: () => go(6) };
       } else {
         body = <Survey key={q.id} q={q} n={s.answers.length + 1} t={t} locale={locale} picked={picked} setPicked={setPicked} heading={heading} sessionId={s.sessionId}
@@ -272,7 +298,7 @@ export default function DemoFlow() {
       break;
     }
     case 6:
-      ({ body, primary, secondary } = smellStep(s, t, patch, go, heading));
+      ({ body, primary, secondary } = smellStep(s, t, locale, patch, go, heading));
       break;
     case 7:
       body = <Building s={s} t={t} locale={locale} heading={heading} onResult={(result) => patch({ result })} />;
@@ -417,7 +443,8 @@ function Capture({ zone, t, locale, mode, reading, onReading, hint, sessionId }:
 }
 
 function ReadingChip({ zone, r, t, locale, problem }: { zone: Zone; r: Reading; t: Copy; locale: Locale; problem?: string }) {
-  const badge = r.estimated ? t.estimated : r.sample ? t.sample : null;
+  // The sample photo's stand-in values (e.g. its faint pH strips) are labelled Sample, never as an error or estimate.
+  const badge = r.sample ? t.sample : r.estimated ? t.estimated : null;
   return <div className="demo-reading">
     {problem && <p className="demo-problem">{problem}</p>}
     <p className="demo-reading-head">{!r.estimated && <><Tick />{t.blot.corners}</>}{badge && <span className="demo-badge">{badge}</span>}</p>
@@ -433,31 +460,48 @@ function ReadingChip({ zone, r, t, locale, problem }: { zone: Zone; r: Reading; 
         <div><dt>{t.ph.control}</dt><dd>{r.ph.control.toFixed(1)}</dd></div>
         <div><dt>{t.ph.diff}</dt><dd>{r.ph.diff > 0 ? "+" : ""}{r.ph.diff.toFixed(1)}</dd></div>
       </dl>
-      <p>{t.ph.confidence(Math.round(r.ph.confidence * 100))}</p>
+      {/* A stand-in value was not read from this photo, so it carries no read confidence. */}
+      {!r.estimated && <p>{t.ph.confidence(Math.round(r.ph.confidence * 100))}</p>}
       <p className="demo-muted">{t.ph.note}</p>
     </>}
-    {r.flags.length > 0 && <TagList tags={r.flags} locale={locale} />}
+    {/* Quality chips are about the person's own photo; the built-in sample is known good, so it never shows them. */}
+    {!r.sample && r.flags.length > 0 && <TagList tags={r.flags} locale={locale} />}
   </div>;
 }
 
-const Tick = () => <svg aria-hidden="true" width="14" height="12" viewBox="0 0 14 12"><path d="m2 6 3 3 7-7" fill="none" stroke="#d8a443" strokeWidth="1.4" /></svg>;
-const TagList = ({ tags, locale }: { tags: string[]; locale: Locale }) => <ul className="demo-tags">{tags.map((tag) => <li key={tag}>{tagLabel(tag, locale)}</li>)}</ul>;
+// Numbered source markers. Numbers follow first appearance on the screen; one source keeps one number.
+type CiteId = (typeof CITES)[keyof typeof CITES];
+function citer(t: Copy) {
+  const order: CiteId[] = [];
+  return (id: CiteId) => {
+    if (!order.includes(id)) order.push(id);
+    const n = order.indexOf(id) + 1;
+    return <a className="demo-cite" href={`/element/research#${id}`} target="_blank" rel="noopener" aria-label={t.cite(n)}>{n}</a>;
+  };
+}
 
-function Timer({ seconds, title, hint, done, heading }: { seconds: number; title: string; hint: string; done: string; heading: RefObject<HTMLHeadingElement | null> }) {
+const Tick = () => <svg aria-hidden="true" width="14" height="12" viewBox="0 0 14 12"><path d="m2 6 3 3 7-7" fill="none" stroke="#d8a443" strokeWidth="1.4" /></svg>;
+const TagList = ({ tags, locale, names }: { tags: string[]; locale: Locale; names?: Record<string, string> }) =>
+  <ul className="demo-tags">{tags.map((tag) => <li key={tag}>{tagLabel(tag, locale, names?.[tag])}</li>)}</ul>;
+
+function Timer({ seconds, unit, title, hint, done, heading }: { seconds: number; unit: string; title: string; hint: string; done: string; heading: RefObject<HTMLHeadingElement | null> }) {
   const left = useCountdown(seconds, true);
   const r = 88, c = 2 * Math.PI * r;
   return <div className="demo-timer">
     <h1 ref={heading} tabIndex={-1}>{title}</h1>
     <div className="demo-ring">
       <svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r={r} className="demo-ring-track" /><circle cx="100" cy="100" r={r} className="demo-ring-fill" strokeDasharray={c} strokeDashoffset={c * (left / seconds)} /></svg>
-      <p className="demo-ring-time" role="timer" aria-live="off">{left}<small>s</small></p>
+      <p className="demo-ring-time" role="timer" aria-live="off">{left}<small>{unit}</small></p>
     </div>
     <p className="demo-lead" role="status">{left === 0 ? done : hint}</p>
   </div>;
 }
 
 function Survey({ q, n, t, locale, picked, setPicked, heading, onVoice, sessionId }: { q: AskedQuestion; n: number; t: Copy; locale: Locale; picked: string[]; setPicked: (p: string[]) => void; heading: RefObject<HTMLHeadingElement | null>; onVoice: (tags: string[]) => void; sessionId?: string }) {
-  const tags = [...new Set(q.chips.filter((c) => picked.includes(c.id)).flatMap((c) => c.tags))];
+  const chosen = q.chips.filter((c) => picked.includes(c.id));
+  const tags = [...new Set(chosen.flatMap((c) => c.tags))];
+  const names: Record<string, string> = {};
+  for (const c of chosen) for (const tag of c.tags) names[tag] ??= c.label[locale];
   return <>
     <p className="demo-eyebrow">{t.survey.counter(n)}{q.source === "ai" && <span className="demo-badge">{t.survey.followUp}</span>}</p>
     <h1 ref={heading} tabIndex={-1}>{q.text[locale]}</h1>
@@ -465,7 +509,7 @@ function Survey({ q, n, t, locale, picked, setPicked, heading, onVoice, sessionI
     <div className="demo-chips" role="group" aria-label={q.text[locale]}>
       {q.chips.map((c) => <button type="button" key={c.id} aria-pressed={picked.includes(c.id)} onClick={() => setPicked(picked.includes(c.id) ? picked.filter((x) => x !== c.id) : [...picked, c.id])}>{c.label[locale]}</button>)}
     </div>
-    <div className="demo-tag-area" aria-live="polite">{tags.length > 0 && <><p className="demo-label">{t.survey.tags}</p><TagList tags={tags} locale={locale} /></>}</div>
+    <div className="demo-tag-area" aria-live="polite">{tags.length > 0 && <><p className="demo-label">{t.survey.tags}</p><TagList tags={tags} locale={locale} names={names} /></>}</div>
     <Voice t={t} locale={locale} questionId={q.id} sessionId={sessionId} onTags={onVoice} />
   </>;
 }
@@ -506,7 +550,7 @@ function Voice({ t, locale, questionId, sessionId, onTags }: { t: Copy; locale: 
   </div>;
 }
 
-function smellStep(s: State, t: Copy, patch: (p: Partial<State>) => void, go: (step: number, sub?: number) => void, heading: RefObject<HTMLHeadingElement | null>): { body: ReactNode; primary: Action; secondary?: Action } {
+function smellStep(s: State, t: Copy, locale: Locale, patch: (p: Partial<State>) => void, go: (step: number, sub?: number) => void, heading: RefObject<HTMLHeadingElement | null>): { body: ReactNode; primary: Action; secondary?: Action } {
   const h1 = (text: string) => <h1 ref={heading} tabIndex={-1}>{text}</h1>;
   const next = { label: t.continue, onClick: () => go(6, s.sub + 1) };
   const byLike = derive(s).byLike;
@@ -520,7 +564,8 @@ function smellStep(s: State, t: Copy, patch: (p: Partial<State>) => void, go: (s
         <p className="demo-letter">{letter}</p>
         {(["like", "strength"] as const).map((k) => <label key={k} className="demo-slider">
           <span>{k === "like" ? t.smell.like : t.smell.strength}<output>{r ? r[k] : "-"}</output></span>
-          <input type="range" min={1} max={5} step={1} value={r?.[k] ?? 3} className={r ? "" : "is-unset"} onChange={(e) => set(k, Number(e.target.value))} />
+          <input type="range" min={1} max={5} step={1} value={r?.[k] ?? 3} className={r ? "" : "is-unset"} onChange={(e) => set(k, Number(e.target.value))}
+            aria-label={t.smell.rateAria(letter, k === "like" ? t.smell.like : t.smell.strength)} />
           <small><span>{(k === "like" ? t.smell.likeEnds : t.smell.strengthEnds)[0]}</span><span>{(k === "like" ? t.smell.likeEnds : t.smell.strengthEnds)[1]}</span></small>
         </label>)}
       </div>;
@@ -562,7 +607,8 @@ function smellStep(s: State, t: Copy, patch: (p: Partial<State>) => void, go: (s
             <span className="demo-letter">{letter}</span><small>{t.smell.choose}</small>
           </button>)}</div>
         </>,
-        primary: { label: t.continue, onClick: () => { patch({ pick: s.pick ?? pair[0], result: undefined }); go(7); } },
+        // The result request starts here, so the model works while the building screen plays.
+        primary: { label: t.continue, onClick: () => { requestResult({ ...s, pick: s.pick ?? pair[0] }, locale); patch({ pick: s.pick ?? pair[0], result: undefined }); go(7); } },
       };
     }
   }
@@ -573,7 +619,7 @@ function Pause({ t, heading }: { t: Copy; heading: RefObject<HTMLHeadingElement 
   return <div className="demo-timer">
     <h1 ref={heading} tabIndex={-1}>{t.smell.pauseTitle}</h1>
     <div className="demo-breath" aria-hidden="true"><span /></div>
-    <p className="demo-ring-time" role="timer">{left}<small>s</small></p>
+    <p className="demo-ring-time" role="timer">{left}<small>{t.seconds}</small></p>
     <p className="demo-lead" role="status">{left === 0 ? t.smell.pauseDone : t.smell.pauseLead}</p>
   </div>;
 }
@@ -587,11 +633,10 @@ function Building({ s, t, locale, heading, onResult }: { s: State; t: Copy; loca
     const timers = [700, 1400, 2100].map((ms, i) => setTimeout(() => mark(i), ms));
     const started = Date.now();
     (async () => {
-      // pH is deliberately not sent: it is recorded with the photo, never a tuning input.
-      const body = { sessionId: s.sessionId, locale, base: d.base, likes: d.likes, sensitivity: d.ladder.sensitivity, oil: d.traits.oil, trust: d.ladder.trust,
-        tags: d.tags.filter((tag) => /^[a-z0-9-]{1,32}$/.test(tag)).slice(0, 40) };
-      const result = fromApi(await callApi("result", body, 8000), s, locale) ?? localResult(s);
-      await wait(Math.max(0, 2800 - (Date.now() - started)));
+      // Usually already in flight since the final pick. Finish as soon as it lands, after at least 3 s of staged
+      // progress, and never wait longer than the API timeout + 1 s (the local tuning stands in).
+      const result = await Promise.race([requestResult(s, locale), wait(RESULT_TIMEOUT + 1000).then(() => localResult(s))]);
+      await wait(Math.max(0, 3000 - (Date.now() - started)));
       if (!alive) return;
       onResult(result);
       mark(3);
@@ -599,12 +644,17 @@ function Building({ s, t, locale, heading, onResult }: { s: State; t: Copy; loca
     return () => { alive = false; timers.forEach(clearTimeout); };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const blot = usable(s.blot)?.blot, ph = usable(s.ph)?.ph;
+  const names = chipLabels(s.answers, locale);
   const details = [
     blot ? t.blot.oil(blot.step) : null,
     ph ? `pH ${ph.skin.toFixed(1)}` : null,
     Object.keys(d.likes).length || s.answers.length || Object.keys(s.ladder).length ? d.nose.name[locale] : null,
-    d.tags.length ? d.tags.map((tag) => tagLabel(tag, locale)).join(" · ") : null,
+    d.tags.length ? d.tags.map((tag) => tagLabel(tag, locale, names[tag])).join(" · ") : null,
   ];
+  // Sources behind each bar, numbered in bar order so the numbers never shift as bars fill.
+  const cite = citer(t);
+  const sources: CiteId[][] = [blot ? [CITES.skin] : [], ph ? [CITES.ph] : [], details[2] ? [CITES.nose, ...(Object.keys(s.ladder).length ? [CITES.sensitivity] : [])] : [], []];
+  const marks = sources.map((ids) => ids.map((id) => <span key={id}>{cite(id)}</span>));
   const all = ready.every(Boolean);
   return <>
     <img className={`demo-emblem ${all ? "" : "is-working"}`} src="/media/element-e.webp" alt="" width="470" height="533" />
@@ -614,7 +664,7 @@ function Building({ s, t, locale, heading, onResult }: { s: State; t: Copy; loca
       return <li key={label} className={ready[i] ? (skipped ? "is-skipped" : "is-ready") : ""}>
         <p><span>{label}</span><span>{ready[i] ? (skipped ? t.building.skipped : t.building.done) : t.building.working}</span></p>
         <div className="demo-build-bar"><span /></div>
-        <small>{ready[i] ? details[i] ?? "" : ""}</small>
+        <small>{ready[i] && details[i] ? <>{details[i]}{marks[i]}</> : ""}</small>
       </li>;
     })}</ul>
     <p className="demo-based" aria-live="polite">{all ? t.building.basedOn(s.name.trim()) : ""}</p>
@@ -624,8 +674,9 @@ function Building({ s, t, locale, heading, onResult }: { s: State; t: Copy; loca
 function NoteGraph({ r, t, locale }: { r: Result; t: Copy; locale: Locale }) {
   const start = BASES[r.base].formula.notes;
   const order = { top: 0, heart: 1, base: 2 };
+  const shown = displayPercents(r.formula.notes); // whole percents that add up to 100
   const rows = [
-    ...r.formula.notes.map((n) => ({ ...n, from: start.find((x) => x.note === n.note)?.weight ?? 0, to: n.weight })),
+    ...r.formula.notes.map((n) => ({ ...n, from: start.find((x) => x.note === n.note)?.weight ?? 0, to: shown[n.note] })),
     ...start.filter((n) => !r.formula.notes.some((x) => x.note === n.note)).map((n) => ({ ...n, from: n.weight, to: 0 })),
   ].map((n) => ({ ...n, tier: NOTE_TIER[n.note] ?? n.tier })) // accents sit in their own tier, never between headers
     .sort((a, b) => order[a.tier] - order[b.tier] || b.to - a.to);
@@ -644,7 +695,7 @@ function NoteGraph({ r, t, locale }: { r: Result; t: Copy; locale: Locale }) {
     <figcaption><span>{t.result.graphTitle}</span><span className="demo-legend"><i className="ghost" />{t.result.legendBase}<i className="tuned" />{t.result.legendTuned}</span></figcaption>
     <svg viewBox={`0 0 300 ${y + 4}`} role="img" aria-label={rows.map((x) => `${name(x.note)} ${x.from} to ${x.to}`).join(", ")}>
       {placed.map((x, i) => {
-        const y = x.y, changed = Math.abs(x.to - x.from) >= 0.5, delta = Math.round((x.to - x.from) * 10) / 10;
+        const y = x.y, changed = x.to !== x.from, delta = x.to - x.from;
         return <g key={x.note} style={{ "--i": i } as CSSProperties}>
           {x.header && <text x="0" y={y - 5} className="demo-graph-tier">{t.result.tiers[x.tier]}</text>}
           <text x="0" y={y + 13} className="demo-graph-note">{name(x.note)}</text>
@@ -660,12 +711,20 @@ function NoteGraph({ r, t, locale }: { r: Result; t: Copy; locale: Locale }) {
 
 function ResultView({ r, t, locale, pick, ph, heading }: { r: Result; t: Copy; locale: Locale; pick: Letter; ph?: Reading; heading: RefObject<HTMLHeadingElement | null> }) {
   const base = BASES[r.base];
+  // Shown percents are whole numbers summing to 100; sentences quote the shown number, not the internal 0.1 weight.
+  const shown = displayPercents(r.formula.notes);
+  const to = (c: Change) => shown[c.note] ?? 0;
+  const visible = r.changes.map((c, i) => ({ c, i })).filter(({ c }) => to(c) !== c.from);
+  const cite = citer(t);
   // matchingReasons keeps only traits that pushed the note the way it moved (same rule as the server's sentences).
   const reason = (c: Change, i: number) => {
     const matched = matchingReasons(c);
     if (matched[0] === "rebalance") return t.result.balanced;
-    if (r.explLocale === locale && r.explanations?.[i] && matched.length === c.reasons.length) return r.explanations[i];
-    return changeLine(c, locale);
+    const line = r.explLocale === locale && matched.length === c.reasons.length ? r.explanations?.[i] : undefined;
+    if (line && to(c) === c.to) return line;
+    // Swap the internal "31.3" for the shown "32"; an integer could also match other digits, so those use the template.
+    if (line && !Number.isInteger(c.to) && line.includes(String(c.to))) return line.replaceAll(String(c.to), String(to(c)));
+    return changeLine({ ...c, to: to(c) }, locale);
   };
   return <>
     <p className="demo-eyebrow">{t.result.eyebrow}</p>
@@ -673,22 +732,24 @@ function ResultView({ r, t, locale, pick, ph, heading }: { r: Result; t: Copy; l
     <h1 ref={heading} tabIndex={-1} className="demo-base-name">{base.name[locale]}</h1>
     <p className="demo-meta"><span>{t.families[base.family]}</span><span className="demo-badge">{t.result.sampleFormula}</span></p>
     <NoteGraph r={r} t={t} locale={locale} />
-    {r.changes.length ? <ul className="demo-reasons">{r.changes.map((c, i) => <li key={c.note}>
-      <strong>{NOTE_NAMES[c.note]?.[locale] ?? c.note}</strong><span className="demo-fromto">{c.from} → {c.to}</span><p>{reason(c, i)}</p>
+    {visible.length ? <ul className="demo-reasons">{visible.map(({ c, i }) => <li key={c.note}>
+      <strong>{NOTE_NAMES[c.note]?.[locale] ?? c.note}</strong><span className="demo-fromto">{c.from} → {to(c)}</span>
+      <p>{reason(c, i)}{matchingReasons(c).some((x) => x === "dry-skin" || x === "oily-skin") && cite(CITES.skin)}</p>
     </li>)}</ul> : <p className="demo-muted">{t.result.noChanges}</p>}
     <dl className="demo-facts">
       <div><dt>{t.result.concentration}</dt><dd>{r.concentration} · {t.result.concentrations[r.concentration]}</dd></div>
       <div><dt>{t.result.projection}</dt><dd>{t.result.projections[r.projection]}</dd></div>
-      <div><dt>{t.result.nose}</dt><dd>{r.nose.name[locale]}</dd></div>
+      <div><dt>{t.result.nose}</dt><dd>{r.nose.name[locale]}{cite(CITES.nose)}</dd></div>
     </dl>
-    {ph?.ph && <p className="demo-muted">{t.result.phLine(ph.ph.skin.toFixed(1))}</p>}
-    <p className="demo-perfumer">{t.perfumer}</p>
+    {ph?.ph && <p className="demo-muted">{t.result.phLine(ph.ph.skin.toFixed(1))}{cite(CITES.ph)}</p>}
+    <p className="demo-perfumer">{t.perfumer}{cite(CITES.review)}</p>
     <div className="demo-order">
       <a className="demo-primary demo-inline" href="/shop?source=element-order#newsletter">{t.result.order}</a>
       <a className="demo-secondary" href="/shop?source=element-gift#newsletter">{t.result.gift}</a>
     </div>
     <p className="demo-muted">{t.result.orderNote}</p>
     <p className="demo-muted">{t.medical}</p>
+    <p className="demo-muted"><a className="demo-methods" href="/element/tech#methods" target="_blank" rel="noopener">{t.result.methods}</a></p>
   </>;
 }
 
@@ -767,8 +828,8 @@ function Share({ r, s, t, locale, heading }: { r: Result; s: State; t: Copy; loc
     <div className="demo-social">
       {r.resultId && <a className="demo-secondary" href={`/element/login?result=${encodeURIComponent(r.resultId)}`}>{t.share.saveAccount}</a>}
       <button type="button" className="demo-secondary" aria-expanded={!!match} disabled={comparing} onClick={compareFounder}>{t.share.compareFounder}</button>
-      {match && <div className="demo-match" role="status"><p className="demo-match-pct">{match.percent}%</p><p>{t.share.compareResult(match.percent)}</p>
-        <p className="demo-muted">{match.sentence && match.sentenceLocale === locale ? match.sentence : `${t.share.compareShared(t.families[match.shared])} ${t.share.compareDiffer(t.families[match.differ])}`}</p></div>}
+      {match && <div className="demo-match" role="status"><p className="demo-match-pct">{match.percent}%</p><p>{t.share.compareResult}</p>
+        <p className="demo-muted">{match.sentence && match.sentenceLocale === locale ? match.sentence : t.share.compareLine(t.families[match.shared], t.families[match.differ])}</p></div>}
       <button type="button" className="demo-secondary" aria-expanded={scan} onClick={() => setScan(!scan)}>{t.share.scanFriend}</button>
       {scan && <p className="demo-muted">{t.share.scanHint}</p>}
     </div>

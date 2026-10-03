@@ -8,7 +8,7 @@ import { PX_PER_MM, homography, readWarped, warp, zoneCorners, type BlotReading,
 export type { LidLayout };
 export type ZoneResult =
   | { ok: true; warped: HTMLCanvasElement; flags: string[]; blot?: BlotReading; ph?: PhReading }
-  | { ok: false; reason: "markers" | "blur" | "glare"; missing?: number[] };
+  | { ok: false; reason: "markers" | "blur" | "glare" | "no-sheet"; missing?: number[] };
 type ReaderImage = HTMLCanvasElement | ImageBitmap | HTMLImageElement;
 type Detector = { detect(image: { width: number; height: number; data: Uint8ClampedArray }): { id: number; corners: Pt[] }[] };
 type ArucoGlobal = { Detector: new (config: { dictionaryName: string; maxHammingDistance?: number }) => Detector };

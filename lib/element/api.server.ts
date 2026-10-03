@@ -6,7 +6,7 @@ import { BASES, CARRIER } from "./bases.ts";
 import { compare, type ProfileVector } from "./compare.ts";
 import { FAMILY_NAMES, REASONS, matchingReasons, templateExplanations, validateExplanations, type Explanations } from "./explain.ts";
 import { BANK } from "./survey-bank.ts";
-import { nextFromBank, validateAiChoice, type SurveyState } from "./survey.ts";
+import { nextFromBank, optionsOf, validateAiChoice, type SurveyState } from "./survey.ts";
 import { tune, type Change } from "./tune.ts";
 import type { BaseId, Family, Localised } from "./types.ts";
 
@@ -173,8 +173,9 @@ function surveyState(raw: unknown): SurveyState {
   const s = raw as SurveyState | null;
   if (!s || !Array.isArray(s.answered) || s.answered.length > 15 || !Number.isInteger(s.aiFollowUps) || s.aiFollowUps < 0 || s.aiFollowUps > 3
     || !s.answered.every((a) => a && typeof a.id === "string" && a.id.length <= 40 && typeof a.text === "string" && a.text.length <= 200
-      && strings(a.chips, 5, 32) && strings(a.tags, 8, 32) && (a.source === "bank" || a.source === "ai"))) throw new HttpError(400);
-  return { answered: s.answered.map(({ id, text, chips, tags, source }) => ({ id, text, chips, tags, source })), aiFollowUps: s.aiFollowUps };
+      && strings(a.chips, 5, 32) && strings(a.tags, 8, 32) && (a.source === "bank" || a.source === "ai")
+      && (a.options === undefined || strings(a.options, 5, 40)) && (a.picked === undefined || strings(a.picked, 5, 40)))) throw new HttpError(400);
+  return { answered: s.answered.map(({ id, text, chips, tags, source, options, picked }) => ({ id, text, chips, tags, source, options, picked })), aiFollowUps: s.aiFollowUps };
 }
 const SURVEY_SCHEMA = {
   type: "object",
@@ -204,8 +205,8 @@ async function survey(body: Record<string, unknown>, deps: Deps) {
   try {
     const out = await ai(deps, MODELS.text, {
       messages: [
-        { role: "system", content: `You pick the next question in a short, friendly perfume survey. Reply with JSON only: either {"questionId": "<a candidate id>"} or, when one short personal follow-up would tell a perfumer more, {"followup": {"text": "...", "chips": [{"id": "slug", "label": "...", "tags": ["slug"]}]}}. A follow-up is one question of at most 120 characters in ${LANGUAGE[locale]}, with 2 to 5 short answer chips, about daily routine, places, climate, activities, social settings or scent memories. Never ask about health, religion, sexuality, income or body weight. Never use em dashes.` },
-        { role: "user", content: JSON.stringify({ followUpsLeft: 3 - state.aiFollowUps, answered: state.answered.map((a) => ({ question: a.text, tags: a.tags })), candidates }) },
+        { role: "system", content: `You pick the next question in a short, friendly perfume survey. Reply with JSON only: either {"questionId": "<a candidate id>"} or, when one short personal follow-up would tell a perfumer more, {"followup": {"text": "...", "chips": [{"id": "slug", "label": "...", "tags": ["slug"]}]}}. A follow-up is one question of at most 120 characters in ${LANGUAGE[locale]}, with 2 to 5 short answer chips, about daily routine, places, climate, activities, social settings or scent memories. A follow-up must build on the person's last answer (the chips they picked) and go one step deeper into it, while staying useful to a perfumer: where, when and with whom they wear scent, the air and temperature around them, or smells they love or avoid. "asked" lists every question already shown, with its exact text, the chip options shown and the ones picked: never repeat any of those questions, their topics, their option sets or any single option already shown, even reworded. If you cannot ask something new, pick a candidate instead. Never ask about health, religion, sexuality, income or body weight. Never use em dashes.` },
+        { role: "user", content: JSON.stringify({ followUpsLeft: 3 - state.aiFollowUps, asked: state.answered.map((a) => ({ question: a.text, options: optionsOf(a, locale), picked: a.picked ?? [], tags: a.tags })), lastAnswer: last ? { question: last.text, picked: last.picked ?? [], tags: last.tags } : null, candidates }) },
       ],
       response_format: { type: "json_schema", json_schema: SURVEY_SCHEMA },
       max_tokens: 300,
@@ -270,7 +271,11 @@ function resultInput(body: Record<string, unknown>) {
     || !Object.entries(likes).every(([k, v]) => FAMILIES.includes(k as Family) && typeof v === "number" && v >= 1 && v <= 5)
     || (oil !== undefined && (typeof oil !== "number" || oil < 0 || oil > 1)) || typeof trust !== "number" || trust < 0 || trust > 1
     || !strings(body.tags ?? [], 40, 32) || !((body.tags ?? []) as string[]).every((t) => SLUG.test(t))) throw new HttpError(400);
-  return { locale, base, likes: likes as Partial<Record<Family, number>>, sensitivity, oil: oil as number | undefined, trust, tags: (body.tags ?? []) as string[], sessionId: typeof body.sessionId === "string" ? body.sessionId : "" };
+  const tags = (body.tags ?? []) as string[];
+  // The chip label each AI tag came from, in the person's language, so a shared profile never shows a bare slug.
+  const labels = body.tagLabels ?? {};
+  if (typeof labels !== "object" || Array.isArray(labels) || !Object.entries(labels).every(([k, v]) => tags.includes(k) && typeof v === "string" && v.trim() && v.length <= 40 && !/[\p{Cc}<>]/u.test(v))) throw new HttpError(400);
+  return { locale, base, likes: likes as Partial<Record<Family, number>>, sensitivity, oil: oil as number | undefined, trust, tags, tagLabels: labels as Record<string, string>, sessionId: typeof body.sessionId === "string" ? body.sessionId : "" };
 }
 
 async function explain(deps: Deps, base: BaseId, changes: Change[], concentration: "EDT" | "EDP", projection: "close" | "moderate" | "carrying", locale: Locale): Promise<Explanations> {
@@ -279,7 +284,7 @@ async function explain(deps: Deps, base: BaseId, changes: Change[], concentratio
   try {
     const out = await ai(deps, MODELS.text, {
       messages: [
-        { role: "system", content: `You explain a perfumer's computed formula changes to a customer in ${LANGUAGE[locale]}. Write exactly one plain, warm sentence per change, in the given order, plus a one-sentence summary. Only describe the given change and its reasons. Never mention any other note, any number except that change's from and to percentages, skin pH, health or medical effects. Never use em dashes. Reply with JSON only: {"lines": ["..."], "summary": "..."}.` },
+        { role: "system", content: `You explain a perfumer's computed formula changes to a customer in ${LANGUAGE[locale]}. Write exactly one plain, warm sentence per change, in the given order, plus a one-sentence summary. Only describe the given change and its reasons. Any effect of skin on how long a scent lasts is a possibility, so say "may" (or the natural equivalent), never a certainty. Never mention any other note, any number except that change's from and to percentages, skin pH, health or medical effects. Never use em dashes. Reply with JSON only: {"lines": ["..."], "summary": "..."}.` },
         { role: "user", content: JSON.stringify({ perfume: BASES[base].name.en, concentration, changes: changes.map((c) => ({ note: c.note, from: c.from, to: c.to, reasons: matchingReasons(c).map((r) => (REASONS[r] ?? REASONS.rebalance).en) })) }) },
       ],
       response_format: { type: "json_schema", json_schema: { type: "object", required: ["lines", "summary"], properties: { lines: { type: "array", items: { type: "string" } }, summary: { type: "string" } } } },
@@ -317,7 +322,9 @@ async function result(body: Record<string, unknown>, deps: Deps) {
       .bind(resultId, input.sessionId, input.base, JSON.stringify(formula), JSON.stringify(changes), JSON.stringify(explanations), concentration, projection, JSON.stringify(nose), now).run();
     const name = await deps.db.prepare("SELECT first_name FROM element_sessions WHERE id = ?").bind(input.sessionId).first<{ first_name: string | null }>();
     await deps.db.prepare(`INSERT INTO element_profiles (id, share_id, result_id, first_name, likes, nose_type, nose_name, tags, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`)
-      .bind(crypto.randomUUID(), shareId, resultId, name?.first_name ?? null, JSON.stringify(nose.filled), nose.type, JSON.stringify(nose.name), JSON.stringify(input.tags), now).run();
+      // ponytail: tag labels ride inside nose_name JSON to avoid a migration on demo night; give them a column when the schema next changes.
+      .bind(crypto.randomUUID(), shareId, resultId, name?.first_name ?? null, JSON.stringify(nose.filled), nose.type,
+        JSON.stringify(Object.keys(input.tagLabels).length ? { ...nose.name, tagLabels: input.tagLabels } : nose.name), JSON.stringify(input.tags), now).run();
     deps.waitUntil(labelArt(deps, input.sessionId, resultId, input.base, nose.filled));
   } catch { resultId = null; shareId = null; }
   return json({ resultId, shareId, base: input.base, formula, changes, explanations, concentration, projection, nose, materials: BASES[input.base].materials, carrier: CARRIER, sample: true });
@@ -339,23 +346,27 @@ async function compareProfiles(body: Record<string, unknown>, deps: Deps, reques
   const viewer = typeof body.a === "string" || typeof body.b === "string" ? await viewerEmail(request, deps) : null;
   const r = compare(await profileOf(deps, body.a, viewer), await profileOf(deps, body.b, viewer));
   const s = FAMILY_NAMES[r.shared][locale], d = FAMILY_NAMES[r.differ][locale];
-  const template = locale === "en" ? (r.shared === r.differ ? `You both lean ${s}, though not equally.` : `You both love ${s}; you differ most on ${d}.`)
-    : locale === "zh-Hant" ? (r.shared === r.differ ? `你們都偏愛${s}，但程度不同。` : `你們都喜歡${s}；最大分歧在${d}。`)
-      : (r.shared === r.differ ? `你们都偏爱${s}，但程度不同。` : `你们都喜欢${s}；最大分歧在${d}。`);
+  // The page already shows the percent next to this sentence, so the sentence never restates how close the match is.
+  const founder = body.a === "founder" || body.b === "founder";
+  const both = { en: founder ? "You and the founder both" : "You both", "zh-Hant": founder ? "你和創辦人都" : "你們都", "zh-Hans": founder ? "你和创办人都" : "你们都" }[locale];
+  const template = locale === "en" ? (r.shared === r.differ ? `${both} lean ${s}, though not equally.` : `${both} lean ${s}; you differ most on ${d}.`)
+    : locale === "zh-Hant" ? (r.shared === r.differ ? `${both}偏愛${s}，但程度不同。` : `${both}偏愛${s}；最大分別在${d}。`)
+      : (r.shared === r.differ ? `${both}偏爱${s}，但程度不同。` : `${both}偏爱${s}；最大差别在${d}。`);
   try {
     const out = await ai(deps, MODELS.text, {
       messages: [
-        { role: "system", content: `Write exactly one warm, plain sentence in ${LANGUAGE[locale]} telling two friends how their scent profiles compare. Mention the family they share and the family where they differ most, and nothing else: no other scent families, no numbers, no health or skin claims. Never use em dashes. Reply with JSON only: {"sentence": "..."}.` },
-        { role: "user", content: JSON.stringify({ match: r.percent >= 70 ? "close" : r.percent >= 45 ? "partial" : "different", shared: s, differMost: d }) },
+        { role: "system", content: `Write exactly one short, natural sentence in ${LANGUAGE[locale]}, spoken to "you", comparing you with ${founder ? "the founder" : "a friend"}. Say which scent family you both lean towards, then the family where you differ most, like this example: "${template}". Mention no other scent family. Do not say how similar you are or how well you match, and use no numbers or percentages. No health or skin claims. Never use em dashes. Reply with JSON only: {"sentence": "..."}.` },
+        { role: "user", content: JSON.stringify({ sharedFamily: s, differMostFamily: r.shared === r.differ ? null : d }) },
       ],
       response_format: { type: "json_schema", json_schema: { type: "object", required: ["sentence"], properties: { sentence: { type: "string" } } } },
       max_tokens: 120,
     }, BUDGET.survey);
     const sentence = (jsonFrom(responseOf(out)) as { sentence?: unknown } | null)?.sentence;
     const others = FAMILIES.filter((f) => f !== r.shared && f !== r.differ).map((f) => FAMILY_NAMES[f][locale]);
-    // Grounded or nothing: names the shared family, no other family, no digits, right script, one short sentence.
-    if (typeof sentence === "string" && sentence.length <= 200 && sentence.includes(s) && !others.some((o) => sentence.toLowerCase().includes(o.toLowerCase()))
-      && !/[0-9—]/.test(sentence) && /[㐀-鿿]/.test(sentence) === (locale !== "en")) return json({ ...r, sentence, by: "ai" });
+    // Grounded or nothing: names both families, no other family, no digits or match talk, right script, one short sentence.
+    const lower = typeof sentence === "string" ? sentence.toLowerCase() : "";
+    if (typeof sentence === "string" && sentence.length <= 200 && lower.includes(s.toLowerCase()) && lower.includes(d.toLowerCase()) && !others.some((o) => lower.includes(o.toLowerCase()))
+      && !/[0-9０-９—%％]|percent|match|similar|alike|friends|相似|相近|契合|百分|朋友/.test(lower) && /[㐀-鿿]/.test(sentence) === (locale !== "en")) return json({ ...r, sentence, by: "ai" });
   } catch { /* slow or failed model: template */ }
   return json({ ...r, sentence: template, by: "template" });
 }

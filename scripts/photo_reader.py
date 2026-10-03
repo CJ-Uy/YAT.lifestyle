@@ -102,6 +102,10 @@ def read_zone(img, zone, layout=LAYOUT):
         mask[border:-border, border:-border] = False
         dry_luma = float(_luma(_median(sheet[mask])))
         scale = [_median(_patch(corrected, p, z["y0"])) for p in z["blue_scale"]]
+        black_luma = float(_luma(_median(np.concatenate([_patch(corrected, p, z["y0"]).reshape(-1, 3) for n, p in z["neutrals"].items() if n.endswith("black")]))))
+        # Without a sheet the black box reads as heavy oil: a near-black dry border means no sheet.
+        if dry_luma < (black_luma + float(_luma(scale[0]))) / 2:
+            return {"ok": False, "reason": "no-sheet"}
         clear_luma = float(_luma(scale[5]))
         oil_pixels = np.clip((dry_luma - _luma(sheet)) / max(dry_luma - clear_luma, 1), 0, 1)
         # The 90th percentile in oil intensity represents the darker/wetter tail.

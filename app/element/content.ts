@@ -64,3 +64,9 @@ export const elementCopy = {
 };
 
 export const baseNames = ["Hours · Dawn", "Afterimage · Tea", "Afterimage · Harbour", "Hours · Noon", "Afterimage · Forest", "Hours · Night"];
+
+// Link previews for /element pages: the Element logo on an absolute URL so chat apps can fetch it.
+export const elementOg = (title: string, description: string) => ({
+  title, description, siteName: "YAT.lifestyle", type: "website" as const,
+  images: [{ url: "https://yatlifestyle.com/media/element-logo.png", width: 1146, height: 861, alt: "Element · YAT.lifestyle" }],
+});

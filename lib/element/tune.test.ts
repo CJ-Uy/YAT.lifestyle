@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { tune } from "./tune.ts";
+import { displayPercents, tune } from "./tune.ts";
 import { compare } from "./compare.ts";
 import { BASES } from "./bases.ts";
 import { TRAIT_EFFECTS } from "./graph.ts";
@@ -74,4 +74,18 @@ test("tune: cap holds on final weights and weights sum to 100", () => {
   assert.ok(dry.formula.notes.find((n) => n.note === "white musk")!.weight > 25);
   const neroli = dry.changes.find((c) => c.note === "neroli");
   assert.ok(!neroli || neroli.reasons.includes("rebalance"));
+});
+
+test("tune: display percents are whole numbers that sum to exactly 100", () => {
+  // The live walkthrough's Hours · Night: 8 + 23 + 31.3 + 21.3 + 16.3 = 99.9 shown as-is.
+  const live = [["pink pepper", 8], ["benzoin", 23], ["vanilla", 31.3], ["tonka", 21.3], ["soft musk", 16.3]].map(([note, weight]) => ({ note: note as string, weight: weight as number }));
+  const shown = displayPercents(live);
+  assert.equal(Object.values(shown).reduce((s, v) => s + v, 0), 100);
+  assert.deepEqual(shown, { "pink pepper": 8, benzoin: 23, vanilla: 32, tonka: 21, "soft musk": 16 });
+  for (const [base, traits] of CASES) {
+    const d = displayPercents(tune(base, traits).formula.notes);
+    assert.equal(Object.values(d).reduce((s, v) => s + v, 0), 100, base);
+    assert.ok(Object.values(d).every(Number.isInteger));
+  }
+  assert.deepEqual(displayPercents(BASES.dawn.formula.notes), { bergamot: 30, yuzu: 20, neroli: 25, "white musk": 25 });
 });

@@ -4,7 +4,8 @@ import { BANK, BANNED, BANNED_ZH, type Question } from "./survey-bank.ts";
 export { BANNED, BANNED_ZH };
 
 export type SurveyState = {
-  answered: { id: string; text: string; chips: string[]; tags: string[]; source: "bank" | "ai" }[];
+  // options: every chip label shown, in the person's language; picked: the labels they chose. Optional for older clients.
+  answered: { id: string; text: string; chips: string[]; tags: string[]; source: "bank" | "ai"; options?: string[]; picked?: string[] }[];
   aiFollowUps: number;
 };
 
@@ -35,8 +36,14 @@ export type AiChoice =
   | { kind: "bank"; question: Question }
   | { kind: "followup"; text: string; chips: { id: string; label: string; tags: string[] }[] };
 
+const norm = (s: string) => s.toLowerCase().replace(/[\s?？!！.。,，、]+/g, " ").trim();
+const labelSet = (labels: string[]) => [...new Set(labels.map(norm))].sort().join("|");
+/** The chip labels a person already saw for an answered question: sent by the client, else rebuilt from the bank. */
+export const optionsOf = (a: SurveyState["answered"][number], locale: Locale) =>
+  a.options ?? BANK.find((q) => q.id === a.id)?.chips.map((c) => c.label[locale]) ?? [];
+
 /** Validates the model's pick. Anything off returns null so the caller falls back to nextFromBank. */
-export function validateAiChoice(raw: unknown, state: SurveyState, _locale: Locale): AiChoice | null {
+export function validateAiChoice(raw: unknown, state: SurveyState, locale: Locale): AiChoice | null {
   if (typeof raw === "string") {
     try { raw = JSON.parse(raw); } catch { return null; }
   }
@@ -60,5 +67,9 @@ export function validateAiChoice(raw: unknown, state: SurveyState, _locale: Loca
     if (!Array.isArray(tags) || tags.length > 4 || !tags.every((t) => typeof t === "string" && SLUG.test(t) && clean(t))) return null;
     out.push({ id, label, tags });
   }
+  // Never repeat a question, its set of answers, or any answer already offered (near-duplicates read as a broken survey).
+  const set = labelSet(out.map((c) => c.label));
+  const seen = new Set(state.answered.flatMap((a) => optionsOf(a, locale).map(norm)));
+  if (state.answered.some((a) => norm(a.text) === norm(text) || labelSet(optionsOf(a, locale)) === set) || out.some((c) => seen.has(norm(c.label)))) return null;
   return { kind: "followup", text, chips: out };
 }
