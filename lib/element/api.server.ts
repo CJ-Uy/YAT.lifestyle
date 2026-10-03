@@ -61,7 +61,7 @@ function within<T>(ms: number, promise: Promise<T>): Promise<T> {
 }
 // Every model call goes through AI Gateway and has a hard budget; callers catch and fall back.
 const ai = (deps: Deps, model: string, input: Record<string, unknown>, ms: number) =>
-  within(ms, Promise.resolve().then(() => deps.ai.run(model, input, { gateway: { id: "yat-element" } })));
+  within(ms, Promise.resolve().then(() => deps.ai.run(model, input, { gateway: { id: "default" } })));
 const responseOf = (out: unknown) => (out as { response?: unknown } | null)?.response;
 const jsonFrom = (raw: unknown) => {
   if (typeof raw !== "string") return raw;

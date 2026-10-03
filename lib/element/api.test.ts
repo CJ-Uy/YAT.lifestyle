@@ -111,7 +111,7 @@ test("element api: result still explains every change with templates when the AI
   assert.equal(db.prepare("SELECT base FROM element_results WHERE id=?").get(body.resultId)!.base, "forest");
   assert.equal(db.prepare("SELECT nose_type FROM element_profiles WHERE share_id=?").get(body.shareId)!.nose_type, "fresh");
   await Promise.all(background);
-  assert.ok(calls.every((c) => JSON.stringify(c.options) === JSON.stringify({ gateway: { id: "yat-element" } })));
+  assert.ok(calls.every((c) => JSON.stringify(c.options) === JSON.stringify({ gateway: { id: "default" } })));
   for (const locale of ["zh-Hant", "zh-Hans"]) {
     const zh = await (await handle("result", post("result", { ...input, locale }), deps)).json();
     assert.equal(zh.explanations.lines.length, expected.changes.length);
