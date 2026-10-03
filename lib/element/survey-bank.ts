@@ -1,6 +1,4 @@
-import type { Locale } from "../../app/site-header.tsx";
-
-type Localised = Record<Locale, string>; // replaced by import from ./types.ts at merge
+import type { Localised } from "./types.ts";
 
 export type Question = {
   id: string;

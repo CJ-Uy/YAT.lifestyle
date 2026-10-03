@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import type { Locale } from "../site-header";
-import { NEWSLETTER_POLICY_VERSION, newsletterCopy } from "../../lib/newsletter";
+import { NEWSLETTER_POLICY_VERSION, NEWSLETTER_SOURCES, newsletterCopy } from "../../lib/newsletter";
 
 export default function NewsletterForm({ locale }: { locale: Locale }) {
   const t = newsletterCopy[locale];
@@ -15,6 +15,7 @@ export default function NewsletterForm({ locale }: { locale: Locale }) {
     if (pending.current) return;
     pending.current = true;
     const data = new FormData(event.currentTarget);
+    const source = new URLSearchParams(location.search).get("source");
     setState("sending");
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 15000);
@@ -22,7 +23,8 @@ export default function NewsletterForm({ locale }: { locale: Locale }) {
       const result = await fetch("/api/newsletter", {
         method: "POST", headers: { "Content-Type": "application/json" }, signal: controller.signal,
         body: JSON.stringify({ email: data.get("email"), website: data.get("website"), locale,
-          marketingConsent: data.get("marketing") === "on", privacyAcknowledged: data.get("privacy") === "on", policyVersion: NEWSLETTER_POLICY_VERSION }),
+          marketingConsent: data.get("marketing") === "on", privacyAcknowledged: data.get("privacy") === "on", policyVersion: NEWSLETTER_POLICY_VERSION,
+          source: NEWSLETTER_SOURCES.find((s) => s === source) }),
       });
       setState(result.ok ? "success" : result.status === 429 ? "rate" : result.status === 400 ? "invalid" : "error");
     } catch { setState(controller.signal.aborted ? "timeout" : "error"); }
