@@ -12,3 +12,5 @@ next-env.d.ts
 .superpowers/
 public/kit/rendered-board-test.png
 public/kit/synthetic-board-test.png
+scripts/data/
+scripts/__pycache__/
