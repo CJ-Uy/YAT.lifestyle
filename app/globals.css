@@ -522,6 +522,7 @@ label:has(> .demo-hidden-input:focus-visible) { outline: 2px solid var(--gold); 
 .demo-facts dd { font-family: var(--display); font-size: 1.1rem; margin: .2rem 0 0; }
 .demo-perfumer { border-left: 2px solid var(--gold); font-family: var(--display); font-size: 1.15rem; line-height: 1.45; padding-left: 1rem; }
 .demo-order { display: grid; gap: .6rem; margin: 1.4rem 0 .6rem; }
+html:has(.demo) { scroll-padding-bottom: 10rem; }
 .demo-actions { background: linear-gradient(rgba(8, 8, 6, 0), var(--ink) 28%); bottom: 0; display: grid; gap: .55rem; padding: 1.4rem 0 calc(1rem + env(safe-area-inset-bottom)); position: sticky; z-index: 10; }
 .demo-note { color: var(--muted); font-size: .8rem; margin: 0; text-align: center; }
 .demo-primary, .demo-secondary { align-items: center; cursor: pointer; display: flex; font-family: var(--display); justify-content: center; letter-spacing: .02em; text-align: center; transition: background 180ms ease, border-color 180ms ease, color 180ms ease; width: 100%; }

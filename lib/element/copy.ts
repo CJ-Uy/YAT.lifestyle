@@ -153,18 +153,7 @@ const en = {
     orderNote: "Lab kit and your tuned 50 ml bottle. Joins the waitlist.",
     gift: "Gift a kit",
     shareCard: "Make my share card",
-    reasons: {
-      "dry-skin": "Drier skin: more base notes so it lasts.",
-      "oily-skin": "Oilier skin holds scent: lighter base, brighter top.",
-      "post-gym": "After the gym: a fresher, brighter opening.",
-      "humid-outdoor": "Humid days outside: lifted top notes, a lighter base.",
-      "aircon-office": "Cold office air: a soft musk that stays close.",
-      "close-quarters": "Close quarters: a quieter opening.",
-      "musk-quiet": "Musks read quiet to you: ambroxan carries the base instead.",
-      "trail-memory": "Your trail days: a green, woody accent.",
-    } as Record<string, string>,
-    reasonFallback: "Matched to your answers.",
-    rebalance: "Eased to make room for the changes above.",
+    balanced: "Balanced so it still smells like your base.",
   },
   share: {
     title: "Your Element card.",
@@ -182,18 +171,10 @@ const en = {
     restart: "Start again",
     friendsTry: "Friends can try your formula from this link.",
   },
-  notes: {} as Record<string, string>,
 };
 
 type DemoCopy = typeof en;
 
-const notesHant: Record<string, string> = {
-  bergamot: "佛手柑", yuzu: "柚子", neroli: "橙花", "white musk": "白麝香", "green tea": "綠茶", "fig leaf": "無花果葉", vetiver: "岩蘭草",
-  "sea salt": "海鹽", "ozonic accord": "臭氧調", driftwood: "浮木", mandarin: "橘子", osmanthus: "桂花", jasmine: "茉莉", peony: "牡丹",
-  cypress: "柏木", cedar: "雪松", sandalwood: "檀香", "pink pepper": "粉紅胡椒", benzoin: "安息香", vanilla: "雲呢拿", tonka: "零陵香豆",
-  "soft musk": "柔和麝香", grapefruit: "西柚", ambroxan: "龍涎酮",
-};
-const notesHans: Record<string, string> = { ...notesHant, "fig leaf": "无花果叶", vetiver: "岩兰草", "sea salt": "海盐", "ozonic accord": "臭氧调", peony: "牡丹", "pink pepper": "粉红胡椒", vanilla: "香草", tonka: "零陵香豆", "soft musk": "柔和麝香", grapefruit: "西柚", ambroxan: "龙涎酮", "green tea": "绿茶", sandalwood: "檀香" };
 
 const zhHant: DemoCopy = {
   skip: "跳至內容",
@@ -347,18 +328,7 @@ const zhHant: DemoCopy = {
     orderNote: "測試套裝連 50 毫升專屬調整香水。加入輪候名單。",
     gift: "送贈套裝",
     shareCard: "製作分享卡",
-    reasons: {
-      "dry-skin": "皮膚較乾：加重後調，令香氣更持久。",
-      "oily-skin": "皮膚較油、留香較久：後調減輕，前調更明亮。",
-      "post-gym": "運動過後：開首更清新明亮。",
-      "humid-outdoor": "潮濕的戶外日子：提升前調，減輕後調。",
-      "aircon-office": "冷氣辦公室：柔和麝香，貼近皮膚。",
-      "close-quarters": "近距離相處：開首更含蓄。",
-      "musk-quiet": "你對麝香不太敏感：改由龍涎酮承托後調。",
-      "trail-memory": "你的行山日子：加入青綠木質點綴。",
-    },
-    reasonFallback: "根據你的答案配對。",
-    rebalance: "略作調整，為以上改動騰出空間。",
+    balanced: "略作平衡，讓它依然是你選的基調。",
   },
   share: {
     title: "你的 Element 卡。",
@@ -376,7 +346,6 @@ const zhHant: DemoCopy = {
     restart: "重新開始",
     friendsTry: "朋友可以透過這個連結試用你的配方。",
   },
-  notes: notesHant,
 };
 
 const zhHans: DemoCopy = {
@@ -529,18 +498,7 @@ const zhHans: DemoCopy = {
     orderNote: "测试套装连 50 毫升专属调整香水。加入候补名单。",
     gift: "赠送套装",
     shareCard: "制作分享卡",
-    reasons: {
-      "dry-skin": "皮肤偏干：加重后调，让香气更持久。",
-      "oily-skin": "皮肤偏油、留香较久：后调减轻，前调更明亮。",
-      "post-gym": "运动过后：开头更清新明亮。",
-      "humid-outdoor": "潮湿的户外日子：提升前调，减轻后调。",
-      "aircon-office": "空调办公室：柔和麝香，贴近皮肤。",
-      "close-quarters": "近距离相处：开头更含蓄。",
-      "musk-quiet": "你对麝香不太敏感：改由龙涎酮承托后调。",
-      "trail-memory": "你的徒步日子：加入青绿木质点缀。",
-    },
-    reasonFallback: "根据你的答案匹配。",
-    rebalance: "略作调整，为以上改动腾出空间。",
+    balanced: "略作平衡，让它依然是你选的基调。",
   },
   share: {
     title: "你的 Element 卡。",
@@ -558,7 +516,45 @@ const zhHans: DemoCopy = {
     restart: "重新开始",
     friendsTry: "朋友可以通过这个链接试用你的配方。",
   },
-  notes: notesHans,
 };
 
 export const demoCopy: Record<Locale, DemoCopy> = { en, "zh-Hant": zhHant, "zh-Hans": zhHans };
+
+// Labels for survey tags and photo-check flags. Unknown ids (new bank chips, AI follow-ups) fall back to the id, humanised.
+const TAGS: Record<string, [en: string, zhHant: string, zhHans: string]> = {
+  "active-day": ["Active days", "活躍日子", "活跃日子"], "aircon-hop": ["In and out of air-con", "冷熱交替", "冷热交替"],
+  "aircon-office": ["Air-conditioned office", "冷氣辦公室", "空调办公室"], "avoid-clean": ["No laundry-clean", "避開洗衣香", "避开洗衣香"],
+  "avoid-jasmine": ["No jasmine", "避開茉莉", "避开茉莉"], "avoid-lily": ["No lily", "避開百合", "避开百合"],
+  "avoid-memory": ["Avoids a memory", "避開某段回憶", "避开某段回忆"], "avoid-musty": ["No musty notes", "避開霉味", "避开霉味"],
+  "avoid-powdery": ["No powdery notes", "避開粉香", "避开粉香"], "avoid-rose": ["No rose", "避開玫瑰", "避开玫瑰"],
+  "avoid-smoke": ["No smoke", "避開煙燻", "避开烟熏"], "avoid-sweet": ["Not too sweet", "不要太甜", "不要太甜"],
+  "avoid-synthetic": ["Nothing synthetic", "避開人工感", "避开人工感"], beach: ["Beach days", "海灘", "海滩"], bold: ["Bold", "大膽", "大胆"],
+  "calm-morning": ["Calm mornings", "平靜早晨", "平静早晨"], campus: ["Campus", "校園", "校园"], citrus: ["Citrus", "柑橘", "柑橘"],
+  "city-lights": ["City lights", "城市燈火", "城市灯火"], "city-wander": ["City wandering", "城市漫步", "城市漫步"],
+  "close-quarters": ["Close quarters", "近距離相處", "近距离相处"], "cool-indoor": ["Cool indoors", "室內清涼", "室内清凉"],
+  "crisp-cool": ["Crisp and cool", "清爽涼快", "清爽凉快"], "damp-averse": ["Dislikes damp", "怕潮濕", "怕潮湿"], date: ["Date nights", "約會", "约会"],
+  "dining-out": ["Dining out", "外出用餐", "外出用餐"], "dry-sun": ["Dry sun", "乾爽陽光", "干爽阳光"], "evening-active": ["Evening workouts", "傍晚運動", "傍晚运动"],
+  family: ["Family time", "家庭時光", "家庭时光"], "first-time": ["New to perfume", "初次用香", "初次用香"], floral: ["Floral", "花香", "花香"],
+  "food-aroma": ["Food aromas", "食物香氣", "食物香气"], friends: ["Friends", "朋友聚會", "朋友聚会"], green: ["Green", "青綠", "青绿"],
+  home: ["At home", "在家", "在家"], "home-nostalgia": ["Home memories", "家的回憶", "家的回忆"], "humid-night": ["Humid nights", "潮濕晚上", "潮湿晚上"],
+  "humid-outdoor": ["Humid outdoors", "潮濕戶外", "潮湿户外"], kitchen: ["Kitchen", "廚房", "厨房"], "long-wearing": ["Long-wearing", "持久", "持久"],
+  moderate: ["Moderate", "適中", "适中"], "morning-active": ["Morning workouts", "早上運動", "早上运动"], "needs-longevity": ["Needs to last", "需要持久", "需要持久"],
+  "night-owl": ["Night owl", "夜貓子", "夜猫子"], nightlife: ["Nightlife", "夜生活", "夜生活"], office: ["Office", "辦公室", "办公室"],
+  "outdoor-commute": ["Outdoor commute", "戶外通勤", "户外通勤"], outdoors: ["Outdoors", "戶外", "户外"], paper: ["Paper and books", "紙與書", "纸与书"],
+  petrichor: ["Rain on pavement", "雨後泥土", "雨后泥土"], pool: ["Pool", "泳池", "泳池"], "post-gym": ["After the gym", "運動過後", "运动过后"],
+  "private-ride": ["Private ride", "私家車", "私家车"], "quick-start": ["Quick mornings", "快速出門", "快速出门"], "sea-breeze": ["Sea breeze", "海風", "海风"],
+  "self-care": ["Self-care", "自我照顧", "自我照顾"], smoky: ["Smoky", "煙燻", "烟熏"], studio: ["Studio", "工作室", "工作室"],
+  "stuffy-office": ["Stuffy office", "悶熱辦公室", "闷热办公室"], subtle: ["Subtle", "低調", "低调"], "sweet-gourmand": ["Sweet treats", "甜美美食調", "甜美美食调"],
+  "team-sport": ["Team sport", "團隊運動", "团队运动"], "trail-memory": ["Trail memories", "山徑回憶", "山径回忆"], transit: ["MTR and buses", "港鐵巴士", "港铁巴士"],
+  walking: ["Walking", "步行", "步行"], "wants-niche": ["Wants something unusual", "想要獨特", "想要独特"], "warm-lover": ["Loves warm scents", "喜歡溫暖香氣", "喜欢温暖香气"],
+  "warm-spice": ["Warm spice", "暖辛香", "暖辛香"], water: ["Water", "水生", "水生"], "weekend-active": ["Active weekends", "活躍週末", "活跃周末"], woody: ["Woody", "木質", "木质"],
+  "no-sheet": ["No sheet seen", "看不到吸油紙", "看不到吸油纸"], "outside-guide": ["Outside the guide", "超出框線", "超出框线"],
+  "dry-pads": ["Pads look dry", "試紙看來是乾的", "试纸看来是干的"], glare: ["Glare", "反光", "反光"],
+};
+const LOCALE_INDEX: Record<Locale, 0 | 1 | 2> = { en: 0, "zh-Hant": 1, "zh-Hans": 2 };
+export function tagLabel(id: string, locale: Locale) {
+  const known = TAGS[id];
+  if (known) return known[LOCALE_INDEX[locale]];
+  const words = id.replace(/[-_]+/g, " ").trim();
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}

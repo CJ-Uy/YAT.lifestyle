@@ -12,7 +12,7 @@ export { kitKey } from "../../../lib/element/kit";
 export { scoreLadder, type LadderAnswer } from "../../../lib/element/ladder";
 export { tune, type Change, type Traits } from "../../../lib/element/tune";
 export { compare } from "../../../lib/element/compare";
-export { TRAIT_EFFECTS } from "../../../lib/element/graph";
+export { NOTE_TIER, TRAIT_EFFECTS } from "../../../lib/element/graph";
 export { nextFromBank, type SurveyState } from "../../../lib/element/survey";
 export type { Question } from "../../../lib/element/survey-bank";
 
