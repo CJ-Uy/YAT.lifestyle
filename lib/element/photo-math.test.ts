@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
-import { blotScore, deltaE, homography, phMatch, project, srgbToLab, type Img, type RGB } from "./photo-math.ts";
+import { blotScore, deltaE, dryBorderLuma, homography, phMatch, project, sheetMissing, srgbToLab, type Img, type RGB } from "./photo-math.ts";
 
 const layout = JSON.parse(readFileSync(new URL("../../public/kit/lid-board.json", import.meta.url), "utf8"));
 const hex = (h: string): RGB => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)) as RGB;
@@ -52,6 +52,16 @@ test("blot score rises monotonically as the oily patch darkens; dry sheet scores
   const full = blotScore(sheet(scale[5]), scale);
   assert.ok(Math.abs(full.clearArea - (350 * 250) / (800 * 500)) < 1e-9);
   assert.equal(full.step, 6);
+});
+
+test("an empty black box is refused as no sheet; dry and oily sheets are not", () => {
+  const scale = layout.zones.blot.blue_scale.map((s: { printed_hex: string }) => hex(s.printed_hex));
+  const black = hex("#000000"), blackLuma = 12; // a printed black patch after correction sits just above 0
+  const empty: Img = { width: 400, height: 300, data: new Uint8ClampedArray(400 * 300 * 4).map((_, i) => (i % 4 === 3 ? 255 : 18)) };
+  assert.ok(sheetMissing(dryBorderLuma(empty), blackLuma, scale), "black box, no sheet");
+  assert.ok(!sheetMissing(dryBorderLuma(sheet(hex("#23a8ff"))), blackLuma, scale), "dry sheet");
+  assert.ok(!sheetMissing(dryBorderLuma(sheet(scale[5])), blackLuma, scale), "oily centre, dry border");
+  assert.ok(!sheetMissing(dryBorderLuma(sheet(black)), blackLuma, scale));
 });
 
 test("pH match picks the painted chart rows and blends toward the second nearest", () => {

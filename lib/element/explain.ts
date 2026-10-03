@@ -12,8 +12,9 @@ export const CLOSING = loc(["A perfumer reviews every formula before mixing.", "
 
 // Plain reasons per trait. pH is deliberately absent: it is recorded, never a reason.
 export const REASONS: Record<string, Localised> = {
-  "dry-skin": loc(["your skin reads dry, so base notes help it last", "你的皮膚偏乾，基調能讓香味更持久", "你的皮肤偏干，基调能让香味更持久"]),
-  "oily-skin": loc(["your skin reads oily, which holds heavy notes longer", "你的皮膚偏油，較能留住濃重的香調", "你的皮肤偏油，较能留住浓重的香调"]),
+  // Skin-oil effects on longevity are hedged ("may"): one small lab study, not a validation of the kit (research.ts kit-validation).
+  "dry-skin": loc(["your skin reads dry, so base notes may help it last", "你的皮膚偏乾，基調或能讓香味更持久", "你的皮肤偏干，基调或能让香味更持久"]),
+  "oily-skin": loc(["your skin reads oily, which may hold heavy notes longer", "你的皮膚偏油，或較能留住濃重的香調", "你的皮肤偏油，或较能留住浓重的香调"]),
   "post-gym": loc(["you wear scent after the gym, so it opens fresher", "你常在運動後用香，開首要更清新", "你常在运动后用香，开头要更清新"]),
   "humid-outdoor": loc(["you spend time outdoors in the humidity", "你常在潮濕的戶外", "你常在潮湿的户外"]),
   "aircon-office": loc(["you sit in air-conditioned rooms, where skin-close musk works well", "你常在冷氣房，貼膚的麝香更合適", "你常在空调房，贴肤的麝香更合适"]),

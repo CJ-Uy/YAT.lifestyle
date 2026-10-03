@@ -50,6 +50,8 @@ export const noseDataset = {
   wording: wording("Keller & Vosshall 2016: 55 people rated 480 molecules at two concentrations. The dataset is CC BY 4.0. In leave-one-person-out testing, Element's family-liking mean absolute error was 0.178 against 0.300 for a predict-the-average baseline, with k=3 nose types (Discerning, Open, Balanced). Transfer to blended perfumes is untested.", "Keller 與 Vosshall 2016：55 人在兩種濃度下評分 480 種分子。資料集採 CC BY 4.0。留一人測試中，Element 香調喜好平均絕對誤差為 0.178，預測平均值基線為 0.300，並以 k=3 分出三種嗅覺類型（精挑細選型、樂於嘗試型、均衡型）。轉用到混合香水仍未測試。", "Keller 与 Vosshall 2016：55 人在两种浓度下评分 480 种分子。数据集采 CC BY 4.0。留一人测试中，Element 香调喜好平均绝对误差为 0.178，预测平均值基线为 0.300，并以 k=3 分出三种嗅觉类型（精挑细选型、乐于尝试型、均衡型）。转用到混合香水仍未测试。"),
   sources: ["https://pmc.ncbi.nlm.nih.gov/articles/PMC4977894/", "https://creativecommons.org/licenses/by/4.0/"],
 };
+// The entries the demo's citation markers point at (/element/research#<id>). Tested to exist above.
+export const CITES = { nose: "nose-dataset", skin: "kit-validation", ph: "skin-ph", sensitivity: "sensitivity-ladder", review: "kit-validation" } as const;
 export const verdictLabels = {
   supported: wording("Supported within scope", "在限定範圍內獲支持", "在限定范围内获支持"),
   weaken: wording("Weaken wording", "須收斂措辭", "须收敛措辞"),

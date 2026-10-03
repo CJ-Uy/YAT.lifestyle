@@ -97,6 +97,23 @@ test("survey: Chinese ban list and em dashes are rejected in AI output", () => {
   assert.equal(validateAiChoice({ followup: { text: "Morning or evening?", chips: [{ id: "m", label: `Morning ${dash} early`, tags: [] }, { id: "e", label: "Evening", tags: [] }] } }, state, "en"), null);
 });
 
+test("survey: an AI follow-up that repeats a question or its answer set is rejected", () => {
+  const places = ["Home", "Office", "Outdoors"];
+  const asked = { id: "ai-1", text: "Where do you apply perfume?", chips: ["home"], tags: [], source: "ai" as const, options: places, picked: ["Home"] };
+  const state = { answered: [asked], aiFollowUps: 1 };
+  const chips = (labels: string[]) => labels.map((label, i) => ({ id: `c${i}`, label, tags: [] }));
+  // The live near-duplicate: a new wording with the same options, in any order or case.
+  assert.equal(validateAiChoice({ followup: { text: "Where do you spend most time?", chips: chips(["outdoors", "Home", "office"]) } }, state, "en"), null);
+  assert.equal(validateAiChoice({ followup: { text: "where do you apply perfume", chips: chips(["Wrists", "Neck"]) } }, state, "en"), null);
+  assert.equal(validateAiChoice({ followup: { text: "Which room at home?", chips: chips(["Bedroom", "Living room"]) } }, state, "en")?.kind, "followup");
+  // Re-offering any answer already shown (live: "Home office" twice in a row) is rejected too.
+  assert.equal(validateAiChoice({ followup: { text: "Which room at home?", chips: chips(["Bedroom", "office"]) } }, state, "en"), null);
+  // Bank questions are checked against their own chip labels when the client sends none.
+  const weekday = BANK.find((q) => q.id === "weekday")!;
+  const bankState = { answered: [{ id: "weekday", text: weekday.text["zh-Hant"], chips: [], tags: [], source: "bank" as const }], aiFollowUps: 0 };
+  assert.equal(validateAiChoice({ followup: { text: "你平日多數在哪裡？", chips: weekday.chips.map((c, i) => ({ id: `c${i}`, label: c.label["zh-Hant"], tags: [] })) } }, bankState, "zh-Hant"), null);
+});
+
 test("survey: AI choices are rejected once 12 questions are answered", () => {
   const answered = Array.from({ length: 12 }, (_, i) => ({ id: `q${i}`, text: "", chips: [], tags: [], source: "bank" as const }));
   const state = { answered, aiFollowUps: 0 };

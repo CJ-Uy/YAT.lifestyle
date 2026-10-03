@@ -18,7 +18,7 @@ export type BlotReading = { oil: number; step: 1 | 2 | 3 | 4 | 5 | 6; clearArea:
 export type PhReading = { skin: number; control: number; diff: number; confidence: number };
 export type WarpedReading =
   | { ok: true; corrected: Img; flags: string[]; blot?: BlotReading; ph?: PhReading }
-  | { ok: false; reason: "blur" | "glare" };
+  | { ok: false; reason: "blur" | "glare" | "no-sheet" };
 
 export const PX_PER_MM = 10;
 const DRY_BORDER_MM = 3;
@@ -161,14 +161,27 @@ function laplacianVariance(img: Img, rect: Rect, y0: number): number {
  * Oil from a colour-corrected sheet crop: each pixel's darkening from the dry border median,
  * scaled so 1 = blue_scale[5] (clear over black). Step = scale swatch nearest the 90th-percentile pixel.
  */
-export function blotScore(sheet: Img, scale: RGB[], borderPx = DRY_BORDER_MM * PX_PER_MM): BlotReading {
-  const { width: w, height: h, data } = sheet, dry: RGB[] = [], lumas = new Float64Array(w * h);
+/** Luma of the median colour of the sheet's dry border (the outer DRY_BORDER_MM). */
+export function dryBorderLuma(sheet: Img, borderPx = DRY_BORDER_MM * PX_PER_MM): number {
+  const { width: w, height: h, data } = sheet, dry: RGB[] = [];
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
-    const i = (y * w + x) * 4, px: RGB = [data[i], data[i + 1], data[i + 2]];
-    lumas[y * w + x] = luma(px);
-    if (x < borderPx || x >= w - borderPx || y < borderPx || y >= h - borderPx) dry.push(px);
+    if (x >= borderPx && x < w - borderPx && y >= borderPx && y < h - borderPx) continue;
+    const i = (y * w + x) * 4;
+    dry.push([data[i], data[i + 1], data[i + 2]]);
   }
-  const dryLuma = luma(median(dry)), scaleLuma = scale.map(luma), span = Math.max(dryLuma - scaleLuma[5], 1);
+  return luma(median(dry));
+}
+
+/** An empty black box has a near-black "dry border": below halfway from the black patch to the lightest blue swatch. */
+export const sheetMissing = (dryLuma: number, blackLuma: number, scale: RGB[]) => dryLuma < (blackLuma + luma(scale[0])) / 2;
+
+export function blotScore(sheet: Img, scale: RGB[], borderPx = DRY_BORDER_MM * PX_PER_MM): BlotReading {
+  const { width: w, height: h, data } = sheet, lumas = new Float64Array(w * h);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const i = (y * w + x) * 4;
+    lumas[y * w + x] = luma([data[i], data[i + 1], data[i + 2]]);
+  }
+  const dryLuma = dryBorderLuma(sheet, borderPx), scaleLuma = scale.map(luma), span = Math.max(dryLuma - scaleLuma[5], 1);
   const oil = lumas.map(l => clip01((dryLuma - l) / span));
   const wetLuma = dryLuma - quantile(oil, 0.9) * span;
   let step = 0;
@@ -241,7 +254,11 @@ export function readWarped(warped: Img, zone: "blot" | "ph", layout: LidLayout):
   const corrected: Img = { width: warped.width, height: warped.height, data };
   if (zone === "blot") {
     const scale = (z.blue_scale ?? []).map(r => median(patch(corrected, r, z.y0)));
-    return { ok: true, corrected, flags, blot: blotScore(crop(corrected, z.slots.blot.sheet!, z.y0), scale) };
+    const sheet = crop(corrected, z.slots.blot.sheet!, z.y0);
+    const blackLuma = luma(median(Object.entries(z.neutrals).filter(([n]) => n.endsWith("black")).flatMap(([, r]) => patch(corrected, r, z.y0))));
+    // Without a sheet the black box reads as heavy oil, so refuse it instead.
+    if (sheetMissing(dryBorderLuma(sheet), blackLuma, scale)) return { ok: false, reason: "no-sheet" };
+    return { ok: true, corrected, flags, blot: blotScore(sheet, scale) };
   }
   const rows = (z.chart ?? []).map(row => ({ ph: row.ph, lab: row.pads.map(p => srgbToLab(median(patch(corrected, { ...p, y: row.y }, z.y0)))) }));
   const strip = (slot: string) => phMatch(rows, z.slots[slot].pads!.map(p => srgbToLab(median(patch(corrected, p, z.y0)))));

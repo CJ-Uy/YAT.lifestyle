@@ -12,6 +12,8 @@ const en = {
   perfumer: "A perfumer reviews every formula before mixing.",
   sample: "Sample photo",
   estimated: "Estimated",
+  seconds: "s",
+  cite: (n: number) => `Source ${n}, opens the research notes in a new tab`,
   families: { citrus: "Citrus", green: "Green", water: "Water", floral: "Floral", woody: "Woody", amber: "Amber" },
   welcome: {
     eyebrow: "Element · Live demo",
@@ -84,6 +86,7 @@ const en = {
     markers: "A corner square is hidden. Keep all four corners of the zone in the frame and try again.",
     blur: "The photo is blurred. Hold the phone still and try again.",
     glare: "Glare is covering the lid. Tilt away from the light and try again.",
+    "no-sheet": "Place the blue sheet on the black box, then take the photo again.",
     timeout: "We couldn't read this photo in time, so we're using an estimated reading.",
   },
   survey: {
@@ -107,7 +110,7 @@ const en = {
     ladderLead: "Open each vial and sniff gently. One of the four is blank. In the demo, pretend and tap.",
     vial: (n: number) => `Vial ${n}`,
     levels: ["Nothing", "Faint", "Clear", "Strong"],
-    pauseTitle: "Give your nose a minute.",
+    pauseTitle: "Give your nose 30 seconds.",
     pauseLead: "Breathe slowly and smell your inner elbow. Your own skin resets your nose.",
     pauseReady: "I'm ready",
     pauseDone: "Ready for the next smell.",
@@ -118,6 +121,7 @@ const en = {
     likeEnds: ["Not for me", "Love it"],
     strengthEnds: ["Faint", "Strong"],
     base: (letter: string) => `Base ${letter}`,
+    rateAria: (letter: string, what: string) => `Base ${letter}, ${what}, 1 to 5`,
     top2Title: "Pick your top two.",
     top2Lead: "Put these two on your wrists and wear them for a few minutes.",
     finalTitle: "Which one feels like you?",
@@ -130,7 +134,7 @@ const en = {
     working: "Reading",
     done: "Ready",
     skipped: "Not measured",
-    basedOn: (name: string) => (name ? `Based on your results, ${name}...` : "Based on your results..."),
+    basedOn: (name: string) => (name ? `${name}, your formula is ready.` : "Your formula is ready."),
     see: "See your formula",
   },
   result: {
@@ -154,19 +158,20 @@ const en = {
     gift: "Gift a kit",
     shareCard: "Make my share card",
     balanced: "Balanced so it still smells like your base.",
+    methods: "Method and sources",
   },
   share: {
     title: "Your Element card.",
-    families: "Top families",
+    families: "Families you liked most",
     linkLabel: "Share link",
     share: "Share",
     copy: "Copy link",
     copied: "Link copied",
     saveAccount: "Save to your account",
     compareFounder: "Compare with the founder",
-    compareResult: (pct: number) => `${pct}% match with the founder`,
-    compareShared: (fam: string) => `You both like ${fam}.`,
-    compareDiffer: (fam: string) => `Biggest difference: ${fam}.`,
+    compareResult: "Match with the founder",
+    compareLine: (shared: string, differ: string) => (shared === differ ? `You and the founder both lean ${shared.toLowerCase()}, though not equally.`
+      : `You and the founder both lean ${shared.toLowerCase()}; you differ most on ${differ.toLowerCase()}.`),
     scanFriend: "Scan a friend's code",
     scanHint: "Open your phone's camera and point it at their card. Their profile opens, ready to compare with yours.",
     restart: "Start again",
@@ -188,6 +193,8 @@ const zhHant: DemoCopy = {
   perfumer: "每條配方在調配前都會由調香師審閱。",
   sample: "示範相片",
   estimated: "估算",
+  seconds: "秒",
+  cite: (n) => `來源 ${n}，在新分頁開啟研究筆記`,
   families: { citrus: "柑橘", green: "青綠", water: "水生", floral: "花香", woody: "木質", amber: "琥珀" },
   welcome: {
     eyebrow: "Element · 現場示範",
@@ -260,6 +267,7 @@ const zhHant: DemoCopy = {
     markers: "有一個角落方格被遮住。請把該區四角放進框內再試。",
     blur: "相片模糊，請拿穩手機再試。",
     glare: "蓋板反光，請避開光源再試。",
+    "no-sheet": "請把藍色吸油紙放在黑色方格上，然後再拍一次。",
     timeout: "未能及時讀取這張相片，我們會使用估算讀數。",
   },
   survey: {
@@ -283,7 +291,7 @@ const zhHant: DemoCopy = {
     ladderLead: "逐一打開小瓶輕嗅。四支之中有一支是空白的。示範時假裝聞一聞再點選即可。",
     vial: (n) => `第 ${n} 瓶`,
     levels: ["沒有", "微弱", "清楚", "強烈"],
-    pauseTitle: "讓鼻子休息一分鐘。",
+    pauseTitle: "讓鼻子休息 30 秒。",
     pauseLead: "慢慢呼吸，聞一聞手肘內側。自己的皮膚氣味能讓鼻子重新歸零。",
     pauseReady: "我準備好了",
     pauseDone: "可以聞下一款了。",
@@ -294,6 +302,7 @@ const zhHant: DemoCopy = {
     likeEnds: ["不喜歡", "很喜歡"],
     strengthEnds: ["微弱", "強烈"],
     base: (letter) => `基調 ${letter}`,
+    rateAria: (letter, what) => `基調 ${letter}：${what}，1 至 5`,
     top2Title: "選出你最喜歡的兩款。",
     top2Lead: "把這兩款分別塗在兩邊手腕，戴上幾分鐘。",
     finalTitle: "哪一款最像你？",
@@ -306,7 +315,7 @@ const zhHant: DemoCopy = {
     working: "讀取中",
     done: "完成",
     skipped: "未量度",
-    basedOn: (name) => (name ? `根據你的結果，${name}……` : "根據你的結果……"),
+    basedOn: (name) => (name ? `${name}，你的配方已經準備好。` : "你的配方已經準備好。"),
     see: "查看你的配方",
   },
   result: {
@@ -330,19 +339,19 @@ const zhHant: DemoCopy = {
     gift: "送贈套裝",
     shareCard: "製作分享卡",
     balanced: "略作平衡，讓它依然是你選的基調。",
+    methods: "方法與來源",
   },
   share: {
     title: "你的 Element 卡。",
-    families: "最喜歡的香調家族",
+    families: "你最喜歡的香調",
     linkLabel: "分享連結",
     share: "分享",
     copy: "複製連結",
     copied: "已複製連結",
     saveAccount: "儲存到你的帳戶",
     compareFounder: "與創辦人比較",
-    compareResult: (pct) => `與創辦人相似度 ${pct}%`,
-    compareShared: (fam) => `你們都喜歡${fam}。`,
-    compareDiffer: (fam) => `最大分別：${fam}。`,
+    compareResult: "與創辦人的相似度",
+    compareLine: (shared, differ) => (shared === differ ? `你和創辦人都偏愛${shared}，但程度不同。` : `你和創辦人都偏愛${shared}；最大分別在${differ}。`),
     scanFriend: "掃描朋友的二維碼",
     scanHint: "打開手機相機對準朋友的卡，就會打開對方的檔案，可以與你比較。",
     restart: "重新開始",
@@ -361,6 +370,8 @@ const zhHans: DemoCopy = {
   perfumer: "每条配方在调配前都会由调香师审阅。",
   sample: "示范照片",
   estimated: "估算",
+  seconds: "秒",
+  cite: (n) => `来源 ${n}，在新标签页打开研究笔记`,
   families: { citrus: "柑橘", green: "青绿", water: "水生", floral: "花香", woody: "木质", amber: "琥珀" },
   welcome: {
     eyebrow: "Element · 现场演示",
@@ -433,6 +444,7 @@ const zhHans: DemoCopy = {
     markers: "有一个角落方格被遮住。请把该区四角放进框内再试。",
     blur: "照片模糊，请拿稳手机再试。",
     glare: "盖板反光，请避开光源再试。",
+    "no-sheet": "请把蓝色吸油纸放在黑色方格上，然后再拍一次。",
     timeout: "未能及时读取这张照片，我们会使用估算读数。",
   },
   survey: {
@@ -456,7 +468,7 @@ const zhHans: DemoCopy = {
     ladderLead: "逐一打开小瓶轻嗅。四支之中有一支是空白的。演示时假装闻一闻再点选即可。",
     vial: (n) => `第 ${n} 瓶`,
     levels: ["没有", "微弱", "清楚", "强烈"],
-    pauseTitle: "让鼻子休息一分钟。",
+    pauseTitle: "让鼻子休息 30 秒。",
     pauseLead: "慢慢呼吸，闻一闻手肘内侧。自己的皮肤气味能让鼻子重新归零。",
     pauseReady: "我准备好了",
     pauseDone: "可以闻下一款了。",
@@ -467,6 +479,7 @@ const zhHans: DemoCopy = {
     likeEnds: ["不喜欢", "很喜欢"],
     strengthEnds: ["微弱", "强烈"],
     base: (letter) => `基调 ${letter}`,
+    rateAria: (letter, what) => `基调 ${letter}：${what}，1 至 5`,
     top2Title: "选出你最喜欢的两款。",
     top2Lead: "把这两款分别涂在两边手腕，戴上几分钟。",
     finalTitle: "哪一款最像你？",
@@ -479,7 +492,7 @@ const zhHans: DemoCopy = {
     working: "读取中",
     done: "完成",
     skipped: "未测量",
-    basedOn: (name) => (name ? `根据你的结果，${name}……` : "根据你的结果……"),
+    basedOn: (name) => (name ? `${name}，你的配方已经准备好。` : "你的配方已经准备好。"),
     see: "查看你的配方",
   },
   result: {
@@ -501,19 +514,19 @@ const zhHans: DemoCopy = {
     gift: "赠送套装",
     shareCard: "制作分享卡",
     balanced: "略作平衡，让它依然是你选的基调。",
+    methods: "方法与来源",
   },
   share: {
     title: "你的 Element 卡。",
-    families: "最喜欢的香调家族",
+    families: "你最喜欢的香调",
     linkLabel: "分享链接",
     share: "分享",
     copy: "复制链接",
     copied: "已复制链接",
     saveAccount: "保存到你的账户",
     compareFounder: "与创始人比较",
-    compareResult: (pct) => `与创始人相似度 ${pct}%`,
-    compareShared: (fam) => `你们都喜欢${fam}。`,
-    compareDiffer: (fam) => `最大差别：${fam}。`,
+    compareResult: "与创始人的相似度",
+    compareLine: (shared, differ) => (shared === differ ? `你和创始人都偏爱${shared}，但程度不同。` : `你和创始人都偏爱${shared}；最大差别在${differ}。`),
     scanFriend: "扫描朋友的二维码",
     scanHint: "打开手机相机对准朋友的卡，就会打开对方的档案，可以与你比较。",
     restart: "重新开始",
@@ -523,7 +536,7 @@ const zhHans: DemoCopy = {
 
 export const demoCopy: Record<Locale, DemoCopy> = { en, "zh-Hant": zhHant, "zh-Hans": zhHans };
 
-// Labels for survey tags and photo-check flags. Unknown ids (new bank chips, AI follow-ups) fall back to the id, humanised.
+// Labels for survey tags and photo-check flags. Unknown ids (AI follow-ups) show the chip label the person picked, else the id humanised.
 const TAGS: Record<string, [en: string, zhHant: string, zhHans: string]> = {
   "active-day": ["Active days", "活躍日子", "活跃日子"], "aircon-hop": ["In and out of air-con", "冷熱交替", "冷热交替"],
   "aircon-office": ["Air-conditioned office", "冷氣辦公室", "空调办公室"], "avoid-clean": ["No laundry-clean", "避開洗衣香", "避开洗衣香"],
@@ -556,9 +569,10 @@ const TAGS: Record<string, [en: string, zhHant: string, zhHans: string]> = {
   shadow: ["Uneven light", "光線不均", "光线不均"],
 };
 const LOCALE_INDEX: Record<Locale, 0 | 1 | 2> = { en: 0, "zh-Hant": 1, "zh-Hans": 2 };
-export function tagLabel(id: string, locale: Locale) {
+export function tagLabel(id: string, locale: Locale, picked?: string) {
   const known = TAGS[id];
   if (known) return known[LOCALE_INDEX[locale]];
+  if (picked) return picked;
   const words = id.replace(/[-_]+/g, " ").trim();
   return words.charAt(0).toUpperCase() + words.slice(1);
 }

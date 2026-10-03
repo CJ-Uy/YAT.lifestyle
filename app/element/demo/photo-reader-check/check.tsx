@@ -5,7 +5,7 @@
 import { useEffect, useState } from "react";
 import { detectMarkers, readZone, type LidLayout } from "../photo-reader";
 
-const CASES = ["blot-dark.webp", "synthetic-board-test.png"];
+const CASES = ["blot-dark.webp", "v12-clean-blot.webp", "v12-oily-blot.webp", "v12-no-blot.webp", "synthetic-board-test.png"];
 
 export default function PhotoReaderCheck() {
   const [output, setOutput] = useState("running");

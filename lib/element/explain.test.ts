@@ -2,6 +2,13 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { REASONS, changeLine, matchingReasons, templateExplanations } from "./explain.ts";
 import { tune } from "./tune.ts";
+import { CITES, noseDataset, researchClaims } from "./research.ts";
+
+test("explain: every citation marker points at a reviewed research entry; skin longevity is hedged", () => {
+  const ids = new Set([...researchClaims, noseDataset].map((c) => c.id));
+  for (const id of Object.values(CITES)) assert.ok(ids.has(id), id);
+  for (const r of ["dry-skin", "oily-skin"]) assert.match(REASONS[r].en, /\bmay\b/);
+});
 
 test("explain: reasons are kept only when their effect has the same sign as the change", () => {
   // dry-skin lowers top notes and raises base notes; humid-outdoor does the opposite.

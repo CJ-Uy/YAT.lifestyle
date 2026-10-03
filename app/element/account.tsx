@@ -7,7 +7,7 @@ import { FAMILY_NAMES } from "../../lib/element/explain";
 import type { Family, Localised } from "../../lib/element/types";
 import { StyledQr } from "./styled-qr";
 
-type Profile = { shareId: string; firstName: string | null; noseType: string; noseName: Localised; likes: Record<Family, number>; tags: string[]; shared: boolean };
+type Profile = { shareId: string; firstName: string | null; noseType: string; noseName: Localised; likes: Record<Family, number>; tags: string[]; tagLabels?: Record<string, string>; shared: boolean };
 type Match = { percent: number; shared: Family; differ: Family; sentence: string };
 
 const copy = {
@@ -121,7 +121,7 @@ function ProfileBody({ p, t, locale }: { p: Profile; t: Copy; locale: Locale }) 
     <dl className="element-facts">
       <div><dt>{t.p.nose}</dt><dd className="element-nose">{p.noseName[locale] ?? p.noseType}</dd></div>
       <div><dt>{t.p.families}</dt><dd><Families likes={p.likes} locale={locale} /></dd></div>
-      {p.tags.length > 0 && <div><dt>{t.p.tags}</dt><dd><ul className="element-tags">{p.tags.map((tag) => <li key={tag}>{tagLabel(tag, locale)}</li>)}</ul></dd></div>}
+      {p.tags.length > 0 && <div><dt>{t.p.tags}</dt><dd><ul className="element-tags">{p.tags.map((tag) => <li key={tag}>{tagLabel(tag, locale, p.tagLabels?.[tag])}</li>)}</ul></dd></div>}
     </dl>
     <p className="element-muted">{t.p.privacy}</p>
   </>;
@@ -166,7 +166,9 @@ export function SharedView({ id }: { id: string }) {
     setOrigin(location.origin);
     fetch(`/api/element/profile?share=${encodeURIComponent(id)}`).then(async (r) => setP(r.ok ? await r.json() : "missing")).catch(() => setP("missing"));
     // Signed-in visitors compare their own profile; everyone else builds one in the demo first.
-    api("profile", {}).then(async (r) => { if (r.ok) setMine((await r.json()).profile?.shareId ?? null); }).catch(() => undefined);
+    // Only ask when the sign-in hint cookie is there, so anonymous visitors never trigger a 401.
+    if (/(?:^|;\s*)yat_element_in=1(?:;|$)/.test(document.cookie))
+      api("profile", {}).then(async (r) => { if (r.ok) setMine((await r.json()).profile?.shareId ?? null); }).catch(() => undefined);
   }, [id]);
   return <Shell>{(t, locale) => <section className="element-panel">
     <p className="element-kicker">{t.p.kicker}</p>
@@ -194,7 +196,10 @@ function CompareBody({ a, b, t, locale }: { a: string; b: string; t: Copy; local
   const [m, setM] = useState<Match | "missing" | "error" | null>(null);
   useEffect(() => {
     setM(null);
-    api("compare", { a, b, locale }).then(async (r) => setM(r.ok ? await r.json() : r.status === 404 ? "missing" : "error")).catch(() => setM("error"));
+    // A language switch re-asks; a slower answer in the old language must not land last.
+    let alive = true;
+    api("compare", { a, b, locale }).then(async (r) => { const next = r.ok ? await r.json() : r.status === 404 ? "missing" : "error"; if (alive) setM(next); }).catch(() => { if (alive) setM("error"); });
+    return () => { alive = false; };
   }, [a, b, locale]);
   const loc = locale;
   return <section className="element-panel">
