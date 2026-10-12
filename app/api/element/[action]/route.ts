@@ -3,7 +3,10 @@ import { handle, type Deps } from "../../../../lib/element/api.server";
 import { inferNose } from "../../../../lib/element/nose";
 
 const deps = (): Deps => ({
-  ai: env.AI, db: env.DB, bucket: env.BUCKET, vectorize: env.TAGS, limiter: env.ELEMENT_RATE_LIMITER, authLimiter: env.NEWSLETTER_RATE_LIMITER,
+  ai: env.AI, db: env.DB, bucket: {
+    put: (key, value, options) => env.BUCKET.put(key, value, options),
+    get: async (key) => { const object = await env.BUCKET.get(key); return object ? { body: new Response(await object.arrayBuffer()).body! } : null; },
+  }, vectorize: env.TAGS, limiter: env.ELEMENT_RATE_LIMITER, authLimiter: env.NEWSLETTER_RATE_LIMITER,
   adminKey: env.ELEMENT_ADMIN_KEY, now: Date.now, inferNose, waitUntil, pepper: env.ELEMENT_CODE_PEPPER,
   sendEmail: (mail) => env.EMAIL.send({ ...mail, from: { email: "codes@yatlifestyle.com", name: "YAT.lifestyle Element" } }),
 });

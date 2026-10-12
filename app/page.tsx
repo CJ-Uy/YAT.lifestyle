@@ -1,5 +1,5 @@
-import HomeExperience from "./home-experience";
+import { StoreHome } from "./storefront";
 
 export default function Home() {
-  return <HomeExperience />;
+  return <StoreHome />;
 }

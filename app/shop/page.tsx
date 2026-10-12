@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import ShopExperience from "./shop-experience";
 
-export const metadata: Metadata = { title: "Shop | YAT.lifestyle", description: "Our first fragrances are in development. Discover what's taking shape at YAT.lifestyle." };
+export const metadata: Metadata = { title: "Fragrances | YAT.LIFESTYLE", description: "Find your scent among twelve unisex fragrances. Each 10 mL perfume includes a blue gift box with decorative flowers for HK$228." };
 
 export default function Shop() { return <ShopExperience />; }

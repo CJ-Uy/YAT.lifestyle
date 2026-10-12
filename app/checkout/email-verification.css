@@ -1,0 +1,14 @@
+.checkout-email-verification { grid-column: 1/-1; border-block: 1px solid var(--rule); padding-block: 1.25rem; }
+.checkout-email-verification h3 { font-family: var(--body); font-size: 1rem; margin: 0 0 .4rem; }
+.checkout-email-verification p { color: var(--muted); font-size: .85rem; margin: .35rem 0 .7rem; }
+.checkout-email-verification .checkout-error { color: #a13e2c; }
+.checkout-email-verification .checkout-email-verified { color: var(--warm); margin-bottom: 0; }
+.checkout-email-verified span { overflow-wrap: anywhere; }
+.checkout-code-row { display: flex; align-items: end; flex-wrap: wrap; gap: 1rem; margin: 1rem 0 .4rem; }
+.checkout-code-row > div { display: flex; flex-direction: column; gap: .45rem; }
+.checkout-code-row label { font-size: .85rem; }
+.checkout-code-row input { width: 11rem; font-variant-numeric: tabular-nums; letter-spacing: .15em; }
+.checkout-code-row .store-btn-secondary { min-height: 48px; font-size: .9rem; }
+.checkout-code-send { min-height: 44px; background: transparent; border-bottom: 1px solid var(--gold); color: var(--gold); font-size: .85rem; padding: .45rem 0; }
+.checkout-code-send:hover:not(:disabled) { color: var(--warm); border-color: var(--warm); }
+.checkout-code-send:disabled { border-color: transparent; }

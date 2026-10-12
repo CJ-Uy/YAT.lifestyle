@@ -1,7 +1,13 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "yat-lifestyle-prod",
-	"account_id": "8527ec1369d46f55304a6f59ab5356e4",
+	"account_id": "28aa5d214ab31fc266ffde3ba169711d",
+  "vars": { "FORWARD_TO": "A66454385@gmail.com" },
+  "routes": [
+    { "pattern": "yatlifestyle.com", "custom_domain": true },
+    { "pattern": "www.yatlifestyle.com", "custom_domain": true },
+    { "pattern": "admin.yatlifestyle.com", "custom_domain": true }
+  ],
 	"compatibility_date": "2026-09-22",
 	"compatibility_flags": [
 		"nodejs_compat"
@@ -16,7 +22,7 @@
 		{
       "binding": "DB",
       "database_name": "yat-lifestyle-prod-db",
-      "database_id": "44991127-6383-4de9-8e0f-04a08bcd3adb"
+      "database_id": "7526a59a-6ad8-4ede-ba74-5ed18c51c47c"
 		}
 	],
 	"r2_buckets": [
@@ -33,6 +39,10 @@
     "name": "ELEMENT_RATE_LIMITER",
     "namespace_id": "92624002",
     "simple": { "limit": 300, "period": 60 }
+  }, {
+    "name": "CHECKOUT_RATE_LIMITER",
+    "namespace_id": "92624003",
+    "simple": { "limit": 10, "period": 60 }
   }],
   "ai": { "binding": "AI" },
   "send_email": [{ "name": "EMAIL" }],

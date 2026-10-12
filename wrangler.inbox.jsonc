@@ -1,0 +1,16 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "yat-lifestyle-inbox-prod",
+  "account_id": "28aa5d214ab31fc266ffde3ba169711d",
+  "main": "workers/inbox.ts",
+  "compatibility_date": "2026-10-11",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "vars": { "FORWARD_TO": "A66454385@gmail.com" },
+  "r2_buckets": [{ "binding": "BUCKET", "bucket_name": "yat-lifestyle-prod-assets" }],
+  "d1_databases": [{
+    "binding": "DB",
+    "database_name": "yat-lifestyle-prod-db",
+    "database_id": "7526a59a-6ad8-4ede-ba74-5ed18c51c47c"
+  }]
+}
