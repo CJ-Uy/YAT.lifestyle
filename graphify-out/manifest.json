@@ -70,8 +70,8 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1791753039.1595435,
-    "ast_hash": "7d23532a50eedd8a9cba07cc82141dc2",
+    "mtime": 1791783804.7091007,
+    "ast_hash": "70feb6d3d4ef21c64dab3bcd038ece56",
     "semantic_hash": ""
   },
   ".impeccable/direction-options.json": {
@@ -115,8 +115,8 @@
     "semantic_hash": ""
   },
   "public/media/asset-manifest.md": {
-    "mtime": 1791745459.2974858,
-    "ast_hash": "90a6794cc3a924dce9ef13f66520efc1",
+    "mtime": 1791783804.7111008,
+    "ast_hash": "16e1cfba6d05a683af9af4361f3211d9",
     "semantic_hash": ""
   },
   ".impeccable/mocks/home-a.png": {
@@ -6255,8 +6255,8 @@
     "semantic_hash": ""
   },
   "app/shop/[slug]/product-experience.tsx": {
-    "mtime": 1791751370.013482,
-    "ast_hash": "4da9b9ffc84fd98bcaa23c971999946d",
+    "mtime": 1791864982.5012019,
+    "ast_hash": "3702dac6787d87e41f5e0b0e762948cf",
     "semantic_hash": ""
   },
   "app/shop/cart.ts": {
@@ -6265,18 +6265,18 @@
     "semantic_hash": ""
   },
   "app/storefront.tsx": {
-    "mtime": 1791750388.726131,
-    "ast_hash": "486ac62ea9e7c50689eee2d9e2ee6825",
+    "mtime": 1791864944.6939287,
+    "ast_hash": "d81ce9f3b9cc417d4094cd8a059beab2",
     "semantic_hash": ""
   },
   "lib/scent-notes.test.ts": {
-    "mtime": 1791739834.7940412,
-    "ast_hash": "5590f21985f9f52d01eb33c3b4995b32",
+    "mtime": 1791864982.5040238,
+    "ast_hash": "d0cb19ff67b559330958487733de2736",
     "semantic_hash": ""
   },
   "lib/scent-notes.ts": {
-    "mtime": 1791739834.7920299,
-    "ast_hash": "5f736a5c768bf86ccb6e87332c44e627",
+    "mtime": 1791864982.503425,
+    "ast_hash": "29e484acdcce024a3d6efdbaaf71e757",
     "semantic_hash": ""
   },
   "lib/shop.test.ts": {
@@ -6615,8 +6615,8 @@
     "semantic_hash": ""
   },
   "app/droplet-journey.tsx": {
-    "mtime": 1791749589.5127423,
-    "ast_hash": "977e75af06970d359ae06a0139919207",
+    "mtime": 1791864944.6919284,
+    "ast_hash": "6ececef58bf474e31d06b2b85d10adad",
     "semantic_hash": ""
   },
   ".impeccable/review/store-finish-verdict.md": {
@@ -6825,13 +6825,13 @@
     "semantic_hash": ""
   },
   "app/scent-finder.tsx": {
-    "mtime": 1791749134.5913765,
-    "ast_hash": "4fb861a2c93db6507b8c56361c8f7270",
+    "mtime": 1791865024.2915077,
+    "ast_hash": "a6958b058973331e0232d9598fd90f1e",
     "semantic_hash": ""
   },
   "app/shop/scent-profile.tsx": {
-    "mtime": 1791749236.3975418,
-    "ast_hash": "147f8d7a947fe8f3abc9400353ec785a",
+    "mtime": 1791864982.502254,
+    "ast_hash": "a19633fb1f94dc0386fa5c0314e6a5ea",
     "semantic_hash": ""
   },
   "lib/admin.server.ts": {
@@ -6967,6 +6967,96 @@
   ".impeccable/review/luxury-reduced-mobile.jpg": {
     "mtime": 1791747116.1909254,
     "ast_hash": "a205308f01ee22bf53876bb693108c23",
+    "semantic_hash": ""
+  },
+  "output/playwright/high-tea-desktop.png": {
+    "mtime": 1791865081.360324,
+    "ast_hash": "471316f1dc326f2badac8d790ebe054b",
+    "semantic_hash": ""
+  },
+  "output/playwright/high-tea-mobile.png": {
+    "mtime": 1791865137.729366,
+    "ast_hash": "04848d9f78e3827bff5f695eef5f3837",
+    "semantic_hash": ""
+  },
+  "output/playwright/home-finder-desktop.png": {
+    "mtime": 1791865033.1036394,
+    "ast_hash": "4a57871e3d21c7d0324c90a958c9df7f",
+    "semantic_hash": ""
+  },
+  "output/playwright/home-gift-desktop.png": {
+    "mtime": 1791865045.549433,
+    "ast_hash": "bc037e225380e9109541837ef228d6ff",
+    "semantic_hash": ""
+  },
+  "output/playwright/home-hero-desktop.png": {
+    "mtime": 1791865001.2840393,
+    "ast_hash": "33ff5940dab4d47df6f7ccc6f2c67162",
+    "semantic_hash": ""
+  },
+  "output/playwright/finder-desktop.png": {
+    "mtime": 1791865239.6878836,
+    "ast_hash": "098a5a9ef8159b96ec00949a8344e3db",
+    "semantic_hash": ""
+  },
+  "output/playwright/finder-mobile.png": {
+    "mtime": 1791865239.398151,
+    "ast_hash": "821e0e79f5b26619a2e65278e1faa11b",
+    "semantic_hash": ""
+  },
+  "output/playwright/hero-landscape-before.png": {
+    "mtime": 1791865240.1242592,
+    "ast_hash": "49625ab96e47aff97c5d119ea12c7991",
+    "semantic_hash": ""
+  },
+  "output/playwright/hero-landscape.png": {
+    "mtime": 1791865290.8298078,
+    "ast_hash": "f2adff0c26f2f465bac976cdcd8350ce",
+    "semantic_hash": ""
+  },
+  "output/playwright/storefront-validation.txt": {
+    "mtime": 1791865641.6496873,
+    "ast_hash": "6a5e45857eaacf7b819437578b401c98",
+    "semantic_hash": ""
+  },
+  "output/playwright/finder-zh-Hans.png": {
+    "mtime": 1791865580.503711,
+    "ast_hash": "aa48ca69a047a3fc036070863bb4ccd7",
+    "semantic_hash": ""
+  },
+  "output/playwright/finder-zh-Hant.png": {
+    "mtime": 1791865579.3528323,
+    "ast_hash": "5b1d7407ec9a837f86b8dc2b3811bfb4",
+    "semantic_hash": ""
+  },
+  "output/playwright/gift-zh-Hans.png": {
+    "mtime": 1791865580.602981,
+    "ast_hash": "dfc86bab272e10a9a9b892b937b25dd2",
+    "semantic_hash": ""
+  },
+  "output/playwright/gift-zh-Hant.png": {
+    "mtime": 1791865579.4616084,
+    "ast_hash": "e20e87911cf0fcc9bd05fe178cbd40ab",
+    "semantic_hash": ""
+  },
+  "output/playwright/home-hero-mobile.png": {
+    "mtime": 1791865581.5774856,
+    "ast_hash": "98ce3de5eb1b5ec80f5b697b8166189d",
+    "semantic_hash": ""
+  },
+  "output/playwright/profile-mobile.png": {
+    "mtime": 1791865537.287614,
+    "ast_hash": "5a49fc74c22cfeaf692d5aed7b6aa51d",
+    "semantic_hash": ""
+  },
+  "output/playwright/profile-zh-Hans.png": {
+    "mtime": 1791865581.0593002,
+    "ast_hash": "2b435da8849dc926661024e7db2a617b",
+    "semantic_hash": ""
+  },
+  "output/playwright/profile-zh-Hant.png": {
+    "mtime": 1791865579.8987937,
+    "ast_hash": "92e43ad8810fcd86d2ae1fc74e53293e",
     "semantic_hash": ""
   }
 }

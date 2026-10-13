@@ -9,7 +9,7 @@ export const scentJourneyCopy: Record<Locale, { title: string; disclaimer: strin
   en: {
     title: "Scent journey — draft",
     disclaimer: "Proposed sequence, inferred from the blend and reference fragrance-oil profiles. The maker still needs to confirm it on the finished perfume.",
-    labels: { opening: "Opening", heart: "Heart", dryDown: "Dry-down" },
+    labels: { opening: "Top notes", heart: "Middle notes", dryDown: "Base notes" },
   },
   "zh-Hant": {
     title: "香氣旅程 · 草稿",

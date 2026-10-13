@@ -2,7 +2,6 @@
 
 import { type CSSProperties, useEffect, useId, useRef, useState } from "react";
 import { STORY_FRAMES, dropTipGeometry, storyMotion } from "../lib/story-motion";
-import { PRICE_CENTS, formatPrice } from "../lib/shop";
 import { type Locale } from "./site-header";
 
 const copy = {
@@ -16,7 +15,7 @@ const copy = {
       { title: "Meet Natasha.", body: "HKUST Biotechnology student.\nYAT.LIFESTYLE founder." },
       { title: "Close to you.", body: "Twelve fragrances. Yours to make personal." },
     ],
-    shop: "Shop fragrances", inclusion: "10 mL + flower gift box", skip: "Skip story",
+    shop: "Shop fragrances", skip: "Find your scent",
   },
   "zh-Hant": {
     title: "時間。\n地方。\n你。",
@@ -28,7 +27,7 @@ const copy = {
       { title: "認識 Natasha。", body: "香港科技大學生物科技學生。\nYAT.LIFESTYLE 創辦人。" },
       { title: "香氣，隨你。", body: "十二款香水，演繹你的日常。" },
     ],
-    shop: "選購香水", inclusion: "10 mL + 花禮盒", skip: "跳過故事",
+    shop: "選購香水", skip: "找到你的香氣",
   },
   "zh-Hans": {
     title: "时间。\n地方。\n你。",
@@ -40,7 +39,7 @@ const copy = {
       { title: "认识 Natasha。", body: "香港科技大学生物科技学生。\nYAT.LIFESTYLE 创办人。" },
       { title: "香气，随你。", body: "十二款香水，演绎你的日常。" },
     ],
-    shop: "选购香水", inclusion: "10 mL + 花礼盒", skip: "跳过故事",
+    shop: "选购香水", skip: "找到你的香气",
   },
 } as const;
 
@@ -98,6 +97,7 @@ export function DropletJourney({ locale }: { locale: Locale }) {
       stage.style.setProperty("--atmosphere-opacity", String(motion.atmosphereOpacity));
       scenes.forEach((scene, index) => {
         const opacity = String(reducedMotion ? Number(index === panel) : motion.scenes[index].opacity);
+        scene.inert = Number(opacity) < .05;
         scene.style.setProperty("--scene-opacity", opacity);
         scene.style.setProperty("--scene-offset", `${reducedMotion ? 0 : motion.scenes[index].offset}px`);
         if (index >= 2) {
@@ -219,7 +219,7 @@ export function DropletJourney({ locale }: { locale: Locale }) {
         <div className="journey-shade" />
       </div>
       <div className="journey-scene scene-hero" style={{ "--scene-opacity": 1 } as CSSProperties}>
-        <div className="journey-copy"><h1 id={`${signatureId}-heading`}>{t.title}</h1><p>{t.intro}</p></div>
+        <div className="journey-copy"><h1 id={`${signatureId}-heading`}>{t.title}</h1><p>{t.intro}</p><div className="journey-hero-actions"><a className="store-btn" href="/shop">{t.shop}<svg aria-hidden="true" width="22" height="12" viewBox="0 0 22 12"><path d="M1 6h19m-5-5 5 5-5 5" fill="none" stroke="currentColor" strokeWidth="1.2" /></svg></a><a className="journey-skip" href="#collections">{t.skip}</a></div></div>
       </div>
       <div aria-hidden="true" className="journey-scene scene-intro">
         <div className="journey-copy"><h2>{t.heading}</h2><p>{t.story}</p></div>
@@ -259,10 +259,6 @@ export function DropletJourney({ locale }: { locale: Locale }) {
           <use href={`#${signatureId}-outline`} fill={`url(#${signatureId}-reflection)`} stroke="none" />
           <use href={`#${signatureId}-outline`} fill={`url(#${signatureId}-bounce)`} stroke="none" />
         </svg>
-      </div>
-      <div className="journey-shopping">
-        <div className="journey-shopping-facts"><span>{t.inclusion}</span><strong>{formatPrice(PRICE_CENTS)}</strong></div>
-        <div className="journey-shopping-actions"><a className="store-btn" href="/shop">{t.shop}<svg aria-hidden="true" width="22" height="12" viewBox="0 0 22 12"><path d="M1 6h19m-5-5 5 5-5 5" fill="none" stroke="currentColor" strokeWidth="1.2" /></svg></a><a className="journey-skip" href="#collections">{t.skip}</a></div>
       </div>
     </div>
     <div aria-hidden="true" className="journey-spacers"><div /><div /><div /><div /><div /></div>

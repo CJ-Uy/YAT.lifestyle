@@ -6,6 +6,7 @@ import { PRODUCTS } from "./shop.ts";
 test("scent journeys: all twelve products have three localized stages and visible draft context", () => {
   assert.deepEqual(Object.keys(SCENT_NOTES).sort(), PRODUCTS.map((product) => product.slug).sort());
   assert.deepEqual(SCENT_STAGES, ["opening", "heart", "dryDown"]);
+  assert.deepEqual(scentJourneyCopy.en.labels, { opening: "Top notes", heart: "Middle notes", dryDown: "Base notes" });
   for (const product of PRODUCTS) {
     const notes = SCENT_NOTES[product.slug];
     assert.deepEqual(Object.keys(notes).sort(), Object.keys(product.copy).sort());

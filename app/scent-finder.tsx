@@ -35,31 +35,24 @@ export function ScentFinder({ locale }: { locale: Locale }) {
   const t = copy[locale];
   const shared = storeCopy[locale];
   const suggestions = recommendScents(family, feel);
-  const selectedIndex = SCENT_FAMILIES.findIndex((id) => id === family);
 
   return <div className="scent-finder">
     <div className="scent-finder-intro"><h2>{t.title}</h2><p>{t.intro}</p></div>
     <div className="scent-finder-layout">
       <div className="scent-finder-controls">
-        <fieldset className="scent-family-field"><legend>{t.family}</legend>
-          <div className="scent-compass">
-            <svg className="scent-compass-lines" aria-hidden="true" viewBox="0 0 360 360">
-              <circle cx="180" cy="180" r="116" /><circle cx="180" cy="180" r="84" />
-              {SCENT_FAMILIES.map((id, index) => <g key={id} transform={`rotate(${index * 72} 180 180)`}><path d="M180 96v-32" /><circle className={family === id ? "is-selected" : ""} cx="180" cy="64" r="3" /></g>)}
-              {selectedIndex >= 0 && <path className="scent-compass-pointer" d="M180 107v-11" transform={`rotate(${selectedIndex * 72} 180 180)`} />}
-            </svg>
-            <div className="scent-compass-center" aria-hidden="true"><span>{t[family]}</span><small>{t.feelings[feel]}</small></div>
-            {SCENT_FAMILIES.map((id) => <button className={`scent-family scent-family-${id}`} key={id} type="button" aria-pressed={family === id} onClick={() => setFamily(id)}>{t[id]}</button>)}
+        <fieldset className="scent-family-field"><legend><span aria-hidden="true">01</span>{t.family}</legend>
+          <div className="scent-families">
+            {SCENT_FAMILIES.map((id) => <button className="scent-family" key={id} type="button" aria-pressed={family === id} onClick={() => setFamily(id)}>{t[id]}</button>)}
+            <button className="scent-family" type="button" aria-pressed={family === "any"} onClick={() => setFamily("any")}>{t.any}</button>
           </div>
-          <button className="scent-any" type="button" aria-pressed={family === "any"} onClick={() => setFamily("any")}>{t.any}</button>
         </fieldset>
-        <div className="scent-feel"><label htmlFor={feelId}>{t.feel}</label><input id={feelId} type="range" min="0" max="4" step="1" value={feel} aria-valuetext={t.feelings[feel]} onChange={(event) => setFeel(Number(event.target.value))} /><div aria-hidden="true"><span>{t.fresh}</span><span>{t.warm}</span></div></div>
+        <div className="scent-feel"><label htmlFor={feelId}><span aria-hidden="true">02</span>{t.feel}</label><output htmlFor={feelId}>{t.feelings[feel]}</output><input id={feelId} type="range" min="0" max="4" step="1" value={feel} aria-valuetext={t.feelings[feel]} onChange={(event) => setFeel(Number(event.target.value))} /><div aria-hidden="true"><span>{t.fresh}</span><span>{t.warm}</span></div></div>
       </div>
       <div className="scent-finder-results">
-        <div className="scent-results-intro"><div><h3>{t.suggestions}</h3><p>{t.source}</p></div><span>10 mL · {shared.unisex} · {formatPrice(PRICE_CENTS)}</span></div>
+        <div className="scent-results-intro"><div><h3>{t.suggestions}</h3><p>{t.source}</p></div><p className="scent-results-selection">{t[family]}<span aria-hidden="true"> / </span>{t.feelings[feel]}</p></div>
         <p className="scent-announcement" role="status" aria-live="polite" aria-atomic="true">{t.announced}: {suggestions.map((product) => product.name).join(", ")}.</p>
         <div className="scent-recommendations">{suggestions.map((product) => <ProductCard key={product.slug} product={product} locale={locale} />)}</div>
-        <a className="store-text-link" href="/shop">{shared.all}<Arrow /></a>
+        <div className="scent-results-footer"><span>10 mL · {shared.unisex} · {formatPrice(PRICE_CENTS)}</span><a className="store-text-link" href="/shop">{shared.all}<Arrow /></a></div>
       </div>
     </div>
   </div>;

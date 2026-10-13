@@ -747,7 +747,7 @@
       "label": "copy",
       "file_type": "code",
       "source_file": "app/droplet-journey.tsx",
-      "source_location": "L8",
+      "source_location": "L7",
       "_origin": "ast",
       "id": "app_droplet_journey_copy",
       "community": 48,
@@ -757,7 +757,7 @@
       "label": "sceneImages",
       "file_type": "code",
       "source_file": "app/droplet-journey.tsx",
-      "source_location": "L47",
+      "source_location": "L46",
       "_origin": "ast",
       "id": "app_droplet_journey_sceneimages",
       "community": 48,
@@ -767,7 +767,7 @@
       "label": "DropletJourney()",
       "file_type": "code",
       "source_file": "app/droplet-journey.tsx",
-      "source_location": "L49",
+      "source_location": "L48",
       "_origin": "ast",
       "id": "app_droplet_journey_dropletjourney",
       "community": 118,
@@ -68885,5 +68885,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "8db842d100b8221dae996a459587d93399185f9f"
+  "built_at_commit": "75aa84a1488011c4cf53d495f23dcfecb1c77e05"
 }

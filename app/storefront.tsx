@@ -56,7 +56,16 @@ export function StoreHome() {
       <section className="store-selection" id="collections">
         <ScentFinder locale={locale} />
       </section>
-      <section className="store-gift" id="gift-box"><figure><img src="/media/yat-official-gift-box.webp" width="896" height="1195" loading="lazy" alt={t.boxAlt} /></figure><div><h2>{t.gift}</h2><p>{t.giftBody}</p><img className="store-gift-bottles" src="/media/yat-official-three-bottles.webp" width="1206" height="657" loading="lazy" alt={t.photo} /><div className="store-gift-price">{formatPrice(PRICE_CENTS)}</div><a className="store-btn" href="/shop">{t.shop}<Arrow /></a></div></section>
+      <section className="store-gift" id="gift-box" aria-labelledby="gift-heading">
+        <figure><img src="/media/yat-official-gift-box.webp" width="896" height="1195" loading="lazy" alt={t.boxAlt} /></figure>
+        <div className="store-gift-copy">
+          <p className="store-gift-eyebrow">YAT.LIFESTYLE · {t.unisex}</p>
+          <h2 id="gift-heading">{t.gift}</h2><p className="store-gift-description">{t.giftBody}</p>
+          <div className="store-gift-details"><span>{t.inclusion}</span><strong className="store-gift-price">{formatPrice(PRICE_CENTS)}</strong></div>
+          <a className="store-btn" href="/shop">{t.shop}<Arrow /></a>
+          <p className="store-gift-delivery">{t.shipping}</p>
+        </div>
+      </section>
       <section className="store-about" id="about"><div><h2>{t.about}</h2><p>{t.aboutBody}</p></div><div className="store-about-photos"><figure><img src="/media/yat-official-evening.webp" width="1206" height="1569" loading="lazy" alt={t.eveningAlt} /></figure><figure><img src="/media/yat-official-in-hand.webp" width="1600" height="2400" loading="lazy" alt={t.handAlt} /></figure></div></section>
     </main>
   </StoreShell>;
