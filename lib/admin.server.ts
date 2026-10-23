@@ -1,12 +1,15 @@
 import { Buffer } from "node:buffer";
 import { timingSafeEqual } from "node:crypto";
 import type { CommerceDB } from "./commerce.server.ts";
+import { FINANCE_GET, FINANCE_POST, financeAction, sendShippedEmail } from "./admin-finance.server.ts";
 
 export type AdminEnv = {
   DB: CommerceDB;
   CHECKOUT_RATE_LIMITER: { limit(options: { key: string }): Promise<{ success: boolean }> };
   ADMIN_USERNAME?: string;
   ADMIN_PASSWORD_HASH?: string;
+  /** JSON object of further accounts, e.g. {"cj":"pbkdf2-sha256$..."}. */
+  ADMIN_USERS?: string;
   ADMIN_SESSION_SECRET?: string;
   FORWARD_TO?: string;
 };
@@ -15,11 +18,14 @@ export type AdminDeps = {
   limiter: AdminEnv["CHECKOUT_RATE_LIMITER"];
   username?: string;
   passwordHash?: string;
+  /** Further accounts beside the owner's, username → password hash. */
+  users?: Record<string, string>;
   sessionSecret?: string;
   forwardTo?: string;
   syncPayments?: () => Promise<void>;
   getMailRaw?: (key: string) => Promise<ArrayBuffer | null>;
   cancelOrder?: (id: string) => Promise<unknown>;
+  sendEmail?: (message: { to: string; from: { email: string; name: string }; subject: string; text: string; html: string }) => Promise<unknown>;
   now: () => number;
 };
 
@@ -29,8 +35,8 @@ const CODE = /^[A-Z0-9][A-Z0-9_-]{2,31}$/;
 const STAGES = ["new", "making", "packed", "dispatched"] as const;
 const PAYMENTS = ["paid", "unpaid", "cancelled", "failed"];
 type Stage = typeof STAGES[number];
-type Fulfillment = { status: Stage; courier: string; tracking_number: string; note: string; version: number; updated_at: number };
-class HttpError extends Error { status: number; constructor(status: number, message: string) { super(message); this.status = status; } }
+type Fulfillment = { status: Stage; courier: string; tracking_number: string; note: string; version: number; updated_at: number; shipping_cents: number | null; shipped_email_at: number | null };
+export class HttpError extends Error { status: number; constructor(status: number, message: string) { super(message); this.status = status; } }
 const json = (body: unknown, status = 200, headers: Record<string, string> = {}) => Response.json(body, {
   status, headers: { "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff", ...headers },
 });
@@ -90,7 +96,19 @@ async function viewer(request: Request, deps: AdminDeps) {
   const [id, supplied] = token.split(".");
   if (!equal(Buffer.from(supplied, "base64url"), Buffer.from(await signature(id, deps.sessionSecret!), "base64url"))) return null;
   const row = await deps.db.prepare("SELECT username FROM admin_sessions WHERE id_hash = ? AND expires_at > ?").bind(await hash(token), deps.now()).first<{ username: string }>();
-  return row && row.username === deps.username ? row.username : null;
+  return row && passwordHashOf(row.username, deps) ? row.username : null;
+}
+
+// Removing an account's hash also ends its existing sessions.
+const passwordHashOf = (username: string, deps: AdminDeps) => username === deps.username ? deps.passwordHash
+  : deps.users && Object.hasOwn(deps.users, username) ? deps.users[username] : undefined;
+
+export function parseAdminUsers(value: string | undefined) {
+  try {
+    const parsed: unknown = JSON.parse(value ?? "{}");
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return {};
+    return Object.fromEntries(Object.entries(parsed).filter((entry): entry is [string, string] => /^[a-z0-9_-]{2,32}$/.test(entry[0]) && typeof entry[1] === "string"));
+  } catch { return {}; }
 }
 
 async function login(request: Request, deps: AdminDeps) {
@@ -98,16 +116,18 @@ async function login(request: Request, deps: AdminDeps) {
   if (!deps.limiter || !(await deps.limiter.limit({ key: `yat-admin-login:${ip}` })).success) throw new HttpError(429, "Too many sign-in attempts. Wait a minute and try again.");
   const body = await readJson(request);
   if (typeof body.username !== "string" || body.username.length > 64 || typeof body.password !== "string" || !body.password || body.password.length > 256) throw new HttpError(400, "Enter your username and password.");
-  const valid = await verifyAdminPassword(body.password, deps.passwordHash!);
-  if (!valid || body.username !== deps.username) throw new HttpError(401, "The username or password is incorrect.");
+  const username = body.username, known = passwordHashOf(username, deps);
+  // Unknown usernames still pay the full PBKDF2 cost, so timing does not reveal which accounts exist.
+  const valid = await verifyAdminPassword(body.password, known ?? deps.passwordHash!);
+  if (!valid || !known) throw new HttpError(401, "The username or password is incorrect.");
   const id = Buffer.from(crypto.getRandomValues(new Uint8Array(32))).toString("base64url"), token = `${id}.${await signature(id, deps.sessionSecret!)}`, now = deps.now();
   await deps.db.prepare("DELETE FROM admin_sessions WHERE expires_at <= ?").bind(now).run();
-  await deps.db.prepare("INSERT INTO admin_sessions (id_hash, username, expires_at, created_at) VALUES (?, ?, ?, ?)").bind(await hash(token), deps.username!, now + SESSION_TTL, now).run();
-  return json({ ok: true, username: deps.username }, 200, { "Set-Cookie": cookie(token, SESSION_TTL / 1000) });
+  await deps.db.prepare("INSERT INTO admin_sessions (id_hash, username, expires_at, created_at) VALUES (?, ?, ?, ?)").bind(await hash(token), username, now + SESSION_TTL, now).run();
+  return json({ ok: true, username }, 200, { "Set-Cookie": cookie(token, SESSION_TTL / 1000) });
 }
 
-const integer = (value: unknown, min: number, max: number) => typeof value === "number" && Number.isSafeInteger(value) && value >= min && value <= max;
-const cleanText = (value: unknown, max: number) => typeof value === "string" && value.length <= max && !/[\p{Cc}]/u.test(value) ? value.trim() : null;
+export const integer = (value: unknown, min: number, max: number) => typeof value === "number" && Number.isSafeInteger(value) && value >= min && value <= max;
+export const cleanText = (value: unknown, max: number) => typeof value === "string" && value.length <= max && !/[\p{Cc}]/u.test(value) ? value.trim() : null;
 const orderId = (value: unknown) => { if (typeof value !== "string" || !UUID.test(value)) throw new HttpError(400, "Choose a valid order."); return value; };
 
 async function orders(request: Request, deps: AdminDeps) {
@@ -129,17 +149,19 @@ async function detail(request: Request, deps: AdminDeps) {
     FROM commerce_orders WHERE id = ?`).bind(id).first<{ details_json: string; items_json: string } & Record<string, unknown>>();
   if (!row) throw new HttpError(404, "That order could not be found.");
   const { details_json, items_json, ...order } = row;
-  const fulfillment = await deps.db.prepare("SELECT status, courier, tracking_number, note, version, updated_at FROM admin_order_fulfillment WHERE order_id = ?").bind(id).first<Fulfillment>();
+  const fulfillment = await deps.db.prepare("SELECT status, courier, tracking_number, note, version, updated_at, shipping_cents, shipped_email_at FROM admin_order_fulfillment WHERE order_id = ?").bind(id).first<Fulfillment>();
   // shortcut: expose the latest 100 audit entries; add cursor pagination if a single order needs more.
   const history = await deps.db.prepare("SELECT previous_status, status, courier, tracking_number, note, actor, created_at FROM admin_order_history WHERE order_id = ? ORDER BY id DESC LIMIT 100").bind(id).all();
-  return json({ order: { ...order, details: JSON.parse(details_json), items: JSON.parse(items_json), fulfillment: fulfillment ?? { status: "new", courier: "", tracking_number: "", note: "", version: 0 }, history: history.results } });
+  return json({ order: { ...order, details: JSON.parse(details_json), items: JSON.parse(items_json), fulfillment: fulfillment ?? { status: "new", courier: "", tracking_number: "", note: "", version: 0, shipping_cents: null, shipped_email_at: null }, history: history.results } });
 }
 
 async function fulfill(body: Record<string, unknown>, deps: AdminDeps, actor: string) {
   const id = orderId(body.id), status = body.status as Stage;
   const courier = cleanText(body.courier, 80), tracking = cleanText(body.trackingNumber, 120);
   const note = typeof body.note === "string" && body.note.length <= 2000 && !/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(body.note) ? body.note.trim() : null;
-  if (!STAGES.includes(status) || !integer(body.version, 0, 1_000_000) || courier === null || tracking === null || note === null) throw new HttpError(400, "Check the fulfillment details.");
+  const shipping = body.shippingCost === undefined || body.shippingCost === "" ? null : moneyCents(body.shippingCost);
+  if (!STAGES.includes(status) || !integer(body.version, 0, 1_000_000) || courier === null || tracking === null || note === null
+    || (shipping === null && body.shippingCost !== undefined && body.shippingCost !== "")) throw new HttpError(400, "Check the fulfillment details.");
   const order = await deps.db.prepare("SELECT status, mode FROM commerce_orders WHERE id = ?").bind(id).first<{ status: string; mode: string }>();
   if (!order) throw new HttpError(404, "That order could not be found.");
   if (order.status !== "paid" || order.mode !== "prod") throw new HttpError(409, "Only paid live orders can enter fulfillment.");
@@ -147,40 +169,83 @@ async function fulfill(body: Record<string, unknown>, deps: AdminDeps, actor: st
   const previous = current?.status ?? "new", version = current?.version ?? 0;
   if (version !== body.version) throw new HttpError(409, "This order changed. Reload it before saving.");
   if (status !== previous && STAGES.indexOf(status) !== STAGES.indexOf(previous) + 1) throw new HttpError(409, "Complete each fulfillment step in order.");
-  if (status === "dispatched" && (courier.length < 2 || tracking.length < 3)) throw new HttpError(400, "Add the courier and tracking number before dispatch.");
+  if (status === "dispatched" && (courier.length < 2 || tracking.length < 3 || shipping === null)) throw new HttpError(400, "Add the courier, tracking number and shipping cost before dispatch.");
   // The version guard and history trigger keep a concurrent save from overwriting another operator's work.
-  const saved = await deps.db.prepare(`INSERT INTO admin_order_fulfillment (order_id, status, courier, tracking_number, note, version, updated_by, updated_at)
-    SELECT ?, ?, ?, ?, ?, 1, ?, ? WHERE EXISTS (SELECT 1 FROM commerce_orders WHERE id = ? AND status = 'paid' AND mode = 'prod')
+  const saved = await deps.db.prepare(`INSERT INTO admin_order_fulfillment (order_id, status, courier, tracking_number, note, shipping_cents, version, updated_by, updated_at)
+    SELECT ?, ?, ?, ?, ?, ?, 1, ?, ? WHERE EXISTS (SELECT 1 FROM commerce_orders WHERE id = ? AND status = 'paid' AND mode = 'prod')
     ON CONFLICT(order_id) DO UPDATE SET status = excluded.status, courier = excluded.courier, tracking_number = excluded.tracking_number,
-    note = excluded.note, version = admin_order_fulfillment.version + 1, updated_by = excluded.updated_by, updated_at = excluded.updated_at
-    WHERE admin_order_fulfillment.version = ? RETURNING version`).bind(id, status, courier, tracking, note, actor, deps.now(), id, version).first();
+    note = excluded.note, shipping_cents = excluded.shipping_cents, version = admin_order_fulfillment.version + 1, updated_by = excluded.updated_by, updated_at = excluded.updated_at
+    WHERE admin_order_fulfillment.version = ? RETURNING version`).bind(id, status, courier, tracking, note, shipping, actor, deps.now(), id, version).first();
   if (!saved) throw new HttpError(409, "This order changed. Reload it before saving.");
-  return json({ ok: true });
+  // The first save as dispatched emails the customer; a failed send is retried by the next save or the resend action.
+  return json({ ok: true, shippedEmail: status === "dispatched" ? await sendShippedEmail(id, deps) : null });
 }
 
-async function vouchers(deps: AdminDeps) {
+async function resendShippedEmail(body: Record<string, unknown>, deps: AdminDeps) {
+  const id = orderId(body.id);
+  const row = await deps.db.prepare("UPDATE admin_order_fulfillment SET shipped_email_at = NULL WHERE order_id = ? AND status = 'dispatched' RETURNING order_id").bind(id).first();
+  if (!row) throw new HttpError(409, "Only dispatched orders have a shipped email.");
+  const result = await sendShippedEmail(id, deps);
+  if (result !== "sent") throw new HttpError(503, "The shipped email could not be sent. Try again later.");
+  return json({ ok: true, shippedEmail: result });
+}
+
+async function vouchers(request: Request, deps: AdminDeps) {
+  const batch = new URL(request.url).searchParams.get("batch");
+  if (batch !== null && !UUID.test(batch)) throw new HttpError(400, "Choose a valid voucher set.");
   // shortcut: show the newest 200 vouchers; add pagination when the owner needs a larger catalogue.
-  const rows = await deps.db.prepare(`SELECT v.code, v.kind, v.amount, v.min_subtotal_cents, v.expires_at, v.max_uses, v.active, v.created_at,
+  const rows = await deps.db.prepare(`SELECT v.code, v.kind, v.amount, v.min_subtotal_cents, v.expires_at, v.max_uses, v.active, v.created_at, v.batch,
     (SELECT COUNT(*) FROM commerce_voucher_reservations r WHERE r.voucher_code = v.code AND r.status = 'redeemed') AS redeemed,
     (SELECT COUNT(*) FROM commerce_voucher_reservations r WHERE r.voucher_code = v.code AND r.status = 'reserved') AS reserved
-    FROM commerce_vouchers v ORDER BY v.created_at DESC, v.code LIMIT 200`).all();
+    FROM commerce_vouchers v WHERE (? IS NULL OR v.batch = ?) ORDER BY v.created_at DESC, v.code LIMIT 200`).bind(batch, batch).all();
   return json({ vouchers: rows.results });
 }
 
-async function createVoucher(body: Record<string, unknown>, deps: AdminDeps) {
-  const code = typeof body.code === "string" ? body.code.trim().toUpperCase() : "", kind = body.kind;
+function voucherTerms(body: Record<string, unknown>, deps: AdminDeps) {
+  const kind = body.kind;
   const amount = kind === "percent" && typeof body.amount === "string" && /^\d{1,3}$/.test(body.amount) ? Number(body.amount) : kind === "fixed" ? moneyCents(body.amount) : null;
   const minimum = moneyCents(body.minSubtotal);
-  if (!CODE.test(code) || (kind !== "percent" && kind !== "fixed") || !integer(amount, 1, kind === "percent" ? 100 : 1_000_000)
+  if ((kind !== "percent" && kind !== "fixed") || !integer(amount, 1, kind === "percent" ? 100 : 1_000_000)
     || !integer(minimum, 0, 1_000_000) || !(body.maxUses === null || integer(body.maxUses, 1, 1_000_000))
-    || !(body.expiresAt === null || integer(body.expiresAt, deps.now() + 1, Number.MAX_SAFE_INTEGER))) throw new HttpError(400, "Check the voucher code, value, minimum, usage limit and expiry.");
-  const inserted = await deps.db.prepare(`INSERT INTO commerce_vouchers (code, kind, amount, min_subtotal_cents, expires_at, max_uses, active, created_at)
-    VALUES (?, ?, ?, ?, ?, ?, 1, ?) ON CONFLICT(code) DO NOTHING RETURNING code`).bind(code, kind, amount as number, minimum as number, body.expiresAt as number | null, body.maxUses as number | null, deps.now()).first();
-  if (!inserted) throw new HttpError(409, "That voucher code already exists.");
+    || !(body.expiresAt === null || integer(body.expiresAt, deps.now() + 1, Number.MAX_SAFE_INTEGER))) return null;
+  return { kind, amount: amount as number, minimum: minimum as number, maxUses: body.maxUses as number | null, expiresAt: body.expiresAt as number | null };
+}
+const insertVoucher = (deps: AdminDeps, code: string, terms: NonNullable<ReturnType<typeof voucherTerms>>, batch: string | null) => deps.db.prepare(`INSERT INTO commerce_vouchers (code, kind, amount, min_subtotal_cents, expires_at, max_uses, active, created_at, batch)
+  VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?) ON CONFLICT(code) DO NOTHING RETURNING code`).bind(code, terms.kind, terms.amount, terms.minimum, terms.expiresAt, terms.maxUses, deps.now(), batch);
+
+async function createVoucher(body: Record<string, unknown>, deps: AdminDeps) {
+  const code = typeof body.code === "string" ? body.code.trim().toUpperCase() : "", terms = voucherTerms(body, deps);
+  if (!CODE.test(code) || !terms) throw new HttpError(400, "Check the voucher code, value, minimum, usage limit and expiry.");
+  if (!await insertVoucher(deps, code, terms, null).first()) throw new HttpError(409, "That voucher code already exists.");
   return json({ ok: true, code }, 201);
 }
 
-function moneyCents(value: unknown) {
+// No 0/O, 1/I/L: printed codes are typed back in by hand.
+const CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+function randomCode(prefix: string) {
+  const bytes = new Uint8Array(16); let code = "";
+  while (code.length < 8) {
+    crypto.getRandomValues(bytes);
+    for (const byte of bytes) if (byte < 248 && code.length < 8) code += CODE_ALPHABET[byte % CODE_ALPHABET.length];
+  }
+  return prefix ? `${prefix}-${code}` : code;
+}
+
+async function createVoucherSet(body: Record<string, unknown>, deps: AdminDeps) {
+  const prefix = typeof body.prefix === "string" ? body.prefix.trim().toUpperCase() : "", terms = voucherTerms(body, deps);
+  if (!integer(body.count, 1, 200) || !/^[A-Z0-9]{0,12}$/.test(prefix) || !terms) throw new HttpError(400, "Check how many codes, the prefix (letters and numbers, up to 12), value, minimum, uses per code and expiry.");
+  const batch = crypto.randomUUID(), codes: string[] = [];
+  // A random 8-character code collides with another voucher only in theory; conflicting rows are skipped and topped up.
+  for (let round = 0; round < 5 && codes.length < (body.count as number); round++) {
+    const wanted = Array.from({ length: (body.count as number) - codes.length }, () => randomCode(prefix));
+    await deps.db.batch(wanted.map((code) => insertVoucher(deps, code, terms, batch)));
+    codes.splice(0, codes.length, ...(await deps.db.prepare("SELECT code FROM commerce_vouchers WHERE batch = ?").bind(batch).all<{ code: string }>()).results.map((row) => row.code));
+  }
+  if (codes.length < (body.count as number)) throw new HttpError(503, "Some codes could not be created. Try again.");
+  return json({ ok: true, batch, codes }, 201);
+}
+
+export function moneyCents(value: unknown) {
   if (typeof value !== "string" || !/^\d{1,6}(?:\.\d{1,2})?$/.test(value)) return null;
   const [whole, fraction = ""] = value.split(".");
   return Number(whole) * 100 + Number(fraction.padEnd(2, "0"));
@@ -282,24 +347,31 @@ export async function handleAdmin(action: string, request: Request, deps: AdminD
     }
     const actor = await viewer(request, deps);
     if (!actor) throw new HttpError(401, "Sign in to continue.");
-    if (["logout", "fulfillment", "order-cancel", "voucher-create", "voucher-deactivate"].includes(action) || (action === "mail-settings" && request.method === "POST")) {
+    if (["logout", "fulfillment", "shipped-email", "order-cancel", "voucher-create", "voucher-set-create", "voucher-deactivate"].includes(action) || FINANCE_POST.has(action) || (action === "mail-settings" && request.method === "POST")) {
       if (request.method !== "POST") throw new HttpError(405, "Use the admin form.");
       const body = await readJson(request);
       if (action === "logout") {
         await deps.db.prepare("DELETE FROM admin_sessions WHERE id_hash = ?").bind(await hash(tokenOf(request)!)).run();
         return json({ ok: true }, 200, { "Set-Cookie": cookie("", 0) });
       }
+      if (FINANCE_POST.has(action)) return json(await financeAction(action, request, deps, actor, body));
       if (action === "fulfillment") return await fulfill(body, deps, actor);
+      if (action === "shipped-email") return await resendShippedEmail(body, deps);
       if (action === "order-cancel") return await cancelOrder(body, deps);
       if (action === "voucher-create") return await createVoucher(body, deps);
+      if (action === "voucher-set-create") return await createVoucherSet(body, deps);
       if (action === "mail-settings") return await mailSettings(deps, body);
       return await deactivateVoucher(body, deps);
     }
     if (request.method !== "GET") throw new HttpError(405, "Use the admin form.");
+    if (FINANCE_GET.has(action)) {
+      const result = await financeAction(action, request, deps, actor);
+      return result instanceof Response ? result : json(result);
+    }
     if (action === "status") return json({ ok: true, username: actor });
     if (action === "orders") return await orders(request, deps);
     if (action === "order") return await detail(request, deps);
-    if (action === "vouchers") return await vouchers(deps);
+    if (action === "vouchers") return await vouchers(request, deps);
     if (action === "inbox") return await inbox(request, deps);
     if (action === "inbox-raw") return await inboxRaw(request, deps);
     if (action === "mail-settings") return await mailSettings(deps);

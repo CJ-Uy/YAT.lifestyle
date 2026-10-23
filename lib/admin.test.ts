@@ -3,7 +3,7 @@ import { pbkdf2Sync, randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
 import { test } from "node:test";
-import { handleAdmin, verifyAdminPassword, type AdminDeps } from "./admin.server.ts";
+import { handleAdmin, parseAdminUsers, verifyAdminPassword, type AdminDeps } from "./admin.server.ts";
 import type { CommerceStatement } from "./commerce.server.ts";
 
 const ORIGIN = "https://admin.yatlifestyle.com", PASSWORD = "generated-test-password-" + "x".repeat(32);
@@ -11,7 +11,7 @@ const salt = Buffer.alloc(16, 7), PASSWORD_HASH = `pbkdf2-sha256$100000$${salt.t
 
 function setup() {
   const db = new DatabaseSync(":memory:");
-  for (const file of ["0007_commerce.sql", "0008_admin.sql", "0009_inbox.sql", "0010_free_delivery.sql"]) db.exec(readFileSync(new URL(`../migrations/${file}`, import.meta.url), "utf8"));
+  for (const file of ["0007_commerce.sql", "0008_admin.sql", "0009_inbox.sql", "0010_free_delivery.sql", "0011_admin_finance.sql"]) db.exec(readFileSync(new URL(`../migrations/${file}`, import.meta.url), "utf8"));
   const clock = { now: Date.parse("2026-10-12T10:00:00Z") }, limits = { allowed: true, keys: [] as string[] };
   // Match D1's bound-statement shape while exercising the real SQLite constraints and triggers.
   const statement = (sql: string): CommerceStatement => {
@@ -71,8 +71,8 @@ test("admin: all operational endpoints reject anonymous requests before touching
   const { deps } = setup();
   let touched = 0;
   const guarded = { ...deps, db: { prepare: () => { touched++; throw new Error("must not query"); }, batch: deps.db.batch }, syncPayments: async () => { touched++; } };
-  for (const action of ["status", "orders", "order", "vouchers", "delivery-notes", "inbox", "inbox-raw", "mail-settings", "unknown"]) assert.equal((await handleAdmin(action, get(action), guarded)).status, 401, action);
-  for (const action of ["logout", "fulfillment", "order-cancel", "voucher-create", "voucher-deactivate", "mail-settings"]) assert.equal((await handleAdmin(action, post(action, {}), guarded)).status, 401, action);
+  for (const action of ["status", "orders", "order", "vouchers", "delivery-notes", "inbox", "inbox-raw", "mail-settings", "money", "money-csv", "settings", "onsite-days", "onsite-day", "unknown"]) assert.equal((await handleAdmin(action, get(action), guarded)).status, 401, action);
+  for (const action of ["logout", "fulfillment", "shipped-email", "order-cancel", "voucher-create", "voucher-set-create", "voucher-deactivate", "mail-settings", "partner-paid", "partner-unpaid", "settings-save", "onsite-day-create", "onsite-day-update", "onsite-day-delete", "onsite-sale-save", "onsite-sale-delete"]) assert.equal((await handleAdmin(action, post(action, {}), guarded)).status, 401, action);
   assert.equal(touched, 0);
 });
 
@@ -135,8 +135,11 @@ test("admin: fulfillment protects payment, sequencing, concurrent versions and d
   assert.equal((await save("packed", 0)).status, 409);
   assert.equal((await save("packed", 1)).status, 200);
   assert.equal((await save("dispatched", 2)).status, 400);
-  assert.equal((await save("dispatched", 2, { courier: "SF", trackingNumber: "1234", note: "Handed over" })).status, 200);
-  assert.equal((await save("dispatched", 3, { courier: "SF", trackingNumber: "1234", note: "Note line 1\nNote line 2" })).status, 200);
+  assert.equal((await save("dispatched", 2, { courier: "SF", trackingNumber: "1234" })).status, 400);
+  assert.equal((await save("dispatched", 2, { courier: "SF", trackingNumber: "1234", shippingCost: "-1" })).status, 400);
+  assert.equal((await save("dispatched", 2, { courier: "SF", trackingNumber: "1234", note: "Handed over", shippingCost: "45" })).status, 200);
+  assert.equal((await save("dispatched", 3, { courier: "SF", trackingNumber: "1234", note: "Note line 1\nNote line 2", shippingCost: "45.50" })).status, 200);
+  assert.equal(db.prepare("SELECT shipping_cents FROM admin_order_fulfillment WHERE order_id = ?").get(id)!.shipping_cents, 4550);
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM admin_order_history WHERE order_id = ?").get(id)!.n, 4);
   assert.equal(db.prepare("SELECT total_cents FROM commerce_orders WHERE id = ?").get(id)!.total_cents, 25800);
   const concurrentId = seedOrder(), payload = { id: concurrentId, status: "making", version: 0, courier: "", trackingNumber: "", note: "" };
@@ -200,4 +203,153 @@ test("admin: staff cancellation requires authentication and same origin, refuses
   assert.equal(failed.status, 503); assert.ok(!(await failed.text()).includes("sensitive-provider-response"));
   assert.equal((await handleAdmin("order-cancel", post("order-cancel", { id: unpaid }, cookie), { ...deps, cancelOrder: async () => ({ id: unpaid, status: "unpaid" }) })).status, 503);
   assert.equal((await handleAdmin("order-cancel", post("order-cancel", { id: unpaid }, cookie), { ...deps, cancelOrder: async () => { throw Object.assign(new Error("provider paid"), { code: "already_paid", status: 409 }); } })).status, 409);
+});
+
+const paidAt = (db: DatabaseSync, id: string, iso: string) => db.prepare("UPDATE commerce_orders SET paid_at = ? WHERE id = ?").run(Date.parse(iso), id);
+const ok = async (response: Response) => { const body = await response.json(); assert.ok(response.ok, JSON.stringify(body)); return body as Record<string, any>; };
+
+test("admin finance: Money counts only paid live orders by Hong Kong date, applies dated rates and subtracts shipping, CJ share and stall fees", async () => {
+  const { deps, db, seedOrder } = setup(), { cookie } = await signIn(deps);
+  const early = seedOrder(), late = seedOrder(), november = seedOrder();
+  paidAt(db, early, "2026-10-05T04:00:00Z"); paidAt(db, late, "2026-10-31T15:30:00Z"); paidAt(db, november, "2026-10-31T16:30:00Z");
+  for (const ignored of [seedOrder("paid", "sandbox"), seedOrder("unpaid"), seedOrder("failed"), seedOrder("cancelled")]) paidAt(db, ignored, "2026-10-20T04:00:00Z");
+  // The Airwallex rate starts on 10 October, so the earlier order has no fee estimate.
+  await ok(await handleAdmin("settings-save", post("settings-save", { airwallexPercent: "3.4", airwallexFixed: "2.35", partnerPercent: "5", from: "2026-10-10" }, cookie), deps));
+  for (const invalid of [{ airwallexPercent: "3.456" }, { airwallexPercent: "25" }, { partnerPercent: "" }, { from: "2026-02-30" }, { airwallexFixed: "abc" }]) assert.equal((await handleAdmin("settings-save", post("settings-save", { airwallexPercent: "3.4", airwallexFixed: "2.35", partnerPercent: "5", from: "2026-10-10", ...invalid }, cookie), deps)).status, 400, JSON.stringify(invalid));
+  const save = (status: string, version: number, extra = {}) => handleAdmin("fulfillment", post("fulfillment", { id: early, status, version, courier: "SF", trackingNumber: "SF123", note: "", ...extra }, cookie), deps);
+  await ok(await save("making", 0)); await ok(await save("packed", 1)); await ok(await save("dispatched", 2, { shippingCost: "45" }));
+  db.prepare("INSERT INTO admin_order_fulfillment (order_id, status, courier, tracking_number, note, version, updated_by, updated_at) VALUES (?, 'dispatched', 'SF', 'SF999', '', 1, 'natasha', 0)").run(late);
+
+  const day = await ok(await handleAdmin("onsite-day-create", post("onsite-day-create", { place: "PMQ weekend market", day: "2026-10-24", usualPrice: "240" }, cookie), deps));
+  for (const sale of [{ slug: "golden", quantity: 2, unitPrice: "240", method: "cash" }, { slug: "ocean", quantity: 1, unitPrice: "250", method: "fps" }]) await ok(await handleAdmin("onsite-sale-save", post("onsite-sale-save", { id: randomUUID(), dayId: day.id, ...sale }, cookie), deps));
+  await ok(await handleAdmin("onsite-day-update", post("onsite-day-update", { id: day.id, place: "PMQ weekend market", day: "2026-10-24", usualPrice: "240", stallFee: "300", status: "closed" }, cookie), deps));
+
+  const money = await ok(await handleAdmin("money", get("money?from=2026-10-01&to=2026-10-31", cookie), deps));
+  assert.deepEqual({ ...money.online, missingShipping: money.online.missingShipping.length }, { salesCents: 51600, orders: 2, feeCents: 877 + 235, feeUnset: 1, partnerCents: 2580, shippingCents: 4500, awaitingDispatch: 0, missingShipping: 1, keptCents: 51600 - 1112 - 2580 - 4500 });
+  assert.equal(money.online.missingShipping[0], late);
+  assert.deepEqual({ sales: money.onsite.salesCents, bottles: money.onsite.bottles, stall: money.onsite.stallCents, kept: money.onsite.keptCents }, { sales: 73000, bottles: 3, stall: 30000, kept: 43000 });
+  assert.equal(money.keptCents, 43408 + 43000); assert.equal(money.grossCents, 51600 + 73000);
+  assert.equal(money.series.length, 31); assert.equal(money.monthly, false);
+  assert.deepEqual(money.series.filter((point: { cents: number }) => point.cents).map((point: { key: string }) => point.key), ["2026-10-05", "2026-10-31"]);
+  assert.deepEqual(money.bestSellers.map((row: { name: string; quantity: number }) => [row.name, row.quantity]), [["Golden", 2], ["Spill the tea", 2], ["Ocean", 1]]);
+  assert.deepEqual(money.previous, { from: "2026-09-01", to: "2026-09-30", keptCents: 0 });
+  assert.deepEqual(money.partner.map((row: { month: string; owedCents: number }) => [row.month, row.owedCents]), [["2026-11", 1290], ["2026-10", 2580]]);
+
+  const year = await ok(await handleAdmin("money", get("money?from=2026-01-01&to=2026-12-31", cookie), deps));
+  assert.equal(year.monthly, true); assert.equal(year.series.length, 12); assert.equal(year.online.orders, 3);
+  for (const query of ["from=2026-10-31&to=2026-10-01", "from=2026-13-01&to=2026-12-31", "from=2020-01-01&to=2026-01-01", "to=2026-10-01"]) assert.equal((await handleAdmin("money", get(`money?${query}`, cookie), deps)).status, 400, query);
+});
+
+test("admin finance: CJ's share is marked paid per started month with the owed amount snapshotted, and can be undone", async () => {
+  const { deps, db, seedOrder } = setup(), { cookie } = await signIn(deps);
+  paidAt(db, seedOrder(), "2026-10-02T04:00:00Z");
+  assert.equal((await handleAdmin("partner-paid", post("partner-paid", { month: "2026-09" }, cookie), deps)).status, 409);
+  assert.equal((await handleAdmin("partner-paid", post("partner-paid", { month: "2026-11" }, cookie), deps)).status, 400);
+  assert.equal((await handleAdmin("partner-paid", post("partner-paid", { month: "2026-13" }, cookie), deps)).status, 400);
+  assert.equal((await ok(await handleAdmin("partner-paid", post("partner-paid", { month: "2026-10" }, cookie), deps))).amountCents, 1290);
+  assert.deepEqual({ ...db.prepare("SELECT month, amount_cents, paid_by FROM admin_partner_payouts").get() }, { month: "2026-10", amount_cents: 1290, paid_by: "natasha" });
+  paidAt(db, seedOrder(), "2026-10-03T04:00:00Z");
+  const months = (await ok(await handleAdmin("money", get("money?from=2026-10-01&to=2026-10-31", cookie), deps))).partner;
+  assert.deepEqual(months[0], { month: "2026-10", owedCents: 2580, paidCents: 1290, paidAt: deps.now(), paidBy: "natasha" });
+  await ok(await handleAdmin("partner-unpaid", post("partner-unpaid", { month: "2026-10" }, cookie), deps));
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM admin_partner_payouts").get()!.n, 0);
+});
+
+test("admin finance: CSV covers online orders, onsite sales and stall fees with formula-safe text", async () => {
+  const { deps, db, seedOrder } = setup(), { cookie } = await signIn(deps);
+  paidAt(db, seedOrder(), "2026-10-05T04:00:00Z");
+  const place = '=HYPERLINK("x"), market';
+  const day = await ok(await handleAdmin("onsite-day-create", post("onsite-day-create", { place, day: "2026-10-24", usualPrice: "" }, cookie), deps));
+  await ok(await handleAdmin("onsite-sale-save", post("onsite-sale-save", { id: randomUUID(), dayId: day.id, slug: "high-tea", quantity: 2, unitPrice: "250.50", method: "payme" }, cookie), deps));
+  await ok(await handleAdmin("onsite-day-update", post("onsite-day-update", { id: day.id, place, day: "2026-10-24", usualPrice: "", stallFee: "100", status: "open" }, cookie), deps));
+  const response = await handleAdmin("money-csv", get("money-csv?from=2026-10-01&to=2026-10-31", cookie), deps);
+  assert.equal(response.status, 200); assert.match(response.headers.get("content-type")!, /^text\/csv/);
+  assert.equal(response.headers.get("content-disposition"), 'attachment; filename="yat-sales-2026-10-01-to-2026-10-31.csv"');
+  const lines = (await response.text()).replace(/^﻿/, "").trim().split("\r\n");
+  assert.equal(lines.length, 4);
+  assert.match(lines[1], /^2026-10-05,Online,[0-9a-f-]{36},Spill the tea × 1,1,258\.00,Airwallex,,12\.90,,,245\.10$/);
+  assert.equal(lines[2], `2026-10-24,Onsite,"'=HYPERLINK(""x""), market",High Tea,2,501.00,PayMe,,,,,501.00`);
+  assert.equal(lines[3], `2026-10-24,Onsite,"'=HYPERLINK(""x""), market",Stall fee,,,,,,,100.00,-100.00`);
+});
+
+test("admin finance: onsite days and sales validate input, save idempotently by sale id and protect days that still have sales", async () => {
+  const { deps, db } = setup(), { cookie } = await signIn(deps);
+  for (const invalid of [{ place: "" }, { place: "x".repeat(121) }, { day: "2026-02-30" }, { day: "24/10/2026" }, { usualPrice: "2.345" }]) assert.equal((await handleAdmin("onsite-day-create", post("onsite-day-create", { place: "Tai Kwun", day: "2026-10-31", usualPrice: "", ...invalid }, cookie), deps)).status, 400, JSON.stringify(invalid));
+  const first = await ok(await handleAdmin("onsite-day-create", post("onsite-day-create", { place: "  Tai Kwun  ", day: "2026-10-31", usualPrice: "258" }, cookie), deps));
+  const second = await ok(await handleAdmin("onsite-day-create", post("onsite-day-create", { place: "PMQ", day: "2026-10-24", usualPrice: "" }, cookie), deps));
+  const saleId = randomUUID(), sale = { id: saleId, dayId: first.id, slug: "golden", quantity: 1, unitPrice: "258", method: "card" };
+  for (const invalid of [{ slug: "missing" }, { quantity: 0 }, { quantity: 1.5 }, { unitPrice: "-5" }, { method: "bitcoin" }, { id: "not-a-uuid" }]) assert.equal((await handleAdmin("onsite-sale-save", post("onsite-sale-save", { ...sale, ...invalid }, cookie), deps)).status, 400, JSON.stringify(invalid));
+  assert.equal((await handleAdmin("onsite-sale-save", post("onsite-sale-save", { ...sale, dayId: randomUUID() }, cookie), deps)).status, 404);
+  await ok(await handleAdmin("onsite-sale-save", post("onsite-sale-save", sale, cookie), deps));
+  await ok(await handleAdmin("onsite-sale-save", post("onsite-sale-save", sale, cookie), deps));
+  await ok(await handleAdmin("onsite-sale-save", post("onsite-sale-save", { ...sale, quantity: 3, unitPrice: "200" }, cookie), deps));
+  assert.deepEqual({ ...db.prepare("SELECT COUNT(*) AS n, SUM(quantity) AS q, MAX(unit_price_cents) AS p FROM admin_onsite_sales").get() }, { n: 1, q: 3, p: 20000 });
+  assert.equal((await handleAdmin("onsite-sale-save", post("onsite-sale-save", { ...sale, dayId: second.id }, cookie), deps)).status, 404);
+  assert.equal(db.prepare("SELECT day_id FROM admin_onsite_sales WHERE id = ?").get(saleId)!.day_id, first.id);
+  const loaded = await ok(await handleAdmin("onsite-day", get(`onsite-day?id=${first.id}`, cookie), deps));
+  assert.equal(loaded.day.place, "Tai Kwun"); assert.equal(loaded.day.usual_price_cents, 25800); assert.equal(loaded.sales.length, 1);
+  const list = await ok(await handleAdmin("onsite-days", get("onsite-days", cookie), deps));
+  assert.deepEqual(list.days.map((row: { day: string; sales_cents: number }) => [row.day, row.sales_cents]), [["2026-10-31", 60000], ["2026-10-24", 0]]);
+  assert.deepEqual(list.places.sort(), ["PMQ", "Tai Kwun"]); assert.equal(list.today, "2026-10-12");
+  assert.equal((await handleAdmin("onsite-day-delete", post("onsite-day-delete", { id: first.id }, cookie), deps)).status, 409);
+  await ok(await handleAdmin("onsite-sale-delete", post("onsite-sale-delete", { id: saleId }, cookie), deps));
+  await ok(await handleAdmin("onsite-day-delete", post("onsite-day-delete", { id: first.id }, cookie), deps));
+  assert.equal((await handleAdmin("onsite-day", get(`onsite-day?id=${first.id}`, cookie), deps)).status, 404);
+  assert.equal((await handleAdmin("onsite-day-update", post("onsite-day-update", { id: second.id, place: "PMQ", day: "2026-10-24", usualPrice: "", stallFee: "", status: "done" }, cookie), deps)).status, 400);
+});
+
+test("admin finance: the first dispatch emails the customer once in their language; failures release the claim and staff can resend", async () => {
+  const { deps, db, seedOrder } = setup(), { cookie } = await signIn(deps);
+  const sent: { to: string; subject: string; text: string; from: { email: string } }[] = [];
+  let failing = true;
+  const mailer: AdminDeps = { ...deps, sendEmail: async (message) => { if (failing) throw new Error("mail down"); sent.push(message); } };
+  const id = seedOrder();
+  db.prepare("INSERT INTO admin_order_fulfillment (order_id, status, courier, tracking_number, note, version, updated_by, updated_at) VALUES (?, 'packed', '', '', '', 1, 'natasha', 0)").run(id);
+  const dispatch = (version: number, tracking = "SF123") => handleAdmin("fulfillment", post("fulfillment", { id, status: "dispatched", version, courier: "SF Express", trackingNumber: tracking, note: "", shippingCost: "40" }, cookie), mailer);
+  assert.equal((await ok(await dispatch(1))).shippedEmail, "failed");
+  assert.equal(db.prepare("SELECT shipped_email_at FROM admin_order_fulfillment WHERE order_id = ?").get(id)!.shipped_email_at, null);
+  failing = false;
+  assert.equal((await ok(await dispatch(2))).shippedEmail, "sent");
+  assert.equal((await ok(await dispatch(3, "SF456"))).shippedEmail, "already");
+  assert.equal(sent.length, 1);
+  assert.equal(sent[0].to, "buyer@example.com"); assert.equal(sent[0].from.email, "orders@yatlifestyle.com");
+  assert.equal(sent[0].subject, "Your YAT.LIFESTYLE order has shipped"); assert.match(sent[0].text, /Courier: SF Express\nTracking number: SF123\n\nSpill the tea × 1/);
+  // The packed row plus three dispatch saves; claiming and releasing the email adds no history.
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM admin_order_history WHERE order_id = ?").get(id)!.n, 4);
+  assert.equal((await ok(await handleAdmin("shipped-email", post("shipped-email", { id }, cookie), mailer))).shippedEmail, "sent");
+  assert.match(sent[1].text, /Tracking number: SF456/);
+  assert.equal((await handleAdmin("shipped-email", post("shipped-email", { id: seedOrder() }, cookie), mailer)).status, 409);
+  assert.equal((await handleAdmin("shipped-email", post("shipped-email", { id }, cookie), { ...mailer, sendEmail: undefined })).status, 503);
+});
+
+test("admin finance: printable voucher sets create unique, hand-typeable codes that share one batch", async () => {
+  const { deps, db } = setup(), { cookie } = await signIn(deps);
+  const base = { count: 12, prefix: "mkt", kind: "percent", amount: "15", minSubtotal: "0", maxUses: 1, expiresAt: deps.now() + 86400000 };
+  for (const invalid of [{ count: 0 }, { count: 201 }, { count: "5" }, { prefix: "TOOLONGPREFIX1" }, { prefix: "with space" }, { amount: "101" }, { maxUses: 0 }]) assert.equal((await handleAdmin("voucher-set-create", post("voucher-set-create", { ...base, ...invalid }, cookie), deps)).status, 400, JSON.stringify(invalid));
+  const set = await ok(await handleAdmin("voucher-set-create", post("voucher-set-create", base, cookie), deps));
+  assert.equal(set.codes.length, 12); assert.equal(new Set(set.codes).size, 12);
+  for (const code of set.codes) assert.match(code, /^MKT-[ABCDEFGHJKMNPQRSTUVWXYZ2-9]{8}$/);
+  const listed = await ok(await handleAdmin("vouchers", get(`vouchers?batch=${set.batch}`, cookie), deps));
+  assert.equal(listed.vouchers.length, 12);
+  assert.ok(listed.vouchers.every((row: { batch: string; max_uses: number; amount: number }) => row.batch === set.batch && row.max_uses === 1 && row.amount === 15));
+  const single = await ok(await handleAdmin("voucher-set-create", post("voucher-set-create", { ...base, count: 1, prefix: "", kind: "fixed", amount: "30" }, cookie), deps));
+  assert.match(single.codes[0], /^[ABCDEFGHJKMNPQRSTUVWXYZ2-9]{8}$/);
+  assert.equal(db.prepare("SELECT amount FROM commerce_vouchers WHERE code = ?").get(single.codes[0])!.amount, 3000);
+  assert.equal((await handleAdmin("vouchers", get("vouchers?batch=nope", cookie), deps)).status, 400);
+  assert.equal((await ok(await handleAdmin("vouchers", get("vouchers", cookie), deps))).vouchers.length, 13);
+});
+
+test("admin: a second account signs in with its own password, and removing its hash ends its sessions", async () => {
+  const { deps } = setup(), salt2 = Buffer.alloc(16, 9), other = "second-test-password-" + "y".repeat(32);
+  const users = parseAdminUsers(JSON.stringify({ cj: `pbkdf2-sha256$100000$${salt2.toString("base64url")}$${pbkdf2Sync(other, salt2, 100000, 32, "sha256").toString("base64url")}`, "Bad Name": "x", list: 5 }));
+  assert.deepEqual(Object.keys(users), ["cj"]);
+  assert.deepEqual(parseAdminUsers("not json"), {}); assert.deepEqual(parseAdminUsers(undefined), {}); assert.deepEqual(parseAdminUsers("[]"), {});
+  const withUsers = { ...deps, users };
+  for (const body of [{ username: "cj", password: PASSWORD }, { username: "natasha", password: other }, { username: "constructor", password: PASSWORD }]) assert.equal((await handleAdmin("login", post("login", body), withUsers)).status, 401, body.username);
+  const response = await handleAdmin("login", post("login", { username: "cj", password: other }), withUsers);
+  assert.equal(response.status, 200); assert.equal((await response.json()).username, "cj");
+  const cookie = response.headers.get("set-cookie")!.split(";")[0];
+  assert.equal((await (await handleAdmin("status", get("status", cookie), withUsers)).json()).username, "cj");
+  assert.equal((await handleAdmin("status", get("status", cookie), deps)).status, 401);
+  assert.equal((await handleAdmin("status", get("status", (await signIn(withUsers)).cookie), withUsers)).status, 200);
 });

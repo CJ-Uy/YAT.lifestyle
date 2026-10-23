@@ -2,9 +2,12 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { formatPrice } from "../../lib/shop";
+import { RequestError, amount, cents, date, request } from "./admin-api";
+import { Icon, MoneyPanel, OnsitePanel, SettingsPanel, VoucherSheet, voucherTerms, voucherValue, type Voucher } from "./finance-panels";
 import "./admin.css";
 
-type Tab = "orders" | "vouchers" | "inbox" | "delivery";
+type Tab = "money" | "onsite" | "orders" | "vouchers" | "inbox" | "delivery" | "settings";
+const TABS: [Tab, string][] = [["money", "Money"], ["onsite", "Onsite"], ["orders", "Orders"], ["vouchers", "Vouchers"], ["inbox", "Inbox"], ["delivery", "Delivery notes"], ["settings", "Settings"]];
 type Stage = "new" | "making" | "packed" | "dispatched";
 const STAGES: Stage[] = ["new", "making", "packed", "dispatched"];
 const stageName = { new: "To make", making: "Making", packed: "Packed", dispatched: "Dispatched" };
@@ -13,43 +16,33 @@ type Order = OrderRow & {
   subtotal_cents: number; delivery_cents: number; discount_cents: number; voucher_code: string | null; provider_status: string | null;
   details: { name: string; email: string; phone: string; district: string; building: string; street: string; notes: string; country: string };
   items: { slug: string; name: string; quantity: number; unitPriceCents: number; lineTotalCents: number }[];
-  fulfillment: { status: Stage; courier: string; tracking_number: string; note: string; version: number };
+  fulfillment: { status: Stage; courier: string; tracking_number: string; note: string; version: number; shipping_cents: number | null; shipped_email_at: number | null };
   history: { previous_status: Stage | null; status: Stage; courier: string; tracking_number: string; note: string; actor: string; created_at: number }[];
 };
-type Voucher = { code: string; kind: "percent" | "fixed"; amount: number; min_subtotal_cents: number; expires_at: number | null; max_uses: number | null; active: number; redeemed: number; reserved: number };
 type Notes = { checkedAt: string; introduction: string; sections: { title: string; points: string[] }[]; sources: { label: string; url: string }[]; limitations: string };
-type Draft = { status: Stage; courier: string; trackingNumber: string; note: string };
+type Draft = { status: Stage; courier: string; trackingNumber: string; note: string; shippingCost: string };
 type InboxRow = { id: string; from_email: string; to_email: string; subject: string; received_at: number; forwarded_at: number | null; forward_error: number };
 type InboxEmail = InboxRow & { text_body: string; attachment_names: string[] };
 type MailSettings = { forwardingEnabled: boolean; destination: string };
-class RequestError extends Error { status: number; constructor(status: number, message: string) { super(message); this.status = status; } }
-
-async function request<T>(action: string, body?: Record<string, unknown>): Promise<T> {
-  const response = await fetch(`/api/admin/${action}`, {
-    method: body ? "POST" : "GET", credentials: "same-origin", cache: "no-store",
-    ...(body ? { headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) } : {}),
-  });
-  const data = await response.json();
-  if (!response.ok) throw new RequestError(response.status, typeof data.error === "string" ? data.error : "The request could not be completed.");
-  return data as T;
-}
-const date = (timestamp: number) => new Intl.DateTimeFormat("en-HK", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Hong_Kong" }).format(timestamp);
+const SHIPPED_EMAIL = { sent: "The customer was emailed their tracking details.", already: "", unavailable: "Email sending is not configured here, so no shipped email was sent.", failed: "The shipped email could not be sent. Use Resend shipped email to try again." };
 
 export default function AdminExperience() {
   const [username, setUsername] = useState<string | null>();
-  const [tab, setTab] = useState<Tab>("orders");
+  const [tab, setTab] = useState<Tab>("money");
+  const [onsiteDay, setOnsiteDay] = useState<string | null>(null), [sheet, setSheet] = useState<Voucher[] | null>(null), [voucherMode, setVoucherMode] = useState<"set" | "single">("set");
+  const [voucherPreview, setVoucherPreview] = useState({ amount: "", minimum: "0" });
   const [busy, setBusy] = useState(false), [error, setError] = useState(""), [message, setMessage] = useState("");
   const [orders, setOrders] = useState<OrderRow[]>([]), [selected, setSelected] = useState<Order | null>(null);
   const [payment, setPayment] = useState("all"), [fulfillment, setFulfillment] = useState("all"), [page, setPage] = useState(1), [hasMore, setHasMore] = useState(false);
   const [vouchers, setVouchers] = useState<Voucher[]>([]), [voucherKind, setVoucherKind] = useState("percent"), [notes, setNotes] = useState<Notes | null>(null);
-  const [draft, setDraft] = useState<Draft>({ status: "new", courier: "", trackingNumber: "", note: "" });
+  const [draft, setDraft] = useState<Draft>({ status: "new", courier: "", trackingNumber: "", note: "", shippingCost: "" });
   const [emails, setEmails] = useState<InboxRow[]>([]), [email, setEmail] = useState<InboxEmail | null>(null);
   const [inboxPage, setInboxPage] = useState(1), [inboxHasMore, setInboxHasMore] = useState(false), [mailSettings, setMailSettings] = useState<MailSettings | null>(null);
   const [revision, setRevision] = useState(0);
 
   function signedOut() {
     setUsername(null); setOrders([]); setSelected(null); setVouchers([]); setNotes(null);
-    setEmails([]); setEmail(null); setMailSettings(null);
+    setEmails([]); setEmail(null); setMailSettings(null); setSheet(null); setOnsiteDay(null);
   }
   async function perform(work: () => Promise<void>) {
     setBusy(true); setError(""); setMessage("");
@@ -70,7 +63,8 @@ export default function AdminExperience() {
   }, []);
 
   useEffect(() => {
-    if (!username) return;
+    // Money, Onsite and Settings load their own data.
+    if (!username || ["money", "onsite", "settings"].includes(tab)) return;
     let active = true;
     setBusy(true); setError("");
     const loading = tab === "orders" ? request<{ orders: OrderRow[]; hasMore: boolean }>(`orders?payment=${payment}&fulfillment=${fulfillment}&page=${page}`).then((data) => {
@@ -91,40 +85,56 @@ export default function AdminExperience() {
     event.preventDefault(); const form = event.currentTarget, fields = new FormData(form);
     void perform(async () => {
       const data = await request<{ username: string }>("login", { username: fields.get("username"), password: fields.get("password") });
-      form.reset(); setUsername(data.username); setTab("orders");
+      form.reset(); setUsername(data.username); setTab("money");
     });
   }
   function openOrder(id: string) {
     void perform(async () => {
       const { order } = await request<{ order: Order }>(`order?id=${encodeURIComponent(id)}`);
-      setSelected(order); setDraft({ status: order.fulfillment.status, courier: order.fulfillment.courier, trackingNumber: order.fulfillment.tracking_number, note: order.fulfillment.note });
+      setSelected(order); setDraft({ status: order.fulfillment.status, courier: order.fulfillment.courier, trackingNumber: order.fulfillment.tracking_number, note: order.fulfillment.note, shippingCost: amount(order.fulfillment.shipping_cents) });
     });
+  }
+  async function reloadOrder(id: string) {
+    const { order } = await request<{ order: Order }>(`order?id=${encodeURIComponent(id)}`);
+    setSelected(order); setRevision((value) => value + 1);
   }
   function saveFulfillment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); if (!selected) return;
     void perform(async () => {
-      await request("fulfillment", { id: selected.id, version: selected.fulfillment.version, ...draft });
-      const { order } = await request<{ order: Order }>(`order?id=${encodeURIComponent(selected.id)}`);
-      setSelected(order); setRevision((value) => value + 1); setMessage("Fulfillment saved.");
+      const saved = await request<{ shippedEmail: keyof typeof SHIPPED_EMAIL | null }>("fulfillment", { id: selected.id, version: selected.fulfillment.version, ...draft });
+      await reloadOrder(selected.id);
+      setMessage(`Fulfillment saved.${saved.shippedEmail ? ` ${SHIPPED_EMAIL[saved.shippedEmail]}` : ""}`);
     });
   }
   function createVoucher(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); const form = event.currentTarget, fields = new FormData(form);
     void perform(async () => {
       const expiry = String(fields.get("expiry") ?? ""), maximum = String(fields.get("maximum") ?? "");
-      await request("voucher-create", {
-        code: fields.get("code"), kind: voucherKind, amount: fields.get("amount"), minSubtotal: fields.get("minimum"),
-        maxUses: maximum ? Number(maximum) : null, expiresAt: expiry ? new Date(expiry).getTime() : null,
-      });
-      form.reset(); setRevision((value) => value + 1); setMessage("Voucher created.");
+      const terms = { kind: voucherKind, amount: fields.get("amount"), minSubtotal: fields.get("minimum"), maxUses: maximum ? Number(maximum) : null, expiresAt: expiry ? new Date(expiry).getTime() : null };
+      if (voucherMode === "single") {
+        await request("voucher-create", { ...terms, code: fields.get("code") });
+        setMessage("Voucher created.");
+      } else {
+        const created = await request<{ batch: string; codes: string[] }>("voucher-set-create", { ...terms, count: Number(fields.get("count")), prefix: fields.get("prefix") });
+        setSheet((await request<{ vouchers: Voucher[] }>(`vouchers?batch=${created.batch}`)).vouchers);
+        setMessage(`${created.codes.length} codes created. Print the cards below.`);
+      }
+      form.reset(); setVoucherPreview({ amount: "", minimum: "0" }); setRevision((value) => value + 1);
     });
   }
+  function printSet(voucher: Voucher) {
+    void perform(async () => setSheet(voucher.batch ? (await request<{ vouchers: Voucher[] }>(`vouchers?batch=${voucher.batch}`)).vouchers.filter((row) => row.active) : [voucher]));
+  }
+  // One gift box at checkout, after the voucher; mirrors the server's floor rounding for percentages.
+  const previewDiscount = voucherKind === "percent" ? (/^\d{1,3}$/.test(voucherPreview.amount) ? Math.floor(25800 * Number(voucherPreview.amount) / 100) : null) : cents(voucherPreview.amount);
+  const previewMinimum = cents(voucherPreview.minimum) ?? 0;
+  const openTab = (item: Tab) => { setTab(item); setSelected(null); setEmail(null); setMessage(""); setSheet(null); if (item !== "onsite") setOnsiteDay(null); };
 
   return <div className="admin-shell">
     <a className="admin-skip" href="#admin-content">Skip to content</a>
     <header className="admin-header">
       <a className="admin-brand" href="/admin">YAT.lifestyle <span>Admin</span></a>
-      {username && <><nav aria-label="Admin sections">{(["orders", "vouchers", "inbox", "delivery"] as Tab[]).map((item) => <button type="button" key={item} aria-current={tab === item ? "page" : undefined} disabled={busy} onClick={() => { setTab(item); setSelected(null); setEmail(null); setMessage(""); }}>{item === "orders" ? "Orders" : item === "vouchers" ? "Vouchers" : item === "inbox" ? "Inbox" : "Delivery notes"}</button>)}</nav>
+      {username && <><nav aria-label="Admin sections">{TABS.map(([item, label]) => <button type="button" key={item} aria-current={tab === item ? "page" : undefined} disabled={busy} onClick={() => openTab(item)}>{label}</button>)}</nav>
         <button type="button" className="admin-quiet" disabled={busy} onClick={() => void perform(async () => { await request("logout", {}); signedOut(); })}>Sign out</button></>}
     </header>
     <main id="admin-content" className={username ? "admin-main" : "admin-main admin-signin"} aria-busy={busy}>
@@ -136,7 +146,10 @@ export default function AdminExperience() {
           <label>Password<input name="password" type="password" autoComplete="current-password" required maxLength={256} /></label>
           <button className="admin-primary" disabled={busy}>{busy ? "Signing in…" : "Sign in"}</button>
         </form>
-      </> : tab === "orders" ? <>
+      </> : tab === "money" ? <MoneyPanel busy={busy} perform={(work) => void perform(work)} notify={setMessage} onOpenOrders={() => { openTab("orders"); setFulfillment("dispatched"); setPage(1); }} onOpenDay={(id) => { openTab("onsite"); setOnsiteDay(id); }} onOpenSettings={() => openTab("settings")} />
+      : tab === "onsite" ? <OnsitePanel busy={busy} perform={(work) => void perform(work)} notify={setMessage} dayId={onsiteDay} onDayChange={setOnsiteDay} />
+      : tab === "settings" ? <SettingsPanel busy={busy} perform={(work) => void perform(work)} notify={setMessage} />
+      : tab === "orders" ? <>
         <div className="admin-section-heading"><div><h1>Orders</h1><p>Review payment, prepare each fragrance, and track dispatch.</p></div><button type="button" className="admin-quiet" disabled={busy} onClick={() => setRevision((value) => value + 1)}>Refresh</button></div>
         <div className="admin-filters">
           <label>Payment<select value={payment} disabled={busy} onChange={(event) => { setPayment(event.target.value); setPage(1); }}><option value="all">All payment states</option><option value="paid">Paid</option><option value="unpaid">Unpaid</option><option value="failed">Failed</option><option value="cancelled">Cancelled</option></select></label>
@@ -171,26 +184,39 @@ export default function AdminExperience() {
                 <label>Stage<select value={draft.status} onChange={(event) => setDraft({ ...draft, status: event.target.value as Stage })}>{STAGES.map((stage, index) => <option key={stage} value={stage} disabled={index < STAGES.indexOf(selected.fulfillment.status) || index > STAGES.indexOf(selected.fulfillment.status) + 1}>{stageName[stage]}</option>)}</select></label>
                 <label>Courier<input value={draft.courier} maxLength={80} required={draft.status === "dispatched"} onChange={(event) => setDraft({ ...draft, courier: event.target.value })} /></label>
                 <label>Tracking number<input value={draft.trackingNumber} maxLength={120} required={draft.status === "dispatched"} onChange={(event) => setDraft({ ...draft, trackingNumber: event.target.value })} /></label>
+                <label>Shipping cost you paid (HK$) <span>Required to dispatch; counts against this order on Money</span><input className="admin-figure" value={draft.shippingCost} inputMode="decimal" pattern="\d{1,6}(\.\d{1,2})?" required={draft.status === "dispatched"} onChange={(event) => setDraft({ ...draft, shippingCost: event.target.value })} /></label>
                 <label>Private fulfillment note<textarea value={draft.note} rows={4} maxLength={2000} onChange={(event) => setDraft({ ...draft, note: event.target.value })} /></label>
+                {draft.status === "dispatched" && !selected.fulfillment.shipped_email_at && <p className="admin-muted">Saving as Dispatched emails the customer their courier and tracking number from orders@yatlifestyle.com.</p>}
                 <button className="admin-primary">Save fulfillment</button>
               </fieldset>
             </form>
+            {selected.fulfillment.status === "dispatched" && <p className="admin-shipped-email">{selected.fulfillment.shipped_email_at !== null ? <><Icon name="check" size={16} />Shipped email sent {date(selected.fulfillment.shipped_email_at)}</> : "The shipped email has not been sent."}{" "}
+              <button type="button" className="admin-link" disabled={busy} onClick={() => void perform(async () => { await request("shipped-email", { id: selected.id }); await reloadOrder(selected.id); setMessage("Shipped email sent to the customer."); })}>{selected.fulfillment.shipped_email_at ? "Resend" : "Send now"}</button></p>}
           </div></div>
           <details className="admin-history"><summary>Status history{selected.history.length >= 100 ? " · latest 100 updates" : ""}</summary>{!selected.history.length ? <p>No fulfillment updates yet.</p> : <ol>{selected.history.map((entry, index) => <li key={`${entry.created_at}-${index}`}><div><strong>{stageName[entry.previous_status ?? "new"]} → {stageName[entry.status]}</strong><span>{date(entry.created_at)} · {entry.actor}</span></div>{entry.courier && <p>{entry.courier}{entry.tracking_number ? ` · ${entry.tracking_number}` : ""}</p>}{entry.note && <p className="admin-note">{entry.note}</p>}</li>)}</ol>}</details>
         </section>}
       </> : tab === "vouchers" ? <>
-        <div className="admin-section-heading"><div><h1>Vouchers</h1><p>Create a discount code or stop future use. Delivery is charged separately.</p></div></div>
-        <form className="admin-voucher-form admin-form" onSubmit={createVoucher}>
-          <label>Voucher code<input name="code" required minLength={3} maxLength={32} pattern="[A-Za-z0-9][A-Za-z0-9_-]{2,31}" autoCapitalize="characters" /></label>
-          <label>Discount type<select value={voucherKind} disabled={busy} onChange={(event) => setVoucherKind(event.target.value)}><option value="percent">Percentage</option><option value="fixed">Fixed amount</option></select></label>
-          <label>{voucherKind === "percent" ? "Discount (%)" : "Discount (HK$)"}<input name="amount" type="number" inputMode="decimal" required min={voucherKind === "percent" ? 1 : .01} max={voucherKind === "percent" ? 100 : 10000} step={voucherKind === "percent" ? 1 : .01} /></label>
-          <label>Minimum items subtotal (HK$)<input name="minimum" type="number" inputMode="decimal" required min={0} max={10000} step="0.01" defaultValue="0" /></label>
-          <label>Maximum uses <span>(blank for unlimited)</span><input name="maximum" type="number" inputMode="numeric" min={1} max={1000000} step={1} /></label>
+        <div className="admin-section-heading"><div><h1>Vouchers</h1><p>Codes customers type at checkout. The discount comes off the items subtotal; delivery is free.</p></div></div>
+        <form className="admin-panel admin-voucher-form admin-form" onSubmit={createVoucher}>
+          <div className="admin-segmented admin-voucher-mode" role="group" aria-label="What to create">
+            <button type="button" aria-pressed={voucherMode === "set"} onClick={() => setVoucherMode("set")}>Printable set</button>
+            <button type="button" aria-pressed={voucherMode === "single"} onClick={() => setVoucherMode("single")}>One code</button>
+          </div>
+          {voucherMode === "set" ? <>
+            <label>How many cards<input name="count" type="number" inputMode="numeric" required min={1} max={200} step={1} defaultValue={8} /></label>
+            <label>Code prefix <span>(optional, e.g. PMQ)</span><input name="prefix" maxLength={12} pattern="[A-Za-z0-9]{0,12}" autoCapitalize="characters" autoComplete="off" /></label>
+          </> : <label>Voucher code<input name="code" required minLength={3} maxLength={32} pattern="[A-Za-z0-9][A-Za-z0-9_-]{2,31}" autoCapitalize="characters" autoComplete="off" /></label>}
+          <label>Discount type<select value={voucherKind} disabled={busy} onChange={(event) => setVoucherKind(event.target.value)}><option value="percent">Percentage off</option><option value="fixed">HK$ off</option></select></label>
+          <label>{voucherKind === "percent" ? "Discount (%)" : "Discount (HK$)"}<input name="amount" type="number" inputMode="decimal" required min={voucherKind === "percent" ? 1 : .01} max={voucherKind === "percent" ? 100 : 10000} step={voucherKind === "percent" ? 1 : .01} onChange={(event) => setVoucherPreview({ ...voucherPreview, amount: event.target.value })} /></label>
+          <label>Minimum items subtotal (HK$)<input name="minimum" type="number" inputMode="decimal" required min={0} max={10000} step="0.01" defaultValue="0" onChange={(event) => setVoucherPreview({ ...voucherPreview, minimum: event.target.value })} /></label>
+          <label>{voucherMode === "set" ? "Uses per code" : "Maximum uses"} <span>(blank for unlimited)</span><input name="maximum" type="number" inputMode="numeric" min={1} max={1000000} step={1} defaultValue={voucherMode === "set" ? 1 : undefined} key={voucherMode} /></label>
           <label>Expires at <span>(your local time; optional)</span><input name="expiry" type="datetime-local" /></label>
-          <button className="admin-primary" disabled={busy}>Create voucher</button>
+          <p className="admin-voucher-preview" aria-live="polite">{previewDiscount === null || previewDiscount < 1 ? "Enter a discount to see what a customer pays." : <>One gift box at checkout: <s className="admin-figure">{formatPrice(25800)}</s> <b className="admin-figure">{formatPrice(Math.max(0, 25800 - Math.min(25800, previewDiscount)))}</b>{previewMinimum > 25800 ? ` · needs ${formatPrice(previewMinimum)} of items first` : ""}</>}</p>
+          <button className="admin-primary" disabled={busy}>{voucherMode === "set" ? "Create and print cards" : "Create voucher"}</button>
         </form>
+        {sheet && <VoucherSheet vouchers={sheet} onClose={() => setSheet(null)} />}
         <p className="admin-muted">Latest 200 vouchers. Reserved uses include orders with an open payment; they stay reserved until payment or confirmed cancellation.</p>
-        <div className="admin-table-scroll" tabIndex={0} role="region" aria-label="Voucher list"><table className="admin-table"><thead><tr><th scope="col">Code</th><th scope="col">Discount</th><th scope="col">Minimum</th><th scope="col">Uses</th><th scope="col">Expiry</th><th scope="col">Status</th><th scope="col"><span className="visually-hidden">Action</span></th></tr></thead><tbody>{vouchers.map((voucher) => <tr key={voucher.code}><td>{voucher.code}</td><td>{voucher.kind === "percent" ? `${voucher.amount}%` : formatPrice(voucher.amount)}</td><td>{formatPrice(voucher.min_subtotal_cents)}</td><td>{voucher.redeemed} paid · {voucher.reserved} reserved{voucher.max_uses ? ` / ${voucher.max_uses}` : ""}</td><td>{voucher.expires_at ? date(voucher.expires_at) : "No expiry"}</td><td>{!voucher.active ? "Inactive" : voucher.expires_at && voucher.expires_at <= Date.now() ? "Expired" : "Active"}</td><td>{!!voucher.active && <button type="button" className="admin-quiet" disabled={busy} aria-label={`Deactivate ${voucher.code}`} onClick={() => void perform(async () => { await request("voucher-deactivate", { code: voucher.code }); setRevision((value) => value + 1); setMessage(`${voucher.code} deactivated for future orders.`); })}>Deactivate</button>}</td></tr>)}</tbody></table>{!vouchers.length && <p className="admin-empty">{busy ? "Loading vouchers…" : "No vouchers yet. Create your first code above."}</p>}</div>
+        <div className="admin-table-scroll" tabIndex={0} role="region" aria-label="Voucher list"><table className="admin-table"><thead><tr><th scope="col">Code</th><th scope="col">Discount</th><th scope="col">Terms</th><th scope="col">Uses</th><th scope="col">Status</th><th scope="col"><span className="visually-hidden">Actions</span></th></tr></thead><tbody>{vouchers.map((voucher) => <tr key={voucher.code}><td><span className="admin-code">{voucher.code}</span>{voucher.batch && <small>Printed set</small>}</td><td className="admin-figure">{voucherValue(voucher)}</td><td>{voucherTerms(voucher) || "No limits"}</td><td className="admin-figure">{voucher.redeemed} paid · {voucher.reserved} reserved{voucher.max_uses ? ` / ${voucher.max_uses}` : ""}</td><td>{!voucher.active ? "Inactive" : voucher.expires_at && voucher.expires_at <= Date.now() ? "Expired" : "Active"}</td><td><span className="admin-row-actions">{!!voucher.active && <button type="button" className="admin-quiet" disabled={busy} aria-label={voucher.batch ? `Print the set with ${voucher.code}` : `Print ${voucher.code}`} onClick={() => printSet(voucher)}>{voucher.batch ? "Print set" : "Print"}</button>}{!!voucher.active && <button type="button" className="admin-quiet" disabled={busy} aria-label={`Deactivate ${voucher.code}`} onClick={() => void perform(async () => { await request("voucher-deactivate", { code: voucher.code }); setRevision((value) => value + 1); setMessage(`${voucher.code} deactivated for future orders.`); })}>Deactivate</button>}</span></td></tr>)}</tbody></table>{!vouchers.length && <p className="admin-empty">{busy ? "Loading vouchers…" : "No vouchers yet. Create your first code above."}</p>}</div>
       </> : tab === "inbox" ? <>
         <div className="admin-section-heading"><div><h1>Inbox</h1><p>Stored incoming mail for your shop addresses.</p></div><button type="button" className="admin-quiet" disabled={busy} onClick={() => setRevision((value) => value + 1)}>Refresh</button></div>
         {mailSettings && <div className="admin-mail-settings"><label className="admin-toggle"><input type="checkbox" checked={mailSettings.forwardingEnabled} disabled={busy} onChange={(event) => {
