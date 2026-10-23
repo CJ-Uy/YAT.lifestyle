@@ -3,7 +3,6 @@
 import { type CSSProperties, useEffect, useId, useRef, useState } from "react";
 import { STORY_FRAMES, dropTipGeometry, storyMotion } from "../lib/story-motion";
 import { type Locale } from "./site-header";
-import { PRODUCTS } from "../lib/shop";
 
 const copy = {
   en: {
@@ -47,8 +46,6 @@ const copy = {
   },
 } as const;
 
-// Three contrasting scents float beside the drop: fruit, tea and sea.
-const heroPicks = PRODUCTS.filter((product) => ["golden", "midnight", "ocean"].includes(product.slug));
 const sceneImages = ["/media/yat-official-gift-box.webp", "/media/yat-official-evening.webp", "/media/yat-official-in-hand.webp"];
 
 export function DropletJourney({ locale }: { locale: Locale }) {
@@ -226,7 +223,6 @@ export function DropletJourney({ locale }: { locale: Locale }) {
       </div>
       <div className="journey-scene scene-hero" style={{ "--scene-opacity": 1 } as CSSProperties}>
         <div className="journey-copy"><h1 id={`${signatureId}-heading`}>{t.title}</h1><p>{t.intro}</p><div className="journey-hero-actions"><a className="store-btn" href="/shop">{t.shop}<svg aria-hidden="true" width="22" height="12" viewBox="0 0 22 12"><path d="M1 6h19m-5-5 5 5-5 5" fill="none" stroke="currentColor" strokeWidth="1.2" /></svg></a><a className="journey-skip" href="#collections">{t.skip}</a></div></div>
-        <div className="hero-picks">{heroPicks.map((product, index) => <a className={`hero-pick hero-pick-${index + 1}`} href={`/shop/${product.slug}`} key={product.slug}><img alt="" src={`/media/scents/${product.slug}.webp`} width="1120" height="1400" /><span><strong>{product.name}</strong>{product.copy[locale].subtitle}</span></a>)}</div>
         <button className="hero-scroll-cue" type="button" aria-label={t.scroll} onClick={() => window.scrollBy({ top: window.innerHeight * .9, behavior: reducedMotion ? "auto" : "smooth" })}><span aria-hidden="true">{t.scroll}</span><i aria-hidden="true" /></button>
       </div>
       <div aria-hidden="true" className="journey-scene scene-intro">
