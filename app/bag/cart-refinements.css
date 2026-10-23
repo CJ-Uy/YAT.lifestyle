@@ -19,6 +19,12 @@
 .cart-page .bag-line { grid-template-columns: 120px minmax(0, 1fr) auto; gap: 1.5rem; padding: 2rem 0; }
 .cart-page .bag-item-image { width: 120px; }
 .cart-page .bag-item-image img { width: 100%; }
+/* The scent sits in front of the gift box it ships in. */
+.cart-page .bag-item-stack { position: relative; display: block; aspect-ratio: 5/6; }
+.cart-page .bag-item-stack > :is(img, span) { position: absolute; width: 74%; height: auto; aspect-ratio: 4/5; object-fit: cover; border: 3px solid var(--ink); box-shadow: 0 6px 16px rgba(41,42,36,.18); }
+/* Crop the real package photo to the open box itself. */
+.cart-page .bag-stack-box { left: 0; top: 0; rotate: -6deg; background: url(/media/yat-official-gift-box.webp) 59% 65% / 170% auto; }
+.cart-page .bag-stack-scent { right: 0; bottom: 0; rotate: 3deg; }
 .cart-page .bag-item-copy { min-width: 0; }
 .cart-page .bag-item-copy h2 { margin: 0 0 .5rem; font-size: 2rem; line-height: 1.15; }
 .cart-page .bag-item-copy h2 a { display: inline-block; }

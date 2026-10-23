@@ -9,8 +9,9 @@ export type Product = {
   }>;
 };
 
-export const PRICE_CENTS = 22800;
-export const DELIVERY_CENTS = 3000;
+export const PRICE_CENTS = 25800;
+// Hong Kong delivery is included in the price.
+export const DELIVERY_CENTS = 0;
 export const MAX_PER_SCENT = 10;
 export const MAX_BAG_COUNT = 30;
 
@@ -326,6 +327,11 @@ export const PRODUCTS: Product[] = [
 
 export function productBySlug(slug: string): Product | undefined {
   return PRODUCTS.find((product) => product.slug === slug);
+}
+
+const FREE = { en: "Free", "zh-Hant": "免費", "zh-Hans": "免费" } as const;
+export function formatDelivery(cents: number, locale: keyof typeof FREE): string {
+  return cents ? formatPrice(cents) : FREE[locale];
 }
 
 export function formatPrice(cents: number): string {

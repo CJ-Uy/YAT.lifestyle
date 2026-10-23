@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { formatPrice } from "../../lib/shop";
+import { formatDelivery, formatPrice } from "../../lib/shop";
 import { payWithAirwallex, type Payment } from "../checkout/airwallex-client";
 import { useLocale } from "../site-header";
 import { StoreShell } from "../storefront";
@@ -17,7 +17,7 @@ const copy = {
     received: "Thank you. Your order is confirmed, and a confirmation email will be sent to your verified address.", pendingBody: "Check the payment status before trying again. A return from the payment page does not confirm payment.",
     sandbox: "Airwallex test mode · No real payment or delivery will take place.", reference: "Order reference", loading: "Checking your order…", missing: "No order is available in this browser.", missingBody: "Open the order link in the browser where you checked out, or contact us with your order reference.",
     summary: "Order summary", quantity: "Quantity", subtotal: "Items subtotal", delivery: "Hong Kong delivery", discount: "Voucher", total: "Total", pack: "10 mL perfume · blue gift box · artificial flowers",
-    timing: "Estimated dispatch: 1–1.5 weeks. Expected delivery within two weeks. Timing is not guaranteed.", check: "Check payment status", checking: "Checking…", resume: "Continue to payment", paying: "Opening payment…",
+    timing: "Estimated to arrive within 2 weeks.", check: "Check payment status", checking: "Checking…", resume: "Continue to payment", paying: "Opening payment…",
     error: "We could not check your order. Please try again.", paymentError: "Payment could not be opened. Check the status before trying again.", shop: "Return to fragrances", bag: "View cart", help: "Questions about this order?",
   },
   "zh-Hant": {
@@ -25,7 +25,7 @@ const copy = {
     received: "謝謝你，訂單已確認。我們會把確認電郵寄到已驗證的地址。", pendingBody: "再次付款前，請先查看付款狀態。從付款頁面返回並不代表付款已確認。",
     sandbox: "Airwallex 測試模式 · 不會收取真實款項或安排送貨。", reference: "訂單編號", loading: "正在檢查訂單…", missing: "此瀏覽器沒有可顯示的訂單。", missingBody: "請在結帳時使用的瀏覽器開啟訂單連結，或提供訂單編號聯絡我們。",
     summary: "訂單明細", quantity: "數量", subtotal: "商品小計", delivery: "香港送貨", discount: "優惠碼", total: "總額", pack: "10 mL 香水 · 藍色禮盒 · 人造花",
-    timing: "預計 1–1.5 週內出貨，兩週內收貨。以上為估算，並非保證。", check: "查看付款狀態", checking: "正在檢查…", resume: "繼續付款", paying: "正在開啟付款…",
+    timing: "預計兩星期內送達。", check: "查看付款狀態", checking: "正在檢查…", resume: "繼續付款", paying: "正在開啟付款…",
     error: "未能檢查訂單，請再試一次。", paymentError: "未能開啟付款。再次嘗試前，請先查看付款狀態。", shop: "返回香水選購", bag: "查看購物車", help: "對訂單有疑問？",
   },
   "zh-Hans": {
@@ -33,7 +33,7 @@ const copy = {
     received: "谢谢你，订单已确认。我们会把确认邮件发送到已验证的地址。", pendingBody: "再次付款前，请先查看付款状态。从付款页面返回并不代表付款已确认。",
     sandbox: "Airwallex 测试模式 · 不会收取真实款项或安排配送。", reference: "订单编号", loading: "正在检查订单…", missing: "此浏览器没有可显示的订单。", missingBody: "请在结账时使用的浏览器打开订单链接，或提供订单编号联系我们。",
     summary: "订单明细", quantity: "数量", subtotal: "商品小计", delivery: "香港配送", discount: "优惠码", total: "总额", pack: "10 mL 香水 · 蓝色礼盒 · 人造花",
-    timing: "预计 1–1.5 周内发货，两周内收货。以上为估算，并非保证。", check: "查看付款状态", checking: "正在检查…", resume: "继续付款", paying: "正在打开付款…",
+    timing: "预计两星期内送达。", check: "查看付款状态", checking: "正在检查…", resume: "继续付款", paying: "正在打开付款…",
     error: "未能检查订单，请再试一次。", paymentError: "未能打开付款。再次尝试前，请先查看付款状态。", shop: "返回香水选购", bag: "查看购物车", help: "对订单有疑问？",
   },
 };
@@ -87,7 +87,7 @@ export default function OrderExperience() {
         <section className="bag-summary" aria-labelledby="order-summary-heading">
           <h2 id="order-summary-heading">{t.summary}</h2>
           <ul className="checkout-items">{order.items.map((item) => <li key={item.slug}><a href={`/shop/${item.slug}`}>{item.name}</a><span>{t.quantity}: {item.quantity}</span><span>{formatPrice(item.lineTotalCents)}</span></li>)}</ul>
-          <p className="store-muted">{t.pack}</p><dl><div><dt>{t.subtotal}</dt><dd>{formatPrice(order.subtotalCents)}</dd></div><div><dt>{t.delivery}</dt><dd>{formatPrice(order.deliveryCents)}</dd></div>
+          <p className="store-muted">{t.pack}</p><dl><div><dt>{t.subtotal}</dt><dd>{formatPrice(order.subtotalCents)}</dd></div><div><dt>{t.delivery}</dt><dd>{formatDelivery(order.deliveryCents, locale)}</dd></div>
             {order.discountCents > 0 && <div><dt>{t.discount}{order.voucherCode ? ` · ${order.voucherCode}` : ""}</dt><dd>−{formatPrice(order.discountCents)}</dd></div>}
             <div className="bag-total"><dt>{t.total}</dt><dd>{formatPrice(order.totalCents)}</dd></div></dl>
           {order.status === "paid" && order.mode === "prod" && <p className="store-muted">{t.timing}</p>}

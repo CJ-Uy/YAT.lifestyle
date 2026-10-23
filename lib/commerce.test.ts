@@ -15,7 +15,7 @@ const decode = async (response: Response) => await response.json() as Record<str
 function setup() {
   const db = new DatabaseSync(":memory:");
   db.exec("PRAGMA foreign_keys = ON");
-  for (const file of ["0006_checkout_email.sql", "0007_commerce.sql"]) db.exec(readFileSync(new URL(`../migrations/${file}`, import.meta.url), "utf8"));
+  for (const file of ["0006_checkout_email.sql", "0007_commerce.sql", "0010_free_delivery.sql"]) db.exec(readFileSync(new URL(`../migrations/${file}`, import.meta.url), "utf8"));
   db.prepare("INSERT INTO checkout_email_proofs (id_hash, email, expires_at) VALUES (?, ?, ?)").run(createHash("sha256").update("a".repeat(43)).digest("hex"), details.email, Date.now() + 1800000);
   const sql = new WeakMap<CommerceStatement, { query: string; values: (string | number | null)[] }>();
   const prepare = (query: string): CommerceStatement => {
@@ -104,7 +104,7 @@ test("commerce: voucher money rounds down, affects merchandise only and never ma
 test("commerce: quotes use server prices, and browser origin/body boundaries fail closed", async () => {
   const fixture = setup(); fixture.voucher();
   const quote = await decode(await fixture.handle("quote", post("quote", { items: [{ slug: "golden", quantity: 2 }], voucher: " save10 " })));
-  assert.deepEqual([quote.subtotalCents, quote.deliveryCents, quote.discountCents, quote.totalCents, quote.voucherCode], [45600, 3000, 4560, 44040, "SAVE10"]);
+  assert.deepEqual([quote.subtotalCents, quote.deliveryCents, quote.discountCents, quote.totalCents, quote.voucherCode], [51600, 0, 5160, 46440, "SAVE10"]);
   assert.equal((await fixture.handle("quote", new Request(`${ORIGIN}/api/commerce/quote`, { method: "POST", headers: { Origin: "https://attacker.example", "Content-Type": "application/json" }, body: "{}" }))).status, 403);
   assert.equal((await fixture.handle("quote", post("quote", { items: [{ slug: "golden", quantity: 1 }], totalCents: 1 }))).status, 400);
   assert.equal((await fixture.handle("quote", new Request(`${ORIGIN}/api/commerce/quote`, { method: "POST", headers: { Origin: ORIGIN, "Content-Type": "application/json" }, body: "x".repeat(17000) }))).status, 413);
@@ -127,7 +127,7 @@ test("commerce: order snapshot exists before provider create and UUID alone cann
   assert.equal((await fixture.handle("order", get(payment.orderId))).status, 404);
   assert.equal((await fixture.handle("resume", post("resume", { id: payment.orderId }, ""))).status, 404);
   const order = await decode(await fixture.handle("order", get(payment.orderId, cookie)));
-  assert.equal(order.id, payment.orderId); assert.equal(order.items[0].unitPriceCents, 22800); assert.equal(order.status, "unpaid");
+  assert.equal(order.id, payment.orderId); assert.equal(order.items[0].unitPriceCents, 25800); assert.equal(order.status, "unpaid");
   assert.throws(() => fixture.db.prepare("UPDATE commerce_orders SET total_cents = 1 WHERE id = ?").run(payment.orderId), /immutable_order_snapshot/);
 });
 

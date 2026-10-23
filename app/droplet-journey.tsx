@@ -3,46 +3,52 @@
 import { type CSSProperties, useEffect, useId, useRef, useState } from "react";
 import { STORY_FRAMES, dropTipGeometry, storyMotion } from "../lib/story-motion";
 import { type Locale } from "./site-header";
+import { PRODUCTS } from "../lib/shop";
 
 const copy = {
   en: {
-    title: "Time.\nPlace.\nYou.",
-    intro: "Twelve perfumes. Born in Hong Kong.",
-    heading: "A Hong Kong beginning.",
-    story: "One small idea. Twelve personal scents.",
+    title: "Perfume\nthat remembers.",
+    intro: "Twelve Hong Kong perfumes, each gift-boxed with flowers. HK$258.",
+    scroll: "Scroll to follow the drop",
+    heading: "It began in Hong Kong.",
+    story: "One small idea, grown into twelve scents.",
     scenes: [
-      { title: "Ready to give.", body: "Your scent. A blue box. Decorative flowers." },
-      { title: "Meet Natasha.", body: "HKUST Biotechnology student.\nYAT.LIFESTYLE founder." },
-      { title: "Close to you.", body: "Twelve fragrances. Yours to make personal." },
+      { title: "Made to be given.", body: "Your chosen scent in a blue gift box, with flowers that never wilt." },
+      { title: "Meet Natasha.", body: "Biotechnology student at HKUST.\nFounder of YAT.LIFESTYLE." },
+      { title: "Close to you.", body: "Twelve scents for every day. Find the one that feels like yours." },
     ],
     shop: "Shop fragrances", skip: "Find your scent",
   },
   "zh-Hant": {
-    title: "時間。\n地方。\n你。",
-    intro: "十二款香水，從香港開始。",
-    heading: "從香港開始。",
-    story: "一個小小念頭，十二款個人香氣。",
+    title: "記得時光\n的香水。",
+    intro: "十二款香港香水，每瓶附花禮盒。HK$258。",
+    scroll: "向下滑動，跟隨香氣",
+    heading: "故事，從香港開始。",
+    story: "一個小小的念頭，慢慢成為十二款香氣。",
     scenes: [
-      { title: "心意，已準備好。", body: "你的香氣、藍色禮盒與裝飾花。" },
+      { title: "為送禮而生。", body: "你選的香氣，放進藍色禮盒，伴著不會凋謝的花。" },
       { title: "認識 Natasha。", body: "香港科技大學生物科技學生。\nYAT.LIFESTYLE 創辦人。" },
-      { title: "香氣，隨你。", body: "十二款香水，演繹你的日常。" },
+      { title: "香氣，貼近你。", body: "十二款日常香氣，總有一款屬於你。" },
     ],
     shop: "選購香水", skip: "找到你的香氣",
   },
   "zh-Hans": {
-    title: "时间。\n地方。\n你。",
-    intro: "十二款香水，从香港开始。",
-    heading: "从香港开始。",
-    story: "一个小小念头，十二款个人香气。",
+    title: "记得时光\n的香水。",
+    intro: "十二款香港香水，每瓶附花礼盒。HK$258。",
+    scroll: "向下滑动，跟随香气",
+    heading: "故事，从香港开始。",
+    story: "一个小小的念头，慢慢成为十二款香气。",
     scenes: [
-      { title: "心意，已准备好。", body: "你的香气、蓝色礼盒与装饰花。" },
+      { title: "为送礼而生。", body: "你选的香气，放进蓝色礼盒，伴着不会凋谢的花。" },
       { title: "认识 Natasha。", body: "香港科技大学生物科技学生。\nYAT.LIFESTYLE 创办人。" },
-      { title: "香气，随你。", body: "十二款香水，演绎你的日常。" },
+      { title: "香气，贴近你。", body: "十二款日常香气，总有一款属于你。" },
     ],
     shop: "选购香水", skip: "找到你的香气",
   },
 } as const;
 
+// Three contrasting scents float beside the drop: fruit, tea and sea.
+const heroPicks = PRODUCTS.filter((product) => ["golden", "midnight", "ocean"].includes(product.slug));
 const sceneImages = ["/media/yat-official-gift-box.webp", "/media/yat-official-evening.webp", "/media/yat-official-in-hand.webp"];
 
 export function DropletJourney({ locale }: { locale: Locale }) {
@@ -220,6 +226,8 @@ export function DropletJourney({ locale }: { locale: Locale }) {
       </div>
       <div className="journey-scene scene-hero" style={{ "--scene-opacity": 1 } as CSSProperties}>
         <div className="journey-copy"><h1 id={`${signatureId}-heading`}>{t.title}</h1><p>{t.intro}</p><div className="journey-hero-actions"><a className="store-btn" href="/shop">{t.shop}<svg aria-hidden="true" width="22" height="12" viewBox="0 0 22 12"><path d="M1 6h19m-5-5 5 5-5 5" fill="none" stroke="currentColor" strokeWidth="1.2" /></svg></a><a className="journey-skip" href="#collections">{t.skip}</a></div></div>
+        <div className="hero-picks">{heroPicks.map((product, index) => <a className={`hero-pick hero-pick-${index + 1}`} href={`/shop/${product.slug}`} key={product.slug}><img alt="" src={`/media/scents/${product.slug}.webp`} width="1120" height="1400" /><span><strong>{product.name}</strong>{product.copy[locale].subtitle}</span></a>)}</div>
+        <button className="hero-scroll-cue" type="button" aria-label={t.scroll} onClick={() => window.scrollBy({ top: window.innerHeight * .9, behavior: reducedMotion ? "auto" : "smooth" })}><span aria-hidden="true">{t.scroll}</span><i aria-hidden="true" /></button>
       </div>
       <div aria-hidden="true" className="journey-scene scene-intro">
         <div className="journey-copy"><h2>{t.heading}</h2><p>{t.story}</p></div>

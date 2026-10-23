@@ -8,9 +8,6 @@
 .store-product-page .store-product-identity .store-inclusion { margin: .65rem 0 0; }
 .store-product-page .store-product-price-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
 .store-product-page .store-product-price-row .store-product-price { margin: 0; }
-.store-product-page .store-profile-link { display: inline-flex; align-items: center; gap: .6rem; min-height: 44px; font-size: .85rem; color: var(--gold); text-decoration: underline; }
-.store-product-page .store-profile-link svg { width: 16px; }
-.store-product-page .store-profile-link:hover { color: var(--warm); }
 .store-product-page .store-quantity-label { color: var(--muted); gap: .45rem; }
 .store-product-page .store-quantity-control { display: block; position: relative; color: var(--gold); }
 .store-product-page .store-quantity-control select { appearance: none; width: 88px; height: 56px; background: var(--ink); border-color: var(--rule); padding: .8rem 2.5rem .8rem 1rem; font-size: 1rem; font-variant-numeric: tabular-nums; cursor: pointer; }

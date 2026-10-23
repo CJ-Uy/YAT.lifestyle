@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { cartSubtotal, DELIVERY_CENTS, formatPrice, normalizeCart, PRICE_CENTS, productBySlug, PRODUCTS } from "./shop.ts";
+import { cartSubtotal, DELIVERY_CENTS, formatDelivery, formatPrice, normalizeCart, PRICE_CENTS, productBySlug, PRODUCTS } from "./shop.ts";
 
 test("shop: twelve unique products have three-language copy and stable IDs", () => {
   assert.equal(PRODUCTS.length, 12);
@@ -38,7 +38,7 @@ test("cart: untrusted storage cannot add unknown products, coerce quantities or 
     { slug: "midnight", quantity: Number.MAX_SAFE_INTEGER + 1 },
     { slug: "golden", quantity: 2, price: 1, priceCents: 1, name: "Other" },
   ]), [{ slug: "golden", quantity: 2 }]);
-  assert.equal(cartSubtotal([{ slug: "golden", quantity: 2, priceCents: 1 }]), 45600);
+  assert.equal(cartSubtotal([{ slug: "golden", quantity: 2, priceCents: 1 }]), 51600);
   assert.equal(cartSubtotal([{ slug: "missing", quantity: 100 }]), 0);
 });
 
@@ -66,10 +66,11 @@ test("cart: duplicate entries merge and quantities stay bounded without mutating
 });
 
 test("shop: money stays in cents and displays the intended Hong Kong price", () => {
-  assert.equal(PRICE_CENTS, 22800);
-  assert.equal(DELIVERY_CENTS, 3000);
-  assert.equal(formatPrice(PRICE_CENTS), "HK$228");
-  assert.equal(formatPrice(PRICE_CENTS + DELIVERY_CENTS), "HK$258");
+  assert.equal(PRICE_CENTS, 25800);
+  assert.equal(DELIVERY_CENTS, 0);
+  assert.equal(formatPrice(PRICE_CENTS), "HK$258");
+  assert.equal(formatDelivery(DELIVERY_CENTS, "en"), "Free");
+  assert.equal(formatDelivery(3000, "zh-Hant"), "HK$30");
   assert.equal(formatPrice(22850), "HK$228.50");
   assert.equal(formatPrice(0), "HK$0");
   for (const cents of [-1, 1.2, NaN, Infinity, Number.MAX_SAFE_INTEGER + 1]) {

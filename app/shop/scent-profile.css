@@ -1,18 +1,32 @@
-.store-scent-profile { margin-top: clamp(3rem,6vw,5rem); padding-top: 2.5rem; border-top: 1px solid var(--rule); scroll-margin-top: 7rem; }
-.store-scent-profile > h2 { margin: 0 0 1.5rem; font-size: clamp(2rem,3vw,3rem); }
-.store-scent-profile-notes { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: clamp(1.5rem,4vw,4rem); list-style: none; padding: 0; margin: 0; }
-.store-scent-profile-notes li { padding: 1.25rem 0; border-top: 1px solid var(--rule); min-width: 0; }
-.store-scent-profile-notes h3 { display: flex; align-items: baseline; gap: .85rem; font-family: var(--body); font-weight: 500; font-size: .9rem; letter-spacing: 0; margin: 0 0 .75rem; color: var(--gold); }
-.store-scent-stage-number { font-size: .75rem; font-weight: 400; font-variant-numeric: tabular-nums; }
-.store-scent-profile .store-scent-profile-notes p { color: var(--warm); font-family: var(--display); font-size: clamp(1.35rem,2vw,1.8rem); line-height: 1.45; margin: 0; max-width: 22ch; }
-.store-scent-profile .store-scent-profile-note { color: var(--muted); font-size: .8rem; line-height: 1.6; margin: 1rem 0 0; max-width: 85ch; }
+.store-scent-profile { margin-top: clamp(3rem,6vw,5rem); padding-top: 2.5rem; border-top: 1px solid var(--rule); }
+.store-scent-profile-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1rem 2rem; margin-bottom: 2rem; }
+.store-scent-profile-head h2 { margin: 0; font-size: clamp(2rem,3vw,3rem); }
+.store-scent-families { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1rem; font-size: .85rem; color: var(--muted); }
+.store-scent-families ul { display: flex; flex-wrap: wrap; gap: .5rem; list-style: none; margin: 0; padding: 0; }
+.store-scent-families li { padding: .3rem .8rem; border: 1px solid var(--rule); border-radius: 999px; color: var(--warm); }
+.store-scent-profile-notes { display: grid; gap: 6px; list-style: none; padding: 0; margin: 0; }
+.store-scent-tier { display: grid; grid-template-columns: minmax(150px,230px) minmax(9rem,13rem) minmax(0,1fr); align-items: center; column-gap: clamp(1.25rem,3vw,2.5rem); }
+/* Slices stretch to their row so the three tiers always meet as one pyramid. */
+.store-scent-slice { display: block; width: 100%; height: 100%; min-height: 96px; align-self: stretch; }
+.store-scent-tier-1 polygon { fill: #e4cc98; }
+.store-scent-tier-2 polygon { fill: #c49a52; }
+.store-scent-tier-3 polygon { fill: #8a6229; }
+.store-scent-tier-label { padding-block: .5rem; border-top: 1px solid var(--rule); }
+.store-scent-tier-label h3 { margin: 0; font-family: var(--body); font-weight: 500; font-size: .95rem; letter-spacing: 0; color: var(--warm); }
+.store-scent-profile .store-scent-tier-label p { margin: .15rem 0 0; color: var(--muted); font-size: .82rem; }
+.store-scent-notes { display: flex; flex-wrap: wrap; gap: .75rem 1.75rem; list-style: none; margin: 0; padding: 0; }
+.store-scent-notes li { display: flex; align-items: center; gap: .7rem; font-family: var(--display); font-size: clamp(1.15rem,1.6vw,1.4rem); line-height: 1.2; }
+.store-scent-note-icon { display: grid; place-items: center; flex: none; width: 46px; height: 46px; border-radius: 50%; background: var(--carbon); color: var(--gold); }
+.store-scent-profile .store-scent-profile-note { color: var(--muted); font-size: .8rem; line-height: 1.6; margin: 1.5rem 0 0; max-width: 85ch; }
 @media (max-width: 760px) {
   .store-scent-profile { padding-top: 2rem; }
-  .store-scent-profile-notes { grid-template-columns: 1fr; gap: 0; }
-  .store-scent-profile-notes li { display: grid; grid-template-columns: 7.5rem minmax(0,1fr); gap: 1rem; align-items: baseline; padding-block: 1.25rem; }
-  .store-scent-profile-notes h3 { margin: 0; gap: .6rem; font-size: .85rem; }
-  .store-scent-profile .store-scent-profile-notes p { font-size: 1.3rem; }
-}
-@media (max-width: 370px) {
-  .store-scent-profile-notes li { grid-template-columns: 1fr; gap: .6rem; }
+  .store-scent-profile-head { margin-bottom: 1.5rem; }
+  .store-scent-profile-notes { gap: 4px; }
+  .store-scent-tier { grid-template-columns: 76px minmax(0,1fr); grid-template-rows: auto auto; column-gap: 1rem; row-gap: .6rem; align-items: start; }
+  .store-scent-slice { grid-row: 1 / span 2; min-height: 0; }
+  .store-scent-tier-label { border-top: 0; padding: .9rem 0 0; }
+  .store-scent-notes { padding-bottom: .9rem; }
+  .store-scent-notes { gap: .6rem 1.2rem; }
+  .store-scent-note-icon { width: 38px; height: 38px; }
+  .store-scent-note-icon .line-icon { width: 18px; height: 18px; }
 }

@@ -14,6 +14,14 @@ const navigation = {
   "zh-Hans": { home: "首页", shop: "香水", about: "关于我们", bag: "购物车", language: "语言", primary: "主要导航" },
 };
 
+const icons = {
+  home: "M3.5 10.5 12 3.5l8.5 7M5.5 9v11.5h13V9M10 20.5v-6h4v6",
+  shop: "M9.5 2.5h5v4h-5ZM8.5 8h7a2 2 0 0 1 2 2v9.5a2 2 0 0 1-2 2h-7a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2ZM9.5 14.5h5",
+  language: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM3 12h18M12 3c2.4 2.6 3.6 5.6 3.6 9s-1.2 6.4-3.6 9c-2.4-2.6-3.6-5.6-3.6-9S9.6 5.6 12 3Z",
+  cart: "M2 3h3l3 12h11l3-9H6M9 20h.01M19 20h.01",
+};
+export const lineIcon = (d: string) => <svg className="line-icon" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"><path d={d} fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+
 export function useLocale() {
   const [locale, setLocale] = useState<Locale>("en");
   useEffect(() => {
@@ -46,12 +54,14 @@ export default function SiteHeader({ locale, onLocaleChange, brand, bagCount }: 
   const t = navigation[locale];
   return <header className={`site-header site-header-simple${elementBrand ? " site-header-element" : ""}`}>
     <a className={`wordmark${elementBrand ? " element-wordmark" : ""}`} href={elementBrand ? "/element" : "/#top"} aria-label={elementBrand ? "Element" : `YAT.lifestyle · ${t.home}`}>
-      {elementBrand ? <ElementSignature compact /> : <><img className="brand-drop" src="/brand-emblem.svg" alt="" width="64" height="100" />{bagCount !== undefined && <span className="store-wordmark">YAT.LIFESTYLE</span>}</>}
+      {elementBrand ? <ElementSignature compact /> : <><img className="brand-drop" src={bagCount === undefined ? "/brand-emblem.svg" : "/brand-emblem-light.svg"} alt="" width="64" height="100" />{bagCount !== undefined && <span className="store-wordmark">YAT.LIFESTYLE</span>}</>}
     </a>
     <nav aria-label={t.primary} className="primary-nav">
-      {bagCount === undefined ? <a href="/#top" aria-current={pathname === "/" ? "page" : undefined}>{t.home}</a> : <a href="/shop" aria-current={pathname?.startsWith("/shop") ? "page" : undefined}>{t.shop}</a>}
+      {bagCount === undefined ? <a href="/#top" aria-current={pathname === "/" ? "page" : undefined}>{t.home}</a> : <>
+        <a href="/" aria-current={pathname === "/" ? "page" : undefined}>{lineIcon(icons.home)}<span className="store-nav-label">{t.home}</span></a>
+        <a href="/shop" aria-current={pathname?.startsWith("/shop") ? "page" : undefined}>{lineIcon(icons.shop)}<span className="store-nav-label">{t.shop}</span></a>
+      </>}
       {elementPage && <a href="/element" aria-current={pathname === "/element" ? "page" : "location"}>Element</a>}
-      {bagCount !== undefined && <a className="store-nav-about" href="/#about">{t.about}</a>}
     </nav>
     <div className="header-tools">
       <details className="language-select" ref={languageRef} onBlur={(event) => {
@@ -64,6 +74,7 @@ export default function SiteHeader({ locale, onLocaleChange, brand, bagCount }: 
         }
       }}>
         <summary aria-label={`${t.language}: ${languages.find((language) => language.id === locale)?.name}`}>
+          {bagCount !== undefined && lineIcon(icons.language)}
           <span className="language-full">{languages.find((language) => language.id === locale)?.name}</span>
           <span className="language-short" aria-hidden="true">{locale === "en" ? "EN" : locale === "zh-Hant" ? "繁" : "简"}</span>
           <svg className="language-chevron" aria-hidden="true" width="10" height="6" viewBox="0 0 10 6"><path d="m1 1 4 4 4-4" fill="none" stroke="currentColor" /></svg>
@@ -74,7 +85,7 @@ export default function SiteHeader({ locale, onLocaleChange, brand, bagCount }: 
           languageRef.current?.querySelector("summary")?.focus();
         }}>{language.name}<svg aria-hidden="true" width="14" height="12" viewBox="0 0 14 12"><path d="m2 6 3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.3" /></svg></button>)}</div>
       </details>
-      {bagCount !== undefined && <a className="store-bag-link" href="/bag" aria-current={pathname === "/bag" ? "page" : undefined}><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"><path d="M2 3h3l3 12h11l3-9H6M9 20h.01M19 20h.01" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>{t.bag} <span aria-live="polite" aria-atomic="true">({bagCount})</span></a>}
+      {bagCount !== undefined && <a className="store-bag-link" href="/bag" aria-current={pathname === "/bag" ? "page" : undefined}>{lineIcon(icons.cart)}<span className="store-nav-label">{t.bag}</span> <span aria-live="polite" aria-atomic="true">({bagCount})</span></a>}
     </div>
   </header>;
 }

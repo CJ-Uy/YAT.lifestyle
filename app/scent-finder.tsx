@@ -9,22 +9,22 @@ import "./scent-finder.css";
 
 const copy = {
   en: {
-    title: "Find your scent.", intro: "A note you love. A feeling to follow.",
-    family: "What draws you in?", tea: "Tea", floral: "Flowers", woody: "Woods", fruity: "Fruit", musky: "Musk", any: "Open to all",
+    title: "Find your scent.", intro: "Pick a note and a mood. We'll suggest three to try.",
+    family: "What draws you in?", tea: "Tea", floral: "Flowers", woody: "Woods", fruity: "Fruit", musky: "Musk", any: "No preference",
     feel: "How should it feel?", fresh: "Fresh", warm: "Warm", feelings: ["Fresh", "Airy", "Balanced", "Soft", "Warm"],
-    suggestions: "Your starting points.", source: "Suggestions from scent notes.", announced: "Suggested scents",
+    suggestions: "Three to start with.", source: "Matched by each scent's notes.", announced: "Suggested scents",
   },
   "zh-Hant": {
-    title: "找到你的香氣。", intro: "從喜歡的香調，走向心中的感覺。",
-    family: "哪種香氣吸引你？", tea: "茶香", floral: "花香", woody: "木質", fruity: "果香", musky: "麝香", any: "都想試試",
+    title: "找到你的香氣。", intro: "選一個香調和感覺，我們推薦三款給你試。",
+    family: "哪種香氣吸引你？", tea: "茶香", floral: "花香", woody: "木質", fruity: "果香", musky: "麝香", any: "沒有偏好",
     feel: "想要怎樣的感覺？", fresh: "清新", warm: "溫暖", feelings: ["清新", "輕盈", "平衡", "柔和", "溫暖"],
-    suggestions: "從這幾款開始。", source: "依香調介紹推薦。", announced: "推薦香氣",
+    suggestions: "先從這三款開始。", source: "根據香調配對。", announced: "推薦香氣",
   },
   "zh-Hans": {
-    title: "找到你的香气。", intro: "从喜欢的香调，走向心中的感觉。",
-    family: "哪种香气吸引你？", tea: "茶香", floral: "花香", woody: "木质", fruity: "果香", musky: "麝香", any: "都想试试",
+    title: "找到你的香气。", intro: "选一个香调和感觉，我们推荐三款给你试。",
+    family: "哪种香气吸引你？", tea: "茶香", floral: "花香", woody: "木质", fruity: "果香", musky: "麝香", any: "没有偏好",
     feel: "想要怎样的感觉？", fresh: "清新", warm: "温暖", feelings: ["清新", "轻盈", "平衡", "柔和", "温暖"],
-    suggestions: "从这几款开始。", source: "依香调介绍推荐。", announced: "推荐香气",
+    suggestions: "先从这三款开始。", source: "根据香调配对。", announced: "推荐香气",
   },
 };
 

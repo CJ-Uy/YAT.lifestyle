@@ -11,7 +11,7 @@ const salt = Buffer.alloc(16, 7), PASSWORD_HASH = `pbkdf2-sha256$100000$${salt.t
 
 function setup() {
   const db = new DatabaseSync(":memory:");
-  for (const file of ["0007_commerce.sql", "0008_admin.sql", "0009_inbox.sql"]) db.exec(readFileSync(new URL(`../migrations/${file}`, import.meta.url), "utf8"));
+  for (const file of ["0007_commerce.sql", "0008_admin.sql", "0009_inbox.sql", "0010_free_delivery.sql"]) db.exec(readFileSync(new URL(`../migrations/${file}`, import.meta.url), "utf8"));
   const clock = { now: Date.parse("2026-10-12T10:00:00Z") }, limits = { allowed: true, keys: [] as string[] };
   // Match D1's bound-statement shape while exercising the real SQLite constraints and triggers.
   const statement = (sql: string): CommerceStatement => {
