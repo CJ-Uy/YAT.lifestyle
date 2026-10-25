@@ -30,12 +30,19 @@ const monthName = (month: string, style: "long" | "short" = "long") => new Intl.
 const dayName = (day: string, options: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat("en-HK", { ...options, timeZone: "UTC" }).format(Date.parse(`${day}T00:00:00Z`));
 
 /** One stroke weight for every admin icon. */
-export function Icon({ name, size = 18 }: { name: "left" | "right" | "download" | "check" | "alert" | "print" | "minus" | "plus" | "undo" | "close"; size?: number }) {
-  const paths = {
-    left: "M15 5l-7 7 7 7", right: "M9 5l7 7-7 7", download: "M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 19.5h14", check: "M5 12.5l4.5 4.5L19 7.5",
-    alert: "M12 4l9 16H3L12 4zm0 6v4.5m0 2.5v.5", print: "M7 9V4h10v5M7 17H5a1 1 0 01-1-1v-6a1 1 0 011-1h14a1 1 0 011 1v6a1 1 0 01-1 1h-2M7 14h10v6H7z",
-    minus: "M5 12h14", plus: "M12 5v14M5 12h14", undo: "M9 7L5 11l4 4M5 11h9.5a4.5 4.5 0 010 9H11", close: "M6 6l12 12M18 6L6 18",
-  };
+const ICONS = {
+  left: "M15 5l-7 7 7 7", right: "M9 5l7 7-7 7", download: "M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 19.5h14", check: "M5 12.5l4.5 4.5L19 7.5",
+  alert: "M12 4l9 16H3L12 4zm0 6v4.5m0 2.5v.5", print: "M7 9V4h10v5M7 17H5a1 1 0 01-1-1v-6a1 1 0 011-1h14a1 1 0 011 1v6a1 1 0 01-1 1h-2M7 14h10v6H7z",
+  minus: "M5 12h14", plus: "M12 5v14M5 12h14", undo: "M9 7L5 11l4 4M5 11h9.5a4.5 4.5 0 010 9H11", close: "M6 6l12 12M18 6L6 18",
+  chart: "M5 20V11M12 20V5M19 20v-6M3 20h18", store: "M4 10v10h16V10M3 10l2-6h14l2 6zM9 20v-6h6v6", box: "M3 7.5l9-4.5 9 4.5-9 4.5-9-4.5zm0 0V17l9 4.5 9-4.5V7.5M12 12v9.5",
+  ticket: "M4 7h16v3a2 2 0 000 4v3H4v-3a2 2 0 000-4V7zm10 0v10", mail: "M3.5 6h17v12h-17zM3.5 7l8.5 6 8.5-6", truck: "M2.5 6.5h11v9h-11zM13.5 10h4l3 3v2.5h-7M7 19a2 2 0 100-4 2 2 0 000 4zm10 0a2 2 0 100-4 2 2 0 000 4z",
+  sliders: "M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1M15 4v4M9 10v4M17 16v4", more: "M5 11.2h1.6v1.6H5zM11.2 11.2h1.6v1.6h-1.6zM17.4 11.2H19v1.6h-1.6z",
+  logout: "M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10", refresh: "M20 11a8 8 0 10-2.3 5.7M20 4v7h-7", eye: "M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12zm10 3a3 3 0 100-6 3 3 0 000 6z",
+  bell: "M6 16v-5a6 6 0 1112 0v5l1.5 2h-15zM10 20.5a2 2 0 004 0",
+};
+export type IconName = keyof typeof ICONS;
+export function Icon({ name, size = 18 }: { name: IconName; size?: number }) {
+  const paths = ICONS;
   return <svg className="admin-icon" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={paths[name]} /></svg>;
 }
 
@@ -137,7 +144,7 @@ export function MoneyPanel({ busy, perform, notify, onOpenOrders, onOpenDay, onO
       <label>To<input type="date" value={period.to} min={period.from || undefined} onChange={(event) => setPeriod({ ...period, to: event.target.value })} /></label>
     </div>}
 
-    {!current ? <p className="admin-empty" role="status">{busy ? "Loading money…" : validCustom ? "Money could not be loaded." : "Choose a start date on or before the end date."}</p> : <>
+    {!current ? (busy || validCustom ? <div className="money-skeleton" role="status" aria-label="Loading money"><span className="admin-skeleton is-hero" /><div className="money-columns"><span className="admin-skeleton is-panel" /><span className="admin-skeleton is-panel" /></div></div> : <p className="admin-empty">Choose a start date on or before the end date.</p>) : <>
       <section className="money-hero" aria-label="Total kept">
         <div>
           <p className="money-label">Kept {period.mode === "month" ? "this month" : period.mode === "year" ? "this year" : "in this period"}</p>
@@ -305,7 +312,7 @@ export function OnsitePanel({ busy, perform, notify, dayId, onDayChange }: Panel
   }
 
   if (!dayId) return <div className="onsite">
-    <h1>Onsite selling</h1>
+    <div className="admin-page-head"><div><h1>Onsite selling</h1><p>Markets and pop-ups. Start a day, then record each sale as it happens.</p></div></div>
     <form className="admin-panel onsite-start" onSubmit={startDay}>
       <h2>Start selling</h2>
       <label>Place or event<input name="place" list="onsite-places" required maxLength={120} autoComplete="off" placeholder="PMQ weekend market" /></label>
@@ -317,7 +324,7 @@ export function OnsitePanel({ busy, perform, notify, dayId, onDayChange }: Panel
       <button className="admin-primary" disabled={busy}>Open selling day</button>
     </form>
     <h2 className="onsite-list-title">Selling days</h2>
-    {!list ? <p className="admin-empty" role="status">Loading selling days…</p> : !list.days.length ? <p className="admin-empty">No selling days yet. Start your first one above.</p>
+    {!list ? <div className="onsite-days" role="status" aria-label="Loading selling days"><span className="admin-skeleton is-row" /><span className="admin-skeleton is-row" /></div> : !list.days.length ? <div className="admin-empty"><Icon name="store" size={28} /><p>No selling days yet. Start your first one above.</p></div>
       : <ul className="onsite-days">{list.days.map((day) => <li key={day.id}><button type="button" onClick={() => onDayChange(day.id)}>
         <span className="money-date"><b className="admin-figure">{Number(day.day.slice(8))}</b><small>{dayName(day.day, { month: "short" })}</small></span>
         <span className="money-day-place">{day.place}<small>{day.bottles} bottle{day.bottles === 1 ? "" : "s"} · {day.sales} sale{day.sales === 1 ? "" : "s"}</small></span>
@@ -325,7 +332,7 @@ export function OnsitePanel({ busy, perform, notify, dayId, onDayChange }: Panel
       </button></li>)}</ul>}
   </div>;
 
-  if (!detail) return <p className="admin-empty" role="status">Loading the selling day…</p>;
+  if (!detail) return <div className="onsite" role="status" aria-label="Loading the selling day"><span className="admin-skeleton is-hero" /><span className="admin-skeleton is-panel" /></div>;
   return <div className="onsite onsite-day">
     <div className="onsite-head">
       <button type="button" className="admin-link onsite-back" onClick={() => onDayChange(null)}><Icon name="left" size={16} />All days</button>
@@ -405,6 +412,31 @@ export function OnsitePanel({ busy, perform, notify, dayId, onDayChange }: Panel
 
 /* ---------------- Settings ---------------- */
 
+type Notify = { digest_enabled: number; digest_time: string; digest_email: string | null; default_email: string | null; last_sent_day: string | null; last_run_at: number | null; last_count: number | null; last_error: string | null; unseen: number };
+
+function NotifyCard({ busy, perform, notify }: PanelProps) {
+  const [data, setData] = useState<Notify | null>(null), [form, setForm] = useState({ enabled: true, time: "19:00", email: "" });
+  const load = (next: Notify) => { setData(next); setForm({ enabled: next.digest_enabled === 1, time: next.digest_time, email: next.digest_email ?? "" }); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { perform(async () => load(await request<Notify>("notify-settings"))); }, []);
+  if (!data) return <section className="admin-card"><span className="admin-skeleton is-line" /><span className="admin-skeleton is-line is-short" /></section>;
+  const to = form.email.trim() || data.default_email || "no address";
+  const last = data.last_run_at ? `Last checked ${date(data.last_run_at)}: ${data.last_count ? `${data.last_count} unopened order${data.last_count === 1 ? "" : "s"}${data.last_error ? "" : ", email sent"}` : "nothing new, no email needed"}.` : "Not run yet.";
+  return <form className="admin-card admin-form settings-notify" onSubmit={(event) => { event.preventDefault(); perform(async () => { load(await request<Notify>("notify-settings", { enabled: form.enabled, time: form.time, email: form.email })); notify("Order email settings saved."); }); }}>
+    <div className="settings-card-head"><span className="settings-icon"><Icon name="bell" /></span><div><h2>Daily new-order email</h2><p className="admin-muted">Once a day, if paid orders are waiting that Natasha hasn't opened in the admin, an email lists them. Opening an order counts as seen.</p></div></div>
+    <label className="admin-toggle"><input type="checkbox" role="switch" checked={form.enabled} onChange={(event) => setForm({ ...form, enabled: event.target.checked })} /><span>{form.enabled ? "On" : "Off"}</span></label>
+    <div className="settings-grid">
+      <label>Send at (Hong Kong time)<input type="time" required value={form.time} disabled={!form.enabled} onChange={(event) => setForm({ ...form, time: event.target.value })} /></label>
+      <label>Send to<input type="email" maxLength={254} value={form.email} placeholder={data.default_email ?? "you@example.com"} disabled={!form.enabled} onChange={(event) => setForm({ ...form, email: event.target.value })} /><span className="admin-hint">Blank uses {data.default_email ?? "the forwarding address"}</span></label>
+    </div>
+    <p className="settings-status"><span className={`admin-pill is-${data.unseen ? "info" : "neutral"}`}>{data.unseen} not seen now</span><span className="admin-muted">{last}</span>{data.last_error && <span className="admin-pill is-bad">{data.last_error}</span>}</p>
+    <div className="settings-actions">
+      <button className="admin-primary" disabled={busy}>Save</button>
+      <button type="button" className="admin-secondary" disabled={busy} onClick={() => perform(async () => { const sent = await request<{ count: number }>("notify-test", {}); notify(`Test email sent to ${to}${sent.count ? ` listing ${sent.count} order${sent.count === 1 ? "" : "s"}` : ""}.`); })}><Icon name="mail" />Send a test now</button>
+    </div>
+  </form>;
+}
+
 export function SettingsPanel({ busy, perform, notify }: PanelProps) {
   const [data, setData] = useState<{ current: Rate; history: Rate[] } | null>(null);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -419,10 +451,11 @@ export function SettingsPanel({ busy, perform, notify }: PanelProps) {
   }
   const describe = (rate: Rate) => `${rate.airwallex_bp === null ? "Airwallex not set" : `Airwallex ${rate.airwallex_bp / 100}%${rate.airwallex_fixed_cents ? ` + ${money(rate.airwallex_fixed_cents)}` : ""}`} · CJ ${rate.partner_bp / 100}%`;
   return <div className="settings">
-    <h1>Settings</h1>
-    <p className="admin-lead">Rates Money uses to estimate what each online order costs you. Copy the Airwallex numbers from your Airwallex pricing page.</p>
-    {!data ? <p className="admin-empty" role="status">Loading settings…</p> : <>
-      <form className="admin-panel admin-form settings-form" onSubmit={save} key={data.history.length}>
+    <div className="admin-page-head"><div><h1>Settings</h1><p>Order emails and the rates Money uses.</p></div></div>
+    <NotifyCard busy={busy} perform={perform} notify={notify} />
+    {!data ? <section className="admin-card"><span className="admin-skeleton is-line" /><span className="admin-skeleton is-line is-short" /></section> : <>
+      <form className="admin-card admin-form settings-form" onSubmit={save} key={data.history.length}>
+        <div className="settings-card-head"><span className="settings-icon"><Icon name="chart" /></span><div><h2>Fees and shares</h2><p className="admin-muted">Money estimates each online order's costs from these. Copy the Airwallex numbers from your Airwallex pricing page.</p></div></div>
         <div className="settings-grid">
           <label>Airwallex fee (%)<input name="airwallex" inputMode="decimal" pattern="\d{1,2}(\.\d{1,2})?" defaultValue={percent(data.current.airwallex_bp)} placeholder="Not set" /></label>
           <label>Plus per payment (HK$)<input name="fixed" inputMode="decimal" pattern="\d{1,6}(\.\d{1,2})?" defaultValue={amount(data.current.airwallex_fixed_cents || null)} placeholder="0" /></label>

@@ -2,6 +2,7 @@ import { Buffer } from "node:buffer";
 import { timingSafeEqual } from "node:crypto";
 import type { CommerceDB } from "./commerce.server.ts";
 import { FINANCE_GET, FINANCE_POST, financeAction, sendShippedEmail } from "./admin-finance.server.ts";
+import { notifySettings, runDailyDigest, unseenCount } from "./admin-notify.server.ts";
 
 export type AdminEnv = {
   DB: CommerceDB;
@@ -131,19 +132,48 @@ export const cleanText = (value: unknown, max: number) => typeof value === "stri
 const orderId = (value: unknown) => { if (typeof value !== "string" || !UUID.test(value)) throw new HttpError(400, "Choose a valid order."); return value; };
 
 async function orders(request: Request, deps: AdminDeps) {
-  const params = new URL(request.url).searchParams, payment = params.get("payment") ?? "all", fulfillment = params.get("fulfillment") ?? "all", page = Number(params.get("page") ?? 1);
-  if ((payment !== "all" && !PAYMENTS.includes(payment)) || (fulfillment !== "all" && !STAGES.includes(fulfillment as Stage)) || !integer(page, 1, 10000)) throw new HttpError(400, "Choose a valid order filter.");
+  const params = new URL(request.url).searchParams, payment = params.get("payment") ?? "all", fulfillment = params.get("fulfillment") ?? "all", seen = params.get("seen") ?? "all", page = Number(params.get("page") ?? 1);
+  if ((payment !== "all" && !PAYMENTS.includes(payment)) || (fulfillment !== "all" && !STAGES.includes(fulfillment as Stage)) || (seen !== "all" && seen !== "unseen") || !integer(page, 1, 10000)) throw new HttpError(400, "Choose a valid order filter.");
   try { await deps.syncPayments?.(); } catch { console.warn("admin payment check unavailable"); }
+  // "Unseen" means a paid live order the owner has not opened yet.
   const rows = await deps.db.prepare(`SELECT o.id, o.status AS payment_status, o.mode, o.total_cents, o.created_at, o.paid_at,
-    COALESCE(f.status, 'new') AS fulfillment_status
-    FROM commerce_orders o LEFT JOIN admin_order_fulfillment f ON f.order_id = o.id
+    COALESCE(f.status, 'new') AS fulfillment_status, s.seen_at
+    FROM commerce_orders o LEFT JOIN admin_order_fulfillment f ON f.order_id = o.id LEFT JOIN admin_order_seen s ON s.order_id = o.id
     WHERE (? = 'all' OR o.status = ?) AND (? = 'all' OR COALESCE(f.status, 'new') = ?)
-    ORDER BY o.created_at DESC, o.id DESC LIMIT 51 OFFSET ?`).bind(payment, payment, fulfillment, fulfillment, (page - 1) * 50).all();
-  return json({ orders: rows.results.slice(0, 50), page, hasMore: rows.results.length > 50 });
+    AND (? = 'all' OR (o.status = 'paid' AND o.mode = 'prod' AND s.seen_at IS NULL))
+    ORDER BY o.created_at DESC, o.id DESC LIMIT 51 OFFSET ?`).bind(payment, payment, fulfillment, fulfillment, seen, (page - 1) * 50).all();
+  return json({ orders: rows.results.slice(0, 50), page, hasMore: rows.results.length > 50, unseen: await unseenCount(deps.db) });
 }
 
-async function detail(request: Request, deps: AdminDeps) {
+async function markAllSeen(deps: AdminDeps, actor: string) {
+  if (actor !== deps.username) throw new HttpError(403, "Only the owner's sign-in marks orders as seen.");
+  await deps.db.prepare(`INSERT INTO admin_order_seen (order_id, seen_at) SELECT id, ? FROM commerce_orders WHERE status = 'paid' AND mode = 'prod' ON CONFLICT(order_id) DO NOTHING`).bind(deps.now()).run();
+  return json({ ok: true });
+}
+
+async function notify(deps: AdminDeps, body?: Record<string, unknown>) {
+  if (body) {
+    const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : null;
+    if (typeof body.enabled !== "boolean" || typeof body.time !== "string" || !/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(body.time)
+      || email === null || (email !== "" && (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)))) throw new HttpError(400, "Choose a time like 19:00 and a valid email address, or leave the email blank.");
+    await deps.db.prepare("UPDATE admin_notify_settings SET digest_enabled = ?, digest_time = ?, digest_email = ? WHERE id = 1").bind(body.enabled ? 1 : 0, body.time, email || null).run();
+  }
+  const settings = await notifySettings(deps.db);
+  if (!settings) throw new HttpError(503, "Order emails are not configured.");
+  return json({ ...settings, default_email: deps.forwardTo ?? null, unseen: await unseenCount(deps.db) });
+}
+
+async function notifyTest(deps: AdminDeps) {
+  const { result, count } = await runDailyDigest({ db: deps.db, sendEmail: deps.sendEmail, defaultTo: deps.forwardTo, now: deps.now }, true);
+  if (result !== "sent") throw new HttpError(503, "The test email could not be sent. Check the address and try again later.");
+  return json({ ok: true, count });
+}
+
+async function detail(request: Request, deps: AdminDeps, actor: string) {
   const id = orderId(new URL(request.url).searchParams.get("id"));
+  // Opening a paid live order as the owner is what counts as "seen" for the daily email.
+  if (actor === deps.username) await deps.db.prepare(`INSERT INTO admin_order_seen (order_id, seen_at) SELECT ?, ? WHERE EXISTS (SELECT 1 FROM commerce_orders WHERE id = ? AND status = 'paid' AND mode = 'prod')
+    ON CONFLICT(order_id) DO NOTHING`).bind(id, deps.now(), id).run();
   const row = await deps.db.prepare(`SELECT id, locale, details_json, items_json, subtotal_cents, delivery_cents, discount_cents, total_cents,
     currency, voucher_code, status AS payment_status, payment_status AS provider_status, mode, created_at, paid_at
     FROM commerce_orders WHERE id = ?`).bind(id).first<{ details_json: string; items_json: string } & Record<string, unknown>>();
@@ -152,7 +182,8 @@ async function detail(request: Request, deps: AdminDeps) {
   const fulfillment = await deps.db.prepare("SELECT status, courier, tracking_number, note, version, updated_at, shipping_cents, shipped_email_at FROM admin_order_fulfillment WHERE order_id = ?").bind(id).first<Fulfillment>();
   // shortcut: expose the latest 100 audit entries; add cursor pagination if a single order needs more.
   const history = await deps.db.prepare("SELECT previous_status, status, courier, tracking_number, note, actor, created_at FROM admin_order_history WHERE order_id = ? ORDER BY id DESC LIMIT 100").bind(id).all();
-  return json({ order: { ...order, details: JSON.parse(details_json), items: JSON.parse(items_json), fulfillment: fulfillment ?? { status: "new", courier: "", tracking_number: "", note: "", version: 0, shipping_cents: null, shipped_email_at: null }, history: history.results } });
+  const seen = await deps.db.prepare("SELECT seen_at FROM admin_order_seen WHERE order_id = ?").bind(id).first<{ seen_at: number }>();
+  return json({ order: { ...order, seen_at: seen?.seen_at ?? null, details: JSON.parse(details_json), items: JSON.parse(items_json), fulfillment: fulfillment ?? { status: "new", courier: "", tracking_number: "", note: "", version: 0, shipping_cents: null, shipped_email_at: null }, history: history.results } });
 }
 
 async function fulfill(body: Record<string, unknown>, deps: AdminDeps, actor: string) {
@@ -347,7 +378,8 @@ export async function handleAdmin(action: string, request: Request, deps: AdminD
     }
     const actor = await viewer(request, deps);
     if (!actor) throw new HttpError(401, "Sign in to continue.");
-    if (["logout", "fulfillment", "shipped-email", "order-cancel", "voucher-create", "voucher-set-create", "voucher-deactivate"].includes(action) || FINANCE_POST.has(action) || (action === "mail-settings" && request.method === "POST")) {
+    if (["logout", "fulfillment", "shipped-email", "order-cancel", "orders-seen", "notify-test", "voucher-create", "voucher-set-create", "voucher-deactivate"].includes(action) || FINANCE_POST.has(action)
+      || (["mail-settings", "notify-settings"].includes(action) && request.method === "POST")) {
       if (request.method !== "POST") throw new HttpError(405, "Use the admin form.");
       const body = await readJson(request);
       if (action === "logout") {
@@ -358,6 +390,9 @@ export async function handleAdmin(action: string, request: Request, deps: AdminD
       if (action === "fulfillment") return await fulfill(body, deps, actor);
       if (action === "shipped-email") return await resendShippedEmail(body, deps);
       if (action === "order-cancel") return await cancelOrder(body, deps);
+      if (action === "orders-seen") return await markAllSeen(deps, actor);
+      if (action === "notify-settings") return await notify(deps, body);
+      if (action === "notify-test") return await notifyTest(deps);
       if (action === "voucher-create") return await createVoucher(body, deps);
       if (action === "voucher-set-create") return await createVoucherSet(body, deps);
       if (action === "mail-settings") return await mailSettings(deps, body);
@@ -368,9 +403,10 @@ export async function handleAdmin(action: string, request: Request, deps: AdminD
       const result = await financeAction(action, request, deps, actor);
       return result instanceof Response ? result : json(result);
     }
-    if (action === "status") return json({ ok: true, username: actor });
+    if (action === "status") return json({ ok: true, username: actor, owner: actor === deps.username, unseen: await unseenCount(deps.db) });
     if (action === "orders") return await orders(request, deps);
-    if (action === "order") return await detail(request, deps);
+    if (action === "order") return await detail(request, deps, actor);
+    if (action === "notify-settings") return await notify(deps);
     if (action === "vouchers") return await vouchers(request, deps);
     if (action === "inbox") return await inbox(request, deps);
     if (action === "inbox-raw") return await inboxRaw(request, deps);

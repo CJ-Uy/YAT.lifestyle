@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
 import { test } from "node:test";
 import { handleAdmin, parseAdminUsers, verifyAdminPassword, type AdminDeps } from "./admin.server.ts";
+import { runDailyDigest } from "./admin-notify.server.ts";
 import type { CommerceStatement } from "./commerce.server.ts";
 
 const ORIGIN = "https://admin.yatlifestyle.com", PASSWORD = "generated-test-password-" + "x".repeat(32);
@@ -11,7 +12,7 @@ const salt = Buffer.alloc(16, 7), PASSWORD_HASH = `pbkdf2-sha256$100000$${salt.t
 
 function setup() {
   const db = new DatabaseSync(":memory:");
-  for (const file of ["0007_commerce.sql", "0008_admin.sql", "0009_inbox.sql", "0010_free_delivery.sql", "0011_admin_finance.sql"]) db.exec(readFileSync(new URL(`../migrations/${file}`, import.meta.url), "utf8"));
+  for (const file of ["0007_commerce.sql", "0008_admin.sql", "0009_inbox.sql", "0010_free_delivery.sql", "0011_admin_finance.sql", "0012_admin_order_seen.sql"]) db.exec(readFileSync(new URL(`../migrations/${file}`, import.meta.url), "utf8"));
   const clock = { now: Date.parse("2026-10-12T10:00:00Z") }, limits = { allowed: true, keys: [] as string[] };
   // Match D1's bound-statement shape while exercising the real SQLite constraints and triggers.
   const statement = (sql: string): CommerceStatement => {
@@ -71,8 +72,8 @@ test("admin: all operational endpoints reject anonymous requests before touching
   const { deps } = setup();
   let touched = 0;
   const guarded = { ...deps, db: { prepare: () => { touched++; throw new Error("must not query"); }, batch: deps.db.batch }, syncPayments: async () => { touched++; } };
-  for (const action of ["status", "orders", "order", "vouchers", "delivery-notes", "inbox", "inbox-raw", "mail-settings", "money", "money-csv", "settings", "onsite-days", "onsite-day", "unknown"]) assert.equal((await handleAdmin(action, get(action), guarded)).status, 401, action);
-  for (const action of ["logout", "fulfillment", "shipped-email", "order-cancel", "voucher-create", "voucher-set-create", "voucher-deactivate", "mail-settings", "partner-paid", "partner-unpaid", "settings-save", "onsite-day-create", "onsite-day-update", "onsite-day-delete", "onsite-sale-save", "onsite-sale-delete"]) assert.equal((await handleAdmin(action, post(action, {}), guarded)).status, 401, action);
+  for (const action of ["status", "orders", "order", "vouchers", "delivery-notes", "inbox", "inbox-raw", "mail-settings", "money", "money-csv", "settings", "onsite-days", "onsite-day", "notify-settings", "unknown"]) assert.equal((await handleAdmin(action, get(action), guarded)).status, 401, action);
+  for (const action of ["logout", "fulfillment", "shipped-email", "order-cancel", "voucher-create", "voucher-set-create", "voucher-deactivate", "mail-settings", "partner-paid", "partner-unpaid", "settings-save", "onsite-day-create", "onsite-day-update", "onsite-day-delete", "onsite-sale-save", "onsite-sale-delete", "orders-seen", "notify-settings", "notify-test"]) assert.equal((await handleAdmin(action, post(action, {}), guarded)).status, 401, action);
   assert.equal(touched, 0);
 });
 
@@ -352,4 +353,63 @@ test("admin: a second account signs in with its own password, and removing its h
   assert.equal((await (await handleAdmin("status", get("status", cookie), withUsers)).json()).username, "cj");
   assert.equal((await handleAdmin("status", get("status", cookie), deps)).status, 401);
   assert.equal((await handleAdmin("status", get("status", (await signIn(withUsers)).cookie), withUsers)).status, 200);
+});
+
+test("admin seen: only the owner opening a paid live order marks it seen; the unseen filter, counts and Mark all follow it", async () => {
+  const { deps, db, seedOrder } = setup(), { cookie } = await signIn(deps);
+  const cjDeps: AdminDeps = { ...deps, users: { cj: PASSWORD_HASH } };
+  const cjCookie = (await handleAdmin("login", post("login", { username: "cj", password: PASSWORD }), cjDeps)).headers.get("set-cookie")!.split(";")[0];
+  const first = seedOrder(), second = seedOrder(), unpaid = seedOrder("unpaid"), sandbox = seedOrder("paid", "sandbox");
+  const status = async (who = cookie, using = deps) => (await (await handleAdmin("status", get("status", who), using)).json()) as { unseen: number; owner: boolean };
+  assert.deepEqual(await status(), { ok: true, username: "natasha", owner: true, unseen: 2 } as never);
+  await handleAdmin("order", get(`order?id=${first}`, cjCookie), cjDeps);
+  assert.equal((await status(cjCookie, cjDeps)).unseen, 2);
+  assert.equal((await status(cjCookie, cjDeps)).owner, false);
+  for (const id of [first, unpaid, sandbox]) assert.equal((await handleAdmin("order", get(`order?id=${id}`, cookie), deps)).status, 200);
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM admin_order_seen").get()!.n, 1);
+  const unseen = await (await handleAdmin("orders", get("orders?seen=unseen", cookie), deps)).json();
+  assert.deepEqual(unseen.orders.map((row: { id: string }) => row.id), [second]); assert.equal(unseen.unseen, 1);
+  assert.ok((await (await handleAdmin("order", get(`order?id=${first}`, cookie), deps)).json()).order.seen_at);
+  assert.equal((await handleAdmin("orders", get("orders?seen=maybe", cookie), deps)).status, 400);
+  assert.equal((await handleAdmin("orders-seen", post("orders-seen", {}, cjCookie), cjDeps)).status, 403);
+  assert.equal((await handleAdmin("orders-seen", post("orders-seen", {}, cookie), deps)).status, 200);
+  assert.equal((await status()).unseen, 0);
+});
+
+test("admin seen: the daily email goes once per Hong Kong day after the saved time, skips empty days and retries failures", async () => {
+  const { deps, db, clock, seedOrder } = setup();
+  const sent: { to: string; subject: string; text: string }[] = [];
+  let failing = false;
+  const notify = { db: deps.db, defaultTo: "owner@example.com", now: () => clock.now, sendEmail: async (message: (typeof sent)[number]) => { if (failing) throw new Error("down"); sent.push(message); } };
+  clock.now = Date.parse("2026-10-24T10:59:00Z"); // 18:59 in Hong Kong
+  assert.equal((await runDailyDigest(notify)).result, "not-due");
+  clock.now = Date.parse("2026-10-24T11:00:00Z");
+  assert.deepEqual(await runDailyDigest(notify), { result: "none", count: 0 });
+  assert.equal((await runDailyDigest(notify)).result, "already-sent");
+  const order = seedOrder(); db.prepare("UPDATE commerce_orders SET paid_at = ? WHERE id = ?").run(Date.parse("2026-10-25T02:00:00Z"), order);
+  clock.now = Date.parse("2026-10-25T11:05:00Z");
+  failing = true;
+  assert.equal((await runDailyDigest(notify)).result, "failed");
+  assert.equal(db.prepare("SELECT last_sent_day FROM admin_notify_settings").get()!.last_sent_day, "2026-10-24");
+  failing = false;
+  assert.deepEqual(await runDailyDigest(notify), { result: "sent", count: 1 });
+  assert.equal((await runDailyDigest(notify)).result, "already-sent");
+  assert.equal(sent.length, 1); assert.equal(sent[0].to, "owner@example.com");
+  assert.equal(sent[0].subject, "1 new YAT.LIFESTYLE order to review");
+  assert.match(sent[0].text, /25 Oct, 10:00 · Spill the tea × 1 · HK\$258 · Wan Chai/);
+  assert.match(sent[0].text, /https:\/\/admin\.yatlifestyle\.com\/admin/);
+
+  // Settings: validated time and address, disable, and a test that leaves the schedule alone.
+  let { cookie } = await signIn(deps);
+  for (const invalid of [{ time: "7pm" }, { time: "24:00" }, { email: "not-an-email" }, { enabled: "yes" }]) assert.equal((await handleAdmin("notify-settings", post("notify-settings", { enabled: true, time: "19:00", email: "", ...invalid }, cookie), deps)).status, 400, JSON.stringify(invalid));
+  const saved = await (await handleAdmin("notify-settings", post("notify-settings", { enabled: false, time: "08:30", email: " Natasha@Example.com " }, cookie), deps)).json();
+  assert.deepEqual([saved.digest_enabled, saved.digest_time, saved.digest_email, saved.unseen], [0, "08:30", "natasha@example.com", 1]);
+  clock.now = Date.parse("2026-10-26T01:00:00Z");
+  assert.equal((await runDailyDigest(notify)).result, "disabled");
+  ({ cookie } = await signIn(deps));
+  const mailer = { ...deps, sendEmail: notify.sendEmail, forwardTo: "fallback@example.com" };
+  assert.equal((await handleAdmin("notify-test", post("notify-test", {}, cookie), mailer)).status, 200);
+  assert.equal(sent.at(-1)!.to, "natasha@example.com"); assert.match(sent.at(-1)!.subject, /^Test:/);
+  assert.equal(db.prepare("SELECT last_sent_day FROM admin_notify_settings").get()!.last_sent_day, "2026-10-25");
+  assert.equal((await handleAdmin("notify-test", post("notify-test", {}, cookie), { ...mailer, sendEmail: undefined })).status, 503);
 });
