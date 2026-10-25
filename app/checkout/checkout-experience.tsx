@@ -12,12 +12,13 @@ import "./checkout-controls.css";
 type DeliveryFields = { name: string; email: string; phone: string; district: string; building: string; street: string; notes: string };
 type FieldErrors = Partial<Record<keyof DeliveryFields, string>>;
 type Review = { items: CartItem[]; subtotal: number; delivery: DeliveryFields };
+class VoucherRejected extends Error {}
 type Quote = { subtotalCents: number; deliveryCents: number; discountCents: number; totalCents: number; voucherCode: string | null };
 
 const liveCopy = {
-  en: { intro: "Verify your email, add your address, then review your order.", preview: "Secure payment with Airwallex", privacy: "We use your details to verify your email, fulfill your order and send updates. See our Privacy Policy.", bag: "Cart", loading: "Loading your cart…", empty: "Add a fragrance before checkout.", reviewButton: "Review order", reviewIntro: "Check your details before continuing to secure payment.", confirm: "Continue to payment", confirmationHint: "Card details are handled by Airwallex. Your order is confirmed after payment succeeds.", editBag: "Edit cart", total: "Total", delivery: "Home delivery", timing: "Free Hong Kong delivery. Arrives within 2 weeks.", voucher: "Voucher code", apply: "Apply", discount: "Voucher", remove: "Remove", calculating: "Checking total…", paying: "Opening secure payment…", verifyError: "Verify your email with a code before continuing.", paymentError: "Payment could not be opened. Try again; your cart is saved.", voucherError: "This voucher cannot be applied. Check the code, or remove it to continue.", quoteError: "We could not check your total. Please try again.", retry: "Try again" },
-  "zh-Hant": { intro: "驗證電郵、填寫地址，再核對訂單。", preview: "Airwallex 安全付款", privacy: "我們使用你的資料驗證電郵、處理訂單及傳送通知。詳情請參閱私隱政策。", bag: "購物車", loading: "正在載入購物車…", empty: "請先加入香水，再結帳。", reviewButton: "核對訂單", reviewIntro: "繼續安全付款前，請核對資料。", confirm: "前往付款", confirmationHint: "付款卡資料由 Airwallex 處理。付款成功後，訂單才會確認。", editBag: "修改購物車", total: "總額", delivery: "送貨上門", timing: "香港免費送貨，兩星期內送達。", voucher: "優惠碼", apply: "套用", discount: "優惠", remove: "移除", calculating: "正在核對總額…", paying: "正在開啟安全付款…", verifyError: "請先用驗證碼驗證電郵。", paymentError: "無法開啟付款。請再試一次；購物車已保留。", voucherError: "無法使用此優惠碼。請核對，或移除後繼續。", quoteError: "無法核對總額，請再試一次。", retry: "再試一次" },
-  "zh-Hans": { intro: "验证邮箱、填写地址，再核对订单。", preview: "Airwallex 安全付款", privacy: "我们使用你的资料验证邮箱、处理订单及发送通知。详情请参阅隐私政策。", bag: "购物车", loading: "正在加载购物车…", empty: "请先加入香水，再结账。", reviewButton: "核对订单", reviewIntro: "继续安全付款前，请核对资料。", confirm: "前往付款", confirmationHint: "付款卡资料由 Airwallex 处理。付款成功后，订单才会确认。", editBag: "修改购物车", total: "总额", delivery: "送货上门", timing: "香港免费配送，两星期内送达。", voucher: "优惠码", apply: "应用", discount: "优惠", remove: "移除", calculating: "正在核对总额…", paying: "正在打开安全付款…", verifyError: "请先用验证码验证邮箱。", paymentError: "无法打开付款。请重试；购物车已保留。", voucherError: "无法使用此优惠码。请核对，或移除后继续。", quoteError: "无法核对总额，请重试。", retry: "重试" },
+  en: { intro: "Verify your email, add your address, then review your order.", preview: "Secure payment with Airwallex", privacy: "We use your details to verify your email, fulfill your order and send updates. See our Privacy Policy.", bag: "Cart", loading: "Loading your cart…", empty: "Add a fragrance before checkout.", reviewButton: "Review order", reviewIntro: "Check your details before continuing to secure payment.", confirm: "Continue to payment", confirmationHint: "Card details are handled by Airwallex. Your order is confirmed after payment succeeds.", editBag: "Edit cart", total: "Total", delivery: "Home delivery", timing: "Free Hong Kong delivery. Arrives within 2 weeks.", voucher: "Voucher code", apply: "Apply", discount: "Voucher", remove: "Remove", calculating: "Checking total…", paying: "Opening secure payment…", verifyError: "Verify your email with a code before continuing.", paymentError: "Payment could not be opened. Try again; your cart is saved.", voucherError: "This voucher cannot be applied. Check the code, or remove it to continue.", voucherRejected: "{code} can't be used. It may be inactive, expired, used up or mistyped.", applied: "applied", quoteError: "We could not check your total. Please try again.", retry: "Try again" },
+  "zh-Hant": { intro: "驗證電郵、填寫地址，再核對訂單。", preview: "Airwallex 安全付款", privacy: "我們使用你的資料驗證電郵、處理訂單及傳送通知。詳情請參閱私隱政策。", bag: "購物車", loading: "正在載入購物車…", empty: "請先加入香水，再結帳。", reviewButton: "核對訂單", reviewIntro: "繼續安全付款前，請核對資料。", confirm: "前往付款", confirmationHint: "付款卡資料由 Airwallex 處理。付款成功後，訂單才會確認。", editBag: "修改購物車", total: "總額", delivery: "送貨上門", timing: "香港免費送貨，兩星期內送達。", voucher: "優惠碼", apply: "套用", discount: "優惠", remove: "移除", calculating: "正在核對總額…", paying: "正在開啟安全付款…", verifyError: "請先用驗證碼驗證電郵。", paymentError: "無法開啟付款。請再試一次；購物車已保留。", voucherError: "無法使用此優惠碼。請核對，或移除後繼續。", voucherRejected: "{code} 無法使用，可能已停用、過期、用完或輸入有誤。", applied: "已套用", quoteError: "無法核對總額，請再試一次。", retry: "再試一次" },
+  "zh-Hans": { intro: "验证邮箱、填写地址，再核对订单。", preview: "Airwallex 安全付款", privacy: "我们使用你的资料验证邮箱、处理订单及发送通知。详情请参阅隐私政策。", bag: "购物车", loading: "正在加载购物车…", empty: "请先加入香水，再结账。", reviewButton: "核对订单", reviewIntro: "继续安全付款前，请核对资料。", confirm: "前往付款", confirmationHint: "付款卡资料由 Airwallex 处理。付款成功后，订单才会确认。", editBag: "修改购物车", total: "总额", delivery: "送货上门", timing: "香港免费配送，两星期内送达。", voucher: "优惠码", apply: "应用", discount: "优惠", remove: "移除", calculating: "正在核对总额…", paying: "正在打开安全付款…", verifyError: "请先用验证码验证邮箱。", paymentError: "无法打开付款。请重试；购物车已保留。", voucherError: "无法使用此优惠码。请核对，或移除后继续。", voucherRejected: "{code} 无法使用，可能已停用、过期、用完或输入有误。", applied: "已应用", quoteError: "无法核对总额，请重试。", retry: "重试" },
 };
 
 const districts = [
@@ -70,6 +71,7 @@ export default function CheckoutExperience() {
   const [verifiedEmail, setVerifiedEmail] = useState<string | null>(null);
   const [voucherInput, setVoucherInput] = useState("");
   const [voucher, setVoucher] = useState("");
+  const [voucherNotice, setVoucherNotice] = useState("");
   const [quote, setQuote] = useState<Quote | null>(null);
   const [quoteError, setQuoteError] = useState(false);
   const [quoteRetry, setQuoteRetry] = useState(0);
@@ -86,8 +88,18 @@ export default function CheckoutExperience() {
     const controller = new AbortController();
     setQuote(null); setQuoteError(false); requestId.current = null;
     fetch("/api/commerce/quote", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ items: JSON.parse(itemsKey), voucher }), signal: controller.signal })
-      .then(async response => { if (!response.ok) throw new Error("quote"); const value = await response.json() as Quote; if (!controller.signal.aborted) setQuote(value); })
-      .catch(() => { if (!controller.signal.aborted) setQuoteError(true); });
+      .then(async response => {
+        if (!response.ok) {
+          const failure = await response.json().catch(() => ({})) as { error?: string };
+          if (voucher && (failure.error === "voucher_unavailable" || failure.error === "invalid_voucher")) throw new VoucherRejected();
+          throw new Error("quote");
+        }
+        const value = await response.json() as Quote; if (!controller.signal.aborted) setQuote(value);
+      })
+      .catch((problem) => {
+        if (controller.signal.aborted) return;
+        if (problem instanceof VoucherRejected) { setVoucherNotice(voucher); setVoucher(""); setVoucherInput(""); } else setQuoteError(true);
+      });
     return () => controller.abort();
   }, [cart.ready, itemsKey, voucher, quoteRetry]);
 
@@ -122,7 +134,11 @@ export default function CheckoutExperience() {
     requestId.current ??= crypto.randomUUID();
     try {
       const response = await fetch("/api/commerce/create", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ items: review.items, details: review.delivery, voucher, locale, requestId: requestId.current }) });
-      if (!response.ok) throw new Error("payment");
+      if (!response.ok) {
+        const failure = await response.json().catch(() => ({})) as { error?: string };
+        if (voucher && failure.error === "voucher_unavailable") { requestId.current = null; setVoucherNotice(voucher); setVoucher(""); setVoucherInput(""); setPaying(false); return; }
+        throw new Error("payment");
+      }
       const payment = await response.json() as Payment;
       if (payment.totalCents !== quote.totalCents) { requestId.current = null; setQuoteRetry(n => n + 1); throw new Error("total_changed"); }
       await payWithAirwallex(payment, locale);
@@ -162,11 +178,12 @@ export default function CheckoutExperience() {
           <aside className="bag-summary" aria-labelledby="checkout-summary-heading">
             <h2 id="checkout-summary-heading">{t.summary}</h2>
             <ul className="checkout-items">{selectedItems.map((item) => { const product = productBySlug(item.slug); return product ? <li key={item.slug}><a href={`/shop/${item.slug}`}>{product.name}</a><span>{t.quantity}: {item.quantity}</span><span>{formatPrice(item.quantity * PRICE_CENTS)}</span></li> : null; })}</ul>
-            <p className="store-muted">{t.pack}</p>
-            <form className="checkout-voucher" onSubmit={event => { event.preventDefault(); setVoucher(voucherInput.trim().toUpperCase()); setQuoteRetry(n => n + 1); }}><label htmlFor="checkout-voucher">{t.voucher}</label><div><input id="checkout-voucher" value={voucherInput} onChange={event => setVoucherInput(event.target.value)} maxLength={32} autoCapitalize="characters" autoComplete="off" /><button className="store-btn-secondary" type="submit">{t.apply}</button></div></form>
-            {voucher && <button className="checkout-voucher-remove" type="button" onClick={() => { setVoucher(""); setVoucherInput(""); }}>{t.remove} {voucher}</button>}
-            {quoteError ? <p className="checkout-error" role="alert">{voucher ? t.voucherError : t.quoteError} <button type="button" className="checkout-voucher-remove" onClick={() => setQuoteRetry(n => n + 1)}>{t.retry}</button></p> : !quote ? <p role="status">{t.calculating}</p> : <dl><div><dt>{t.subtotal}</dt><dd>{formatPrice(quote.subtotalCents)}</dd></div>{quote.discountCents > 0 && <div><dt>{t.discount} {quote.voucherCode}</dt><dd>−{formatPrice(quote.discountCents)}</dd></div>}<div><dt>{t.delivery}</dt><dd>{formatDelivery(quote.deliveryCents, locale)}</dd></div><div className="bag-total"><dt>{t.total}</dt><dd>{formatPrice(quote.totalCents)}</dd></div></dl>}
-            <p className="store-muted">{t.timing}</p><a href="/bag" className="store-btn-secondary">{t.editBag}</a>
+            <p className="checkout-pack">{t.pack}</p>
+            {voucher ? <div className="checkout-voucher-applied"><span><b>{voucher}</b> {t.applied}</span><button className="checkout-voucher-remove" type="button" onClick={() => { setVoucher(""); setVoucherInput(""); }}>{t.remove}</button></div>
+              : <form className="checkout-voucher" onSubmit={event => { event.preventDefault(); const code = voucherInput.trim().toUpperCase(); if (!code) return; setVoucherNotice(""); setVoucher(code); setQuoteRetry(n => n + 1); }}><label htmlFor="checkout-voucher">{t.voucher}</label><div><input id="checkout-voucher" value={voucherInput} onChange={event => { setVoucherInput(event.target.value); setVoucherNotice(""); }} maxLength={32} autoCapitalize="characters" autoComplete="off" aria-describedby={voucherNotice ? "checkout-voucher-notice" : undefined} /><button className="store-btn-secondary" type="submit">{t.apply}</button></div></form>}
+            {voucherNotice && <p className="checkout-voucher-notice" id="checkout-voucher-notice" role="alert">{t.voucherRejected.replace("{code}", voucherNotice)}</p>}
+            {quoteError ? <p className="checkout-error" role="alert">{t.quoteError} <button type="button" className="checkout-voucher-remove" onClick={() => setQuoteRetry(n => n + 1)}>{t.retry}</button></p> : !quote ? <p className="checkout-pack" role="status">{t.calculating}</p> : <dl className="checkout-totals"><div><dt>{t.subtotal}</dt><dd>{formatPrice(quote.subtotalCents)}</dd></div>{quote.discountCents > 0 && <div><dt>{t.discount} {quote.voucherCode}</dt><dd>−{formatPrice(quote.discountCents)}</dd></div>}<div><dt>{t.delivery}</dt><dd>{formatDelivery(quote.deliveryCents, locale)}</dd></div><div className="bag-total"><dt>{t.total}</dt><dd>{formatPrice(quote.totalCents)}</dd></div></dl>}
+            <p className="checkout-pack">{t.timing}</p><a href="/bag" className="store-btn-secondary checkout-edit-cart">{t.editBag}</a>
           </aside>
         </div>
       </>}
