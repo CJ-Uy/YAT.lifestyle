@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { DELIVERY_CENTS, MAX_BAG_COUNT, MAX_PER_SCENT, PRICE_CENTS, formatDelivery, formatPrice, productBySlug } from "../../lib/shop";
 import { useCart } from "../shop/cart";
+import { SOLD_OUT_COPY, useStock } from "../shop/stock";
 import { useLocale } from "../site-header";
 import { StoreShell } from "../storefront";
 import "./cart-refinements.css";
@@ -40,6 +41,8 @@ export default function BagExperience() {
   const [message, setMessage] = useState("");
   const headingRef = useRef<HTMLHeadingElement>(null);
   const t = copy[locale];
+  const stock = useStock(), sold = SOLD_OUT_COPY[locale];
+  const blocked = stock.closed ? sold.closed : cart.items.some((item) => stock.isSoldOut(item.slug)) ? sold.remove : "";
 
   return <StoreShell locale={locale} onLocaleChange={setLocale}>
     <main className="store-page cart-page" id="store-content">
@@ -66,6 +69,7 @@ export default function BagExperience() {
               <div className="bag-item-copy">
                 <h2><a href={`/shop/${item.slug}`}>{product.name}</a></h2>
                 <p>{product.copy[locale].subtitle}</p>
+                {stock.isSoldOut(item.slug) && <p className="bag-sold-out">{sold.soldOut}</p>}
                 <div className="bag-item-actions"><div className="bag-quantity" role="group" aria-label={`${t.quantity}: ${product.name}`}>
                   <button type="button" className="store-btn-secondary" disabled={item.quantity <= 1} aria-label={`${t.decrease}: ${product.name}`} onClick={() => update(item.quantity - 1)}>−</button>
                   <label className="visually-hidden" htmlFor={`quantity-${item.slug}`}>{t.quantity}: {product.name}</label>
@@ -73,7 +77,7 @@ export default function BagExperience() {
                     const next = event.currentTarget.valueAsNumber;
                     if (Number.isSafeInteger(next) && next >= 1) update(next);
                   }} />
-                  <button type="button" className="store-btn-secondary" disabled={item.quantity >= maxQuantity} aria-label={`${t.increase}: ${product.name}`} onClick={() => update(item.quantity + 1)}>+</button>
+                  <button type="button" className="store-btn-secondary" disabled={item.quantity >= maxQuantity || stock.isSoldOut(item.slug)} aria-label={`${t.increase}: ${product.name}`} onClick={() => update(item.quantity + 1)}>+</button>
                 </div>
                 <button type="button" className="bag-remove" aria-label={`${t.remove}: ${product.name}`} onClick={(event) => {
                   const row = event.currentTarget.closest("li");
@@ -89,7 +93,7 @@ export default function BagExperience() {
           <aside className="bag-summary" aria-labelledby="bag-summary-heading">
             <h2 id="bag-summary-heading">{t.summary}</h2>
             <dl><div><dt>{t.subtotal}</dt><dd>{formatPrice(cart.subtotal)}</dd></div><div><dt>{t.delivery}</dt><dd>{formatDelivery(DELIVERY_CENTS, locale)}</dd></div><div className="bag-total"><dt>{t.total}</dt><dd>{formatPrice(cart.subtotal + DELIVERY_CENTS)}</dd></div></dl>
-            <p className="store-muted">{t.timing}</p><a className="store-btn" href="/checkout">{t.checkout}</a><a className="store-btn-secondary" href="/shop">{t.shop}</a>
+            <p className="store-muted">{t.timing}</p>{blocked ? <><p className="bag-blocked" role="status">{blocked}</p><button className="store-btn" type="button" disabled>{t.checkout}</button></> : <a className="store-btn" href="/checkout">{t.checkout}</a>}<a className="store-btn-secondary" href="/shop">{t.shop}</a>
           </aside>
         </div>
       </>}

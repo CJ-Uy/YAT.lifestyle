@@ -85,6 +85,21 @@ html:has(.admin-shell), body:has(.admin-shell) { background: #f5f4f0; color-sche
 .admin-link { display: inline-flex; align-items: center; gap: .3rem; min-height: 32px; padding: 0; border: 0; background: transparent; color: var(--accent); font-size: .875rem; text-decoration: underline; text-underline-offset: .2em; }
 .admin-link:hover:not(:disabled) { color: #173f99; }
 .admin-link.is-danger { color: var(--bad); }
+.admin-secondary.is-danger { color: var(--bad) !important; }
+.admin-secondary.is-danger:hover:not(:disabled) { border-color: var(--bad); }
+
+/* ---------- Inventory ---------- */
+.admin-shop-switch { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+.admin-shop-switch h3 { margin: 0 0 .25rem; }
+.admin-shop-switch p { margin: 0; max-width: 56ch; }
+.admin-shop-switch.is-closed { border-color: var(--bad); background: var(--bad-soft); }
+.admin-inventory { list-style: none; margin: 0; padding: 0; }
+.admin-inventory li { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; align-items: center; gap: .9rem; padding: .7rem 0; border-bottom: 1px solid var(--line); }
+.admin-inventory li:last-child { border-bottom: 0; }
+.admin-inventory img { width: 48px; height: 60px; object-fit: cover; border-radius: var(--radius-sm); }
+.admin-inventory div { display: flex; flex-direction: column; min-width: 0; }
+.admin-inventory small { color: var(--subtle); font-size: .8125rem; }
+.admin-inventory .admin-toggle span { min-width: 5.5em; }
 .admin-quiet { min-height: 36px; padding: 0; border: 0; background: transparent; color: var(--accent); font-size: .875rem; text-decoration: underline; }
 .admin-segmented { display: inline-flex; padding: 3px; gap: 2px; border-radius: var(--radius-sm); background: var(--neutral-soft); }
 .admin-segmented button { min-height: 34px; padding: .3rem .85rem; border: 0; border-radius: 5px; background: transparent; color: var(--muted); font-size: .875rem; font-weight: 550; }

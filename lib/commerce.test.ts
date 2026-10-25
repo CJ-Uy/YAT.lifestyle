@@ -15,7 +15,7 @@ const decode = async (response: Response) => await response.json() as Record<str
 function setup() {
   const db = new DatabaseSync(":memory:");
   db.exec("PRAGMA foreign_keys = ON");
-  for (const file of ["0006_checkout_email.sql", "0007_commerce.sql", "0010_free_delivery.sql"]) db.exec(readFileSync(new URL(`../migrations/${file}`, import.meta.url), "utf8"));
+  for (const file of ["0006_checkout_email.sql", "0007_commerce.sql", "0010_free_delivery.sql", "0015_inventory.sql"]) db.exec(readFileSync(new URL(`../migrations/${file}`, import.meta.url), "utf8"));
   db.prepare("INSERT INTO checkout_email_proofs (id_hash, email, expires_at) VALUES (?, ?, ?)").run(createHash("sha256").update("a".repeat(43)).digest("hex"), details.email, Date.now() + 1800000);
   const sql = new WeakMap<CommerceStatement, { query: string; values: (string | number | null)[] }>();
   const prepare = (query: string): CommerceStatement => {
@@ -339,4 +339,23 @@ test("commerce: payment racing admin cancellation wins reconciliation and never 
   fixture.provider.paidDuringCancel = true;
   await assert.rejects(cancelUnpaidOrder(fixture.env, payment.orderId), (error: unknown) => (error as { code: string }).code === "already_paid");
   assert.equal(fixture.db.prepare("SELECT status FROM commerce_orders").get()!.status, "paid"); assert.equal(fixture.db.prepare("SELECT status FROM commerce_voucher_reservations").get()!.status, "redeemed"); assert.equal(fixture.mail.length, 1);
+});
+
+test("commerce: sold-out scents and a closed shop block new checkouts and unpaid resumes", async (t) => {
+  const fixture = setup(); t.mock.method(globalThis, "fetch", fixture.fetcher);
+  const stock = async () => (await fixture.handle("stock", new Request(`${ORIGIN}/api/commerce/stock`))).json();
+  assert.deepEqual(await stock(), { closed: false, soldOut: [] });
+  const { payment, cookie } = await created(fixture);
+  fixture.db.prepare("INSERT INTO shop_inventory (slug, sold_out, updated_by, updated_at) VALUES ('midnight', 1, 'natasha', 0)").run();
+  assert.deepEqual(await stock(), { closed: false, soldOut: ["midnight"] });
+  const blocked = await fixture.handle("create", post("create", body()));
+  assert.equal(blocked.status, 409); assert.equal((await blocked.json()).error, "sold_out");
+  assert.equal((await fixture.handle("create", post("create", body({ items: [{ slug: "golden", quantity: 1 }] })))).status, 200);
+  const resume = await fixture.handle("resume", post("resume", { id: payment.orderId }, cookie));
+  assert.equal(resume.status, 409); assert.equal((await resume.json()).error, "sold_out");
+  fixture.db.prepare("UPDATE shop_state SET closed = 1").run();
+  assert.equal((await stock()).closed, true);
+  const closed = await fixture.handle("create", post("create", body({ items: [{ slug: "golden", quantity: 1 }] })));
+  assert.equal(closed.status, 409); assert.equal((await closed.json()).error, "shop_closed");
+  assert.equal((await fixture.handle("quote", post("quote", { items: [{ slug: "golden", quantity: 1 }] }))).status, 200);
 });

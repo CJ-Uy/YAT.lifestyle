@@ -102,6 +102,17 @@ export function discountFor(voucher: VoucherRow, subtotal: number, now: number):
   if (!Number.isSafeInteger(subtotal) || subtotal < 1 || voucher.active !== 1 || (voucher.expires_at !== null && voucher.expires_at <= now) || subtotal < voucher.min_subtotal_cents || !Number.isSafeInteger(voucher.amount) || voucher.amount < 1 || (voucher.kind !== "fixed" && voucher.kind !== "percent") || (voucher.kind === "percent" && voucher.amount > 100)) throw new HttpError(422, "voucher_unavailable");
   return Math.min(subtotal, voucher.kind === "percent" ? Math.floor(subtotal * voucher.amount / 100) : voucher.amount);
 }
+/** Which scents customers cannot buy right now; a closed shop sells out every scent. */
+export async function stockState(env: { DB: CommerceDB }) {
+  const state = await env.DB.prepare("SELECT closed FROM shop_state WHERE id = 1").first<{ closed: number }>();
+  const rows = await env.DB.prepare("SELECT slug FROM shop_inventory WHERE sold_out = 1").all<{ slug: string }>();
+  return { closed: state?.closed === 1, soldOut: rows.results.map((row) => row.slug) };
+}
+async function requireStock(items: { slug: string }[], env: CommerceEnv) {
+  const stock = await stockState(env);
+  if (stock.closed) throw new HttpError(409, "shop_closed");
+  if (items.some((item) => stock.soldOut.includes(item.slug))) throw new HttpError(409, "sold_out");
+}
 async function quote(items: CartItem[], code: string | null, env: CommerceEnv): Promise<Quote> {
   const subtotalCents = items.reduce((sum, item) => sum + item.quantity * PRICE_CENTS, 0);
   let discountCents = 0;
@@ -317,6 +328,10 @@ export async function handleCommerce(action: string, request: Request, env: Comm
       waitUntil(sendReceipt(order, env));
       return json(orderView(order));
     }
+    if (action === "stock") {
+      if (request.method !== "GET") throw new HttpError(405, "method_not_allowed");
+      return json(await stockState(env));
+    }
     if (action !== "quote" && action !== "create" && action !== "resume") throw new HttpError(404, "not_found");
     if (request.method !== "POST") throw new HttpError(405, "method_not_allowed");
     const origin = new URL(request.url).origin;
@@ -329,6 +344,8 @@ export async function handleCommerce(action: string, request: Request, env: Comm
       let order = await findOrder(env, body.id);
       if (!order || !ownsOrder(request, order)) throw new HttpError(404, "order_not_found");
       if (paymentMode(env) !== order.mode) throw new HttpError(503, "payments_not_configured");
+      // Unpaid orders cannot reach payment again once a scent in them sells out or the shop closes.
+      if (order.status !== "paid") await requireStock(JSON.parse(order.items_json) as OrderItem[], env);
       const intent = await ensureIntent(order, env);
       order = await reconcile(order, intent, env);
       waitUntil(sendReceipt(order, env));
@@ -337,6 +354,7 @@ export async function handleCommerce(action: string, request: Request, env: Comm
     keys(body, action === "quote" ? ["items", "voucher"] : ["items", "voucher", "details", "locale", "requestId"]);
     const items = strictCart(body.items), code = voucherCode(body.voucher);
     if (action === "quote") return json(await quote(items, code, env));
+    await requireStock(items, env);
     const mode = paymentMode(env), details = deliveryDetails(body.details);
     if (mode === "prod" && !["https://yatlifestyle.com", "https://www.yatlifestyle.com"].includes(origin)) throw new HttpError(403, "production_origin_required");
     if (!env.COMMERCE_COOKIE_SECRET || env.COMMERCE_COOKIE_SECRET.length < 32) throw new HttpError(503, "payments_not_configured");

@@ -12,7 +12,7 @@ const salt = Buffer.alloc(16, 7), PASSWORD_HASH = `pbkdf2-sha256$100000$${salt.t
 
 function setup() {
   const db = new DatabaseSync(":memory:");
-  for (const file of ["0007_commerce.sql", "0008_admin.sql", "0009_inbox.sql", "0010_free_delivery.sql", "0011_admin_finance.sql", "0012_admin_order_seen.sql", "0014_admin_order_details.sql"]) db.exec(readFileSync(new URL(`../migrations/${file}`, import.meta.url), "utf8"));
+  for (const file of ["0007_commerce.sql", "0008_admin.sql", "0009_inbox.sql", "0010_free_delivery.sql", "0011_admin_finance.sql", "0012_admin_order_seen.sql", "0014_admin_order_details.sql", "0015_inventory.sql"]) db.exec(readFileSync(new URL(`../migrations/${file}`, import.meta.url), "utf8"));
   const clock = { now: Date.parse("2026-10-12T10:00:00Z") }, limits = { allowed: true, keys: [] as string[] };
   // Match D1's bound-statement shape while exercising the real SQLite constraints and triggers.
   const statement = (sql: string): CommerceStatement => {
@@ -441,4 +441,26 @@ test("admin: delivery details edit is validated, keeps the verified email and is
   assert.match(db.prepare("SELECT details_json FROM commerce_orders WHERE id = ?").get(id)!.details_json as string, /"Flat 1"/);
   assert.equal(details.email, "buyer@example.com"); assert.equal(details.phone, "+85298765432"); assert.equal(details.building, "Flat 9, 3/F");
   assert.match(db.prepare("SELECT note FROM admin_order_history WHERE order_id = ? ORDER BY id DESC").get(id)!.note as string, /phone, building/);
+});
+
+test("admin: inventory marks scents sold out and closing the shop keeps those marks for reopening", async () => {
+  const { deps: base, db, seedOrder } = setup(), { cookie } = await signIn(base);
+  const cancelled: string[] = [], deps: AdminDeps = { ...base, cancelOrder: async (id) => { cancelled.push(id); } };
+  db.exec("DROP TRIGGER commerce_order_snapshot"); // only so this test can seed orders holding real scents
+  const open = (slug: string, status = "unpaid") => { const id = seedOrder(status); db.prepare("UPDATE commerce_orders SET payment_intent_id = ?, items_json = ? WHERE id = ?").run(`int_${id}`, JSON.stringify([{ slug, name: slug, quantity: 1 }]), id); return id; };
+  const midnightOrder = open("midnight"), goldenOrder = open("golden"); open("midnight", "paid");
+  const read = async () => (await ok(await handleAdmin("inventory", get("inventory", cookie), deps)));
+  assert.equal((await read()).items.length, 12);
+  assert.equal((await handleAdmin("inventory-item", post("inventory-item", { slug: "nope", soldOut: true }, cookie), deps)).status, 400);
+  const marked = await ok(await handleAdmin("inventory-item", post("inventory-item", { slug: "midnight", soldOut: true }, cookie), deps));
+  assert.equal(marked.items.find((item: { slug: string }) => item.slug === "midnight").soldOut, true);
+  // Only the open, unpaid checkout holding Midnight is cancelled; paid orders and other scents are left alone.
+  assert.deepEqual(cancelled, [midnightOrder]); assert.equal(marked.cancelled, 1);
+  cancelled.length = 0;
+  const closed = await ok(await handleAdmin("shop-closed", post("shop-closed", { closed: true }, cookie), deps));
+  assert.equal(closed.closed, true); assert.deepEqual(cancelled.sort(), [midnightOrder, goldenOrder].sort());
+  const reopened = await ok(await handleAdmin("shop-closed", post("shop-closed", { closed: false }, cookie), deps));
+  assert.equal(reopened.closed, false);
+  assert.equal(reopened.items.find((item: { slug: string }) => item.slug === "midnight").soldOut, true);
+  assert.equal(db.prepare("SELECT updated_by FROM shop_state").get()!.updated_by, "natasha");
 });

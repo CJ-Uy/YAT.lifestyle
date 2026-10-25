@@ -4,6 +4,7 @@ import { type ReactNode, useEffect, useState } from "react";
 import SiteHeader, { type Locale, useLocale } from "./site-header";
 import { MAX_BAG_COUNT, MAX_PER_SCENT, PRICE_CENTS, formatPrice, type Product } from "../lib/shop";
 import { useCart } from "./shop/cart";
+import { SOLD_OUT_COPY, useStock } from "./shop/stock";
 import { DropletJourney } from "./droplet-journey";
 import { ScentFinder } from "./scent-finder";
 
@@ -52,13 +53,15 @@ export function ProductCard({ product, locale, priority, sizes }: { product: Pro
     return () => clearTimeout(timer);
   }, [added]);
   const full = (cart.items.find((item) => item.slug === product.slug)?.quantity ?? 0) >= MAX_PER_SCENT || cart.count >= MAX_BAG_COUNT;
+  const soldOut = useStock().isSoldOut(product.slug);
   return <article className="store-product-card">
     <a href={`/shop/${product.slug}`} className="store-product-image-link" aria-label={`${t.view}: ${product.name}`}><ProductPhoto product={product} locale={locale} priority={priority} sizes={sizes} /></a>
     <div className="store-product-card-top"><h3><a href={`/shop/${product.slug}`}>{product.name}</a></h3><span className="store-product-card-price">{formatPrice(PRICE_CENTS)}</span></div>
     <p>{product.copy[locale].subtitle}</p>
-    <button className="store-card-add" type="button" data-added={added || undefined} disabled={!cart.ready || full} aria-label={`${t.addTo}: ${product.name}`} onClick={() => { cart.add(product.slug, 1); setAdded(true); }}>
+    {soldOut ? <button className="store-card-add" type="button" disabled data-sold-out aria-label={`${SOLD_OUT_COPY[locale].soldOut}: ${product.name}`}>{SOLD_OUT_COPY[locale].soldOut}</button>
+      : <button className="store-card-add" type="button" data-added={added || undefined} disabled={!cart.ready || full} aria-label={`${t.addTo}: ${product.name}`} onClick={() => { cart.add(product.slug, 1); setAdded(true); }}>
       <svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14"><path d={added ? "m2 7 3.5 3.5L12 4" : "M7 1v12M1 7h12"} fill="none" stroke="currentColor" strokeWidth="1.3" /></svg>{added ? t.added : t.addTo}
-    </button>
+    </button>}
   </article>;
 }
 

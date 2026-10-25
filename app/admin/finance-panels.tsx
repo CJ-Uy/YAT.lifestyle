@@ -33,6 +33,7 @@ const dayName = (day: string, options: Intl.DateTimeFormatOptions) => new Intl.D
 const ICONS = {
   left: "M15 5l-7 7 7 7", right: "M9 5l7 7-7 7", download: "M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 19.5h14", check: "M5 12.5l4.5 4.5L19 7.5",
   alert: "M12 4l9 16H3L12 4zm0 6v4.5m0 2.5v.5", print: "M7 9V4h10v5M7 17H5a1 1 0 01-1-1v-6a1 1 0 011-1h14a1 1 0 011 1v6a1 1 0 01-1 1h-2M7 14h10v6H7z",
+  tag: "M3.5 12.5V3.5h9l8.5 8.5-9 9-8.5-8.5zM8 8h.01",
   minus: "M5 12h14", plus: "M12 5v14M5 12h14", undo: "M9 7L5 11l4 4M5 11h9.5a4.5 4.5 0 010 9H11", close: "M6 6l12 12M18 6L6 18",
   chart: "M5 20V11M12 20V5M19 20v-6M3 20h18", store: "M4 10v10h16V10M3 10l2-6h14l2 6zM9 20v-6h6v6", box: "M3 7.5l9-4.5 9 4.5-9 4.5-9-4.5zm0 0V17l9 4.5 9-4.5V7.5M12 12v9.5",
   ticket: "M4 7h16v3a2 2 0 000 4v3H4v-3a2 2 0 000-4V7zm10 0v10", mail: "M3.5 6h17v12h-17zM3.5 7l8.5 6 8.5-6", truck: "M2.5 6.5h11v9h-11zM13.5 10h4l3 3v2.5h-7M7 19a2 2 0 100-4 2 2 0 000 4zm10 0a2 2 0 100-4 2 2 0 000 4z",

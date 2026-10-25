@@ -76,3 +76,5 @@
   .cart-page .bag-line-total { grid-column: 2; margin: 0; font-size: 1rem; }
   .cart-page .bag-summary { max-width: none; padding-top: 1.5rem; }
 }
+.cart-page .bag-sold-out { margin: .35rem 0 0; color: #a13e2c; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; }
+.cart-page .bag-blocked { margin: 0 0 1rem; padding: .7rem .85rem; border-left: 2px solid #a13e2c; background: rgba(161, 62, 44, .08); color: #8a3322; font-size: .875rem; line-height: 1.5; }

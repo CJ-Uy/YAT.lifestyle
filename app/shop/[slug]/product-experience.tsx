@@ -5,6 +5,7 @@ import { useLocale, type Locale } from "../../site-header";
 import { StoreShell, storeCopy, ProductPhoto, ProductCard, Arrow } from "../../storefront";
 import { PRODUCTS, PRICE_CENTS, MAX_PER_SCENT, MAX_BAG_COUNT, formatPrice, type Product } from "../../../lib/shop";
 import { useCart } from "../cart";
+import { SOLD_OUT_COPY, useStock } from "../stock";
 import { ScentProfile } from "../scent-profile";
 import "../product-controls.css";
 
@@ -22,6 +23,7 @@ export default function ProductExperience({ product, initialLocale }: { product:
   const t = copy[locale]; const s = storeCopy[locale]; const p = product.copy[locale];
   const inBag = cart.items.find((item) => item.slug === product.slug)?.quantity ?? 0;
   const limit = inBag + quantity > MAX_PER_SCENT || cart.count + quantity > MAX_BAG_COUNT;
+  const soldOut = useStock().isSoldOut(product.slug);
   const related = PRODUCTS.filter((candidate) => candidate.slug !== product.slug && candidate.families.some((family) => product.families.includes(family))).slice(0, 3);
   return <StoreShell locale={locale} onLocaleChange={setLocale}>
     <main className="store-page store-product-page" id="store-content">
@@ -31,7 +33,7 @@ export default function ProductExperience({ product, initialLocale }: { product:
         <figure className="store-product-gallery"><ProductPhoto product={product} locale={locale} priority sizes="(max-width: 760px) 400px, 520px" /></figure>
         <div className="store-purchase">
           <div className="store-product-notes"><h2>{t.smell}</h2><p>{p.description}</p><h3>{t.notes}</h3><p>{p.notes}</p></div>
-          <div className="store-add-row"><label className="store-quantity-label">{t.quantity}<span className="store-quantity-control"><select value={quantity} onChange={(event) => { setQuantity(Number(event.target.value)); setAdded(false); }}>{Array.from({ length: MAX_PER_SCENT }, (_, index) => <option key={index + 1} value={index + 1}>{index + 1}</option>)}</select><svg viewBox="0 0 16 16" width="16" height="16" fill="none" aria-hidden="true"><path d="m4 6 4 4 4-4" stroke="currentColor" strokeWidth="1.5" /></svg></span></label><button className="store-btn" type="button" disabled={!cart.ready || limit} onClick={() => { cart.add(product.slug, quantity); setAdded(true); }}>{t.add}<Arrow /></button></div>
+          <div className="store-add-row"><label className="store-quantity-label">{t.quantity}<span className="store-quantity-control"><select value={quantity} disabled={soldOut} onChange={(event) => { setQuantity(Number(event.target.value)); setAdded(false); }}>{Array.from({ length: MAX_PER_SCENT }, (_, index) => <option key={index + 1} value={index + 1}>{index + 1}</option>)}</select><svg viewBox="0 0 16 16" width="16" height="16" fill="none" aria-hidden="true"><path d="m4 6 4 4 4-4" stroke="currentColor" strokeWidth="1.5" /></svg></span></label><button className="store-btn" type="button" disabled={!cart.ready || limit || soldOut} onClick={() => { cart.add(product.slug, quantity); setAdded(true); }}>{soldOut ? SOLD_OUT_COPY[locale].soldOut : <>{t.add}<Arrow /></>}</button></div>
           <div className="store-add-result" role="status" aria-live="polite" aria-atomic="true">{added && <><span>{t.added}</span><a href="/bag">{t.bag}<Arrow /></a></>}</div>
           {limit && <p className="store-muted">{t.limit}</p>}{!cart.storageAvailable && <p className="store-muted">{t.noStorage}</p>}
         </div>

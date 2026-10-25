@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { HK_DISTRICTS, PRICE_CENTS, formatDelivery, formatPrice, productBySlug, type CartItem } from "../../lib/shop";
 import { useCart } from "../shop/cart";
+import { SOLD_OUT_COPY, useStock } from "../shop/stock";
 import { useLocale } from "../site-header";
 import { StoreShell } from "../storefront";
 import { EmailVerification } from "./email-verification";
@@ -66,6 +67,7 @@ export default function CheckoutExperience() {
   const [quoteError, setQuoteError] = useState(false);
   const [quoteRetry, setQuoteRetry] = useState(0);
   const [paymentError, setPaymentError] = useState(false);
+  const stock = useStock(), [stockRefused, setStockRefused] = useState<"closed" | "remove" | null>(null);
   const [paying, setPaying] = useState(false);
   const requestId = useRef<string | null>(null);
   const errorRef = useRef<HTMLDivElement>(null);
@@ -116,6 +118,10 @@ export default function CheckoutExperience() {
     setReview({ items: cart.items.map((item) => ({ ...item })), subtotal: cart.subtotal, delivery: { ...fields } });
   }
   const selectedItems = review?.items ?? cart.items;
+  // The server refuses sold-out scents too; this only explains it before the customer fills in the form.
+  const shopClosed = stock.closed || stockRefused === "closed", mustRemove = !shopClosed && (stockRefused === "remove" || selectedItems.some((item) => stock.isSoldOut(item.slug)));
+  const stockBlock = shopClosed || mustRemove;
+  const stockNotice = stockBlock && <p className="checkout-voucher-notice" role="alert">{shopClosed ? SOLD_OUT_COPY[locale].closed : <>{SOLD_OUT_COPY[locale].remove} <a href="/bag">{t.editBag}</a></>}</p>;
   const errorDescription = (key: keyof DeliveryFields, hint?: string) => [hint, errors[key] ? `${key}-error` : undefined].filter(Boolean).join(" ") || undefined;
 
   async function pay() {
@@ -126,6 +132,7 @@ export default function CheckoutExperience() {
       const response = await fetch("/api/commerce/create", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ items: review.items, details: review.delivery, voucher, locale, requestId: requestId.current }) });
       if (!response.ok) {
         const failure = await response.json().catch(() => ({})) as { error?: string };
+        if (failure.error === "shop_closed" || failure.error === "sold_out") { setStockRefused(failure.error === "shop_closed" ? "closed" : "remove"); setPaying(false); return; }
         if (voucher && failure.error === "voucher_unavailable") { requestId.current = null; setVoucherNotice(voucher); setVoucher(""); setVoucherInput(""); setPaying(false); return; }
         throw new Error("payment");
       }
@@ -147,7 +154,7 @@ export default function CheckoutExperience() {
         {!cart.storageAvailable && <p className="checkout-error" role="status">{t.storage}</p>}
         <div className="checkout-layout">
           {!review ? <form className="checkout-form" noValidate onSubmit={submit}>
-            <h2>{t.deliveryHeading}</h2><p>{t.hongKong}</p><p className="store-muted" id="checkout-required">{t.requiredHint}</p><p className="store-muted">{t.privacy}</p>
+            <h2>{t.deliveryHeading}</h2><p>{t.hongKong}</p><p className="store-muted" id="checkout-required">{t.requiredHint}</p><p className="store-muted">{t.privacy}</p>{stockNotice}
             {Object.keys(errors).length > 0 && <div className="checkout-error" ref={errorRef} tabIndex={-1} role="alert"><h3>{t.errorHeading}</h3><ul>{Object.entries(errors).map(([field, message]) => <li key={field}><a href={`#checkout-${field}`}>{message}</a></li>)}</ul></div>}
               <div className="checkout-field"><label htmlFor="checkout-name">{t.name}</label><input ref={nameRef} id="checkout-name" name="name" autoComplete="shipping name" value={fields.name} onChange={(event) => update("name", event.target.value)} required maxLength={120} aria-invalid={!!errors.name} aria-describedby={errorDescription("name")} />{errors.name && <p id="name-error" className="checkout-error">{errors.name}</p>}</div>
               <div className="checkout-field"><label htmlFor="checkout-email">{t.email}</label><input id="checkout-email" name="email" type="email" inputMode="email" autoComplete="email" value={fields.email} onChange={(event) => update("email", event.target.value)} required maxLength={254} aria-invalid={!!errors.email} aria-describedby={errorDescription("email")} />{errors.email && <p id="email-error" className="checkout-error">{errors.email}</p>}</div>
@@ -157,12 +164,13 @@ export default function CheckoutExperience() {
               <div className="checkout-field"><label htmlFor="checkout-building">{t.building}</label><input id="checkout-building" name="building" autoComplete="shipping address-line1" value={fields.building} onChange={(event) => update("building", event.target.value)} required maxLength={250} aria-invalid={!!errors.building} aria-describedby={errorDescription("building")} />{errors.building && <p id="building-error" className="checkout-error">{errors.building}</p>}</div>
               <div className="checkout-field"><label htmlFor="checkout-street">{t.street}</label><input id="checkout-street" name="street" autoComplete="shipping address-line2" value={fields.street} onChange={(event) => update("street", event.target.value)} maxLength={250} /></div>
               <div className="checkout-field"><label htmlFor="checkout-notes">{t.notes}</label><textarea id="checkout-notes" name="notes" value={fields.notes} onChange={(event) => update("notes", event.target.value)} maxLength={500} rows={3} /></div>
-              <button className="store-btn" type="submit" disabled={!quote}>{t.reviewButton}</button>
+              <button className="store-btn" type="submit" disabled={!quote || stockBlock}>{t.reviewButton}</button>
           </form> : <section className="checkout-review" aria-labelledby="review-heading">
             <h2 id="review-heading" tabIndex={-1} ref={reviewRef}>{t.reviewHeading}</h2><p>{t.reviewIntro}</p>
             <dl className="checkout-address"><div><dt>{t.name}</dt><dd>{review.delivery.name}</dd></div><div><dt>{t.email}</dt><dd>{review.delivery.email}</dd></div><div><dt>{t.phone}</dt><dd>{review.delivery.phone}</dd></div><div><dt>{t.district}</dt><dd>{districts.find(([id]) => id === review.delivery.district)?.[languageIndex]}</dd></div><div><dt>{t.building}</dt><dd>{review.delivery.building}</dd></div>{review.delivery.street && <div><dt>{t.street}</dt><dd>{review.delivery.street}</dd></div>}{review.delivery.notes && <div><dt>{t.notes}</dt><dd>{review.delivery.notes}</dd></div>}</dl>
             <div className="checkout-review-actions"><button className="store-btn-secondary" type="button" onClick={() => { setReview(null); requestAnimationFrame(() => nameRef.current?.focus()); }}>{t.edit}</button>
-            <button className="store-btn" type="button" onClick={pay} disabled={paying || !quote}>{paying ? t.paying : t.confirm}</button></div><p className="store-muted">{t.confirmationHint}</p>
+            <button className="store-btn" type="button" onClick={pay} disabled={paying || !quote || stockBlock}>{paying ? t.paying : t.confirm}</button></div><p className="store-muted">{t.confirmationHint}</p>
+            {stockNotice}
             {paymentError && <p className="checkout-error" role="alert">{t.paymentError}</p>}
           </section>}
           <aside className="bag-summary" aria-labelledby="checkout-summary-heading">

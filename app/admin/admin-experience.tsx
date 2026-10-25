@@ -6,8 +6,8 @@ import { RequestError, amount, cents, date, request } from "./admin-api";
 import { Icon, MoneyPanel, OnsitePanel, SettingsPanel, VoucherSheet, voucherTerms, voucherValue, type IconName, type Voucher } from "./finance-panels";
 import "./admin.css";
 
-type Tab = "money" | "onsite" | "orders" | "vouchers" | "inbox" | "delivery" | "settings";
-const TABS: [Tab, string, IconName][] = [["money", "Money", "chart"], ["onsite", "Onsite", "store"], ["orders", "Orders", "box"], ["vouchers", "Vouchers", "ticket"], ["inbox", "Inbox", "mail"], ["delivery", "Delivery notes", "truck"], ["settings", "Settings", "sliders"]];
+type Tab = "money" | "onsite" | "orders" | "inventory" | "vouchers" | "inbox" | "delivery" | "settings";
+const TABS: [Tab, string, IconName][] = [["money", "Money", "chart"], ["onsite", "Onsite", "store"], ["orders", "Orders", "box"], ["inventory", "Inventory", "tag"], ["vouchers", "Vouchers", "ticket"], ["inbox", "Inbox", "mail"], ["delivery", "Delivery notes", "truck"], ["settings", "Settings", "sliders"]];
 // The phone tab bar keeps the four daily sections in reach; the rest sit behind More.
 const PRIMARY: Tab[] = ["money", "onsite", "orders", "vouchers"];
 type Stage = "new" | "making" | "packed" | "dispatched";
@@ -25,6 +25,7 @@ type Order = OrderRow & {
 };
 type Notes = { checkedAt: string; introduction: string; sections: { title: string; points: string[] }[]; sources: { label: string; url: string }[]; limitations: string };
 type Draft = { status: Stage; courier: string; trackingNumber: string; note: string; shippingCost: string };
+type InventoryState = { closed: boolean; closedBy: string | null; closedAt: number | null; items: { slug: string; name: string; subtitle: string; soldOut: boolean; updatedBy: string | null; updatedAt: number | null }[] };
 type DetailsDraft = { name: string; phone: string; district: string; building: string; street: string; notes: string };
 const districtName = (id: string) => HK_DISTRICTS.find(([key]) => key === id)?.[1] ?? id;
 type InboxRow = { id: string; from_email: string; to_email: string; subject: string; received_at: number; forwarded_at: number | null; forward_error: number };
@@ -54,6 +55,7 @@ export default function AdminExperience() {
   const [draft, setDraft] = useState<Draft>({ status: "new", courier: "", trackingNumber: "", note: "", shippingCost: "" });
   const [detailsDraft, setDetailsDraft] = useState<DetailsDraft | null>(null);
   const [editingFulfillment, setEditingFulfillment] = useState(false);
+  const [stock, setStock] = useState<InventoryState | null>(null);
   const [emails, setEmails] = useState<InboxRow[] | null>(null), [email, setEmail] = useState<InboxEmail | null>(null);
   const [inboxPage, setInboxPage] = useState(1), [inboxHasMore, setInboxHasMore] = useState(false), [mailSettings, setMailSettings] = useState<MailSettings | null>(null);
   const [revision, setRevision] = useState(0);
@@ -87,7 +89,8 @@ export default function AdminExperience() {
     setBusy(true); setError("");
     const loading = tab === "orders" ? request<{ orders: OrderRow[]; hasMore: boolean; unseen: number }>(`orders?payment=${payment}&fulfillment=${fulfillment}&seen=${onlyNew ? "unseen" : "all"}&page=${page}`).then((data) => {
       if (active) { setOrders(data.orders); setHasMore(data.hasMore); setUnseen(data.unseen); }
-    }) : tab === "vouchers" ? request<{ vouchers: Voucher[] }>("vouchers").then((data) => { if (active) setVouchers(data.vouchers); })
+    }) : tab === "inventory" ? request<InventoryState>("inventory").then((data) => { if (active) setStock(data); })
+      : tab === "vouchers" ? request<{ vouchers: Voucher[] }>("vouchers").then((data) => { if (active) setVouchers(data.vouchers); })
       : tab === "inbox" ? Promise.all([request<{ emails: InboxRow[]; hasMore: boolean }>(`inbox?page=${inboxPage}`), request<MailSettings>("mail-settings")]).then(([data, settings]) => {
         if (active) { setEmails(data.emails); setInboxHasMore(data.hasMore); setMailSettings(settings); }
       }) : request<Notes>("delivery-notes").then((data) => { if (active) setNotes(data); });
@@ -147,6 +150,22 @@ export default function AdminExperience() {
       const saved = await request<{ changed: string[] }>("order-details", { id: selected.id, details: detailsDraft });
       await reloadOrder(selected.id); setDetailsDraft(null);
       setMessage(saved.changed.length ? "Delivery details saved." : "No delivery details changed.");
+    });
+  }
+  const cancelledNote = (count: number) => count ? ` Cancelled ${count} unpaid checkout${count === 1 ? "" : "s"} still on the payment page.` : "";
+  function setSoldOut(slug: string, soldOut: boolean) {
+    void perform(async () => {
+      const next = await request<InventoryState & { cancelled: number }>("inventory-item", { slug, soldOut });
+      setStock(next);
+      setMessage(`${stock?.items.find((item) => item.slug === slug)?.name ?? "Scent"} is now ${soldOut ? "sold out" : "available"}.${cancelledNote(next.cancelled)}`);
+    });
+  }
+  function setShopClosed(closed: boolean) {
+    if (closed && !window.confirm("Close the shop? Every scent will show as sold out, no one can check out until you reopen, and unpaid checkouts still on the payment page are cancelled. Orders already paid are kept.")) return;
+    void perform(async () => {
+      const next = await request<InventoryState & { cancelled: number }>("shop-closed", { closed });
+      setStock(next);
+      setMessage(closed ? `Shop closed. Every scent now shows as sold out.${cancelledNote(next.cancelled)}` : "Shop reopened.");
     });
   }
   function createVoucher(event: FormEvent<HTMLFormElement>) {
@@ -305,6 +324,22 @@ export default function AdminExperience() {
           </div>
           <details className="admin-card admin-history"><summary>Status history{selected.history.length >= 100 ? " · latest 100 updates" : ""}</summary>{!selected.history.length ? <p className="admin-muted">No fulfillment updates yet.</p> : <ol>{selected.history.map((entry, index) => <li key={`${entry.created_at}-${index}`}><div><b>{stageName[entry.previous_status ?? "new"]} → {stageName[entry.status]}</b><span>{date(entry.created_at)} · {entry.actor}</span></div>{entry.courier && <p>{entry.courier}{entry.tracking_number ? ` · ${entry.tracking_number}` : ""}</p>}{entry.note && <p className="admin-muted">{entry.note}</p>}</li>)}</ol>}</details>
         </section>}
+      </> : tab === "inventory" ? <>
+        <div className="admin-page-head"><div><h1>Inventory</h1><p>Sold-out scents can't be added to carts or checked out. Changes reach the shop straight away.</p></div></div>
+        {!stock ? <div className="admin-card"><p className="admin-muted" role="status">Loading inventory…</p></div> : <>
+          <div className={`admin-card admin-shop-switch${stock.closed ? " is-closed" : ""}`}>
+            <div><h3>{stock.closed ? "Shop closed" : "Shop open"}</h3><p className="admin-muted">{stock.closed ? `Every scent shows as sold out. No one can check out, and unpaid payment pages were cancelled.${stock.closedBy && stock.closedAt ? ` Closed by ${stock.closedBy} · ${date(stock.closedAt)}.` : ""}` : "Customers can buy every scent that isn't marked sold out below."}</p></div>
+            <button type="button" className={stock.closed ? "admin-primary" : "admin-secondary is-danger"} disabled={busy} onClick={() => setShopClosed(!stock.closed)}>{stock.closed ? "Reopen shop" : "Close shop"}</button>
+          </div>
+          <div className="admin-card">
+            {stock.closed && <p className="admin-alert is-warn"><Icon name="alert" />While the shop is closed, customers see every scent as sold out. These switches are kept for when you reopen.</p>}
+            <ul className="admin-inventory">{stock.items.map((item) => <li key={item.slug}>
+              <img src={`/media/scents/${item.slug}-480.webp`} alt="" width="48" height="60" loading="lazy" />
+              <div><b>{item.name}</b><small>{item.subtitle}</small>{item.updatedBy && item.updatedAt && <small>Changed by {item.updatedBy} · {date(item.updatedAt)}</small>}</div>
+              <label className="admin-toggle"><input type="checkbox" role="switch" checked={!item.soldOut} disabled={busy} aria-label={`${item.name} available`} onChange={(event) => setSoldOut(item.slug, !event.target.checked)} /><span>{item.soldOut ? "Sold out" : "Available"}</span></label>
+            </li>)}</ul>
+          </div>
+        </>}
       </> : tab === "vouchers" ? <>
         <div className="admin-page-head"><div><h1>Vouchers</h1><p>Codes customers type at checkout. The discount comes off the items subtotal; delivery is free.</p></div></div>
         <form className="admin-card admin-voucher-form admin-form" onSubmit={createVoucher}>

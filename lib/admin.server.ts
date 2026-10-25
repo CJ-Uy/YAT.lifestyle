@@ -1,6 +1,7 @@
 import { Buffer } from "node:buffer";
 import { timingSafeEqual } from "node:crypto";
 import { deliveryDetails, type CommerceDB } from "./commerce.server.ts";
+import { PRODUCTS, productBySlug } from "./shop.ts";
 import { FINANCE_GET, FINANCE_POST, financeAction, sendShippedEmail } from "./admin-finance.server.ts";
 import { notifySettings, runDailyDigest, unseenCount } from "./admin-notify.server.ts";
 
@@ -184,6 +185,39 @@ async function detail(request: Request, deps: AdminDeps, actor: string) {
   const history = await deps.db.prepare("SELECT previous_status, status, courier, tracking_number, note, actor, created_at FROM admin_order_history WHERE order_id = ? ORDER BY id DESC LIMIT 100").bind(id).all();
   const seen = await deps.db.prepare("SELECT seen_at FROM admin_order_seen WHERE order_id = ?").bind(id).first<{ seen_at: number }>();
   return json({ order: { ...order, seen_at: seen?.seen_at ?? null, details: JSON.parse(details_json), items: JSON.parse(items_json), fulfillment: fulfillment ?? { status: "new", courier: "", tracking_number: "", note: "", version: 0, shipping_cents: null, shipped_email_at: null }, history: history.results } });
+}
+
+async function inventoryState(deps: AdminDeps) {
+  const state = await deps.db.prepare("SELECT closed, updated_by, updated_at FROM shop_state WHERE id = 1").first<{ closed: number; updated_by: string | null; updated_at: number | null }>();
+  const rows = (await deps.db.prepare("SELECT slug, sold_out, updated_by, updated_at FROM shop_inventory").all<{ slug: string; sold_out: number; updated_by: string; updated_at: number }>()).results;
+  return ({ closed: state?.closed === 1, closedBy: state?.updated_by ?? null, closedAt: state?.updated_at ?? null,
+    items: PRODUCTS.map((product) => { const row = rows.find((entry) => entry.slug === product.slug); return { slug: product.slug, name: product.name, subtitle: product.copy.en.subtitle, soldOut: row?.sold_out === 1, updatedBy: row?.updated_by ?? null, updatedAt: row?.updated_at ?? null }; }) });
+}
+const inventory = async (deps: AdminDeps) => json(await inventoryState(deps));
+/**
+ * Customers already on the payment page hold a live intent, so selling out also cancels open unpaid orders that contain the
+ * scent. The staff cancel path confirms with Airwallex and keeps any order that turns out to be paid.
+ * ponytail: newest 50 open orders per change; page through them if abandoned checkouts ever pile up beyond that.
+ */
+async function cancelOpenCheckouts(deps: AdminDeps, affects: (slugs: string[]) => boolean) {
+  if (!deps.cancelOrder) return 0;
+  const open = (await deps.db.prepare("SELECT id, items_json FROM commerce_orders WHERE status IN ('unpaid', 'failed') AND payment_intent_id IS NOT NULL ORDER BY created_at DESC LIMIT 50").all<{ id: string; items_json: string }>()).results
+    .filter((order) => affects((JSON.parse(order.items_json) as { slug: string }[]).map((item) => item.slug)));
+  const results = await Promise.allSettled(open.map((order) => deps.cancelOrder!(order.id)));
+  return results.filter((result) => result.status === "fulfilled").length;
+}
+async function setInventory(body: Record<string, unknown>, deps: AdminDeps, actor: string) {
+  if (typeof body.slug !== "string" || !productBySlug(body.slug) || typeof body.soldOut !== "boolean") throw new HttpError(400, "Choose a scent and whether it is sold out.");
+  await deps.db.prepare(`INSERT INTO shop_inventory (slug, sold_out, updated_by, updated_at) VALUES (?, ?, ?, ?)
+    ON CONFLICT(slug) DO UPDATE SET sold_out = excluded.sold_out, updated_by = excluded.updated_by, updated_at = excluded.updated_at`).bind(body.slug, body.soldOut ? 1 : 0, actor, deps.now()).run();
+  const slug = body.slug, cancelled = body.soldOut ? await cancelOpenCheckouts(deps, (slugs) => slugs.includes(slug)) : 0;
+  return json({ ...(await inventoryState(deps)), cancelled });
+}
+async function setShopClosed(body: Record<string, unknown>, deps: AdminDeps, actor: string) {
+  if (typeof body.closed !== "boolean") throw new HttpError(400, "Choose whether the shop is open.");
+  await deps.db.prepare("UPDATE shop_state SET closed = ?, updated_by = ?, updated_at = ? WHERE id = 1").bind(body.closed ? 1 : 0, actor, deps.now()).run();
+  const cancelled = body.closed ? await cancelOpenCheckouts(deps, () => true) : 0;
+  return json({ ...(await inventoryState(deps)), cancelled });
 }
 
 const DETAIL_FIELDS = ["name", "phone", "district", "building", "street", "notes"] as const;
@@ -404,7 +438,7 @@ export async function handleAdmin(action: string, request: Request, deps: AdminD
     }
     const actor = await viewer(request, deps);
     if (!actor) throw new HttpError(401, "Sign in to continue.");
-    if (["logout", "fulfillment", "order-details", "shipped-email", "order-cancel", "orders-seen", "notify-test", "voucher-create", "voucher-set-create", "voucher-deactivate"].includes(action) || FINANCE_POST.has(action)
+    if (["logout", "fulfillment", "order-details", "inventory-item", "shop-closed", "shipped-email", "order-cancel", "orders-seen", "notify-test", "voucher-create", "voucher-set-create", "voucher-deactivate"].includes(action) || FINANCE_POST.has(action)
       || (["mail-settings", "notify-settings"].includes(action) && request.method === "POST")) {
       if (request.method !== "POST") throw new HttpError(405, "Use the admin form.");
       const body = await readJson(request);
@@ -415,6 +449,8 @@ export async function handleAdmin(action: string, request: Request, deps: AdminD
       if (FINANCE_POST.has(action)) return json(await financeAction(action, request, deps, actor, body));
       if (action === "fulfillment") return await fulfill(body, deps, actor);
       if (action === "order-details") return await editDetails(body, deps, actor);
+      if (action === "inventory-item") return await setInventory(body, deps, actor);
+      if (action === "shop-closed") return await setShopClosed(body, deps, actor);
       if (action === "shipped-email") return await resendShippedEmail(body, deps);
       if (action === "order-cancel") return await cancelOrder(body, deps);
       if (action === "orders-seen") return await markAllSeen(deps, actor);
@@ -435,6 +471,7 @@ export async function handleAdmin(action: string, request: Request, deps: AdminD
     if (action === "order") return await detail(request, deps, actor);
     if (action === "notify-settings") return await notify(deps);
     if (action === "vouchers") return await vouchers(request, deps);
+    if (action === "inventory") return await inventory(deps);
     if (action === "inbox") return await inbox(request, deps);
     if (action === "inbox-raw") return await inboxRaw(request, deps);
     if (action === "mail-settings") return await mailSettings(deps);

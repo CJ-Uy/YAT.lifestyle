@@ -29,3 +29,4 @@
 .checkout-review-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin: 2rem 0 1rem; }
 .checkout-review-actions > * { justify-content: center; }
 @media (max-width: 560px) { .checkout-review-actions { flex-direction: column-reverse; } }
+.checkout-voucher-notice a { color: inherit; text-decoration: underline; text-underline-offset: .2em; }
