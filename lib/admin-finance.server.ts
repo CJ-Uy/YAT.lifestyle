@@ -299,7 +299,7 @@ export async function sendShippedEmail(orderId: string, deps: AdminDeps): Promis
   const release = () => deps.db.prepare("UPDATE admin_order_fulfillment SET shipped_email_at = NULL WHERE order_id = ?").bind(orderId).run();
   if (!deps.sendEmail) { await release(); return "unavailable"; }
   try {
-    const order = await deps.db.prepare("SELECT locale, email, items_json, details_json FROM commerce_orders WHERE id = ?").bind(orderId).first<{ locale: keyof typeof SHIPPED; email: string; items_json: string; details_json: string }>();
+    const order = await deps.db.prepare("SELECT o.locale, o.email, o.items_json, COALESCE(d.details_json, o.details_json) AS details_json FROM commerce_orders o LEFT JOIN admin_order_details d ON d.order_id = o.id WHERE o.id = ?").bind(orderId).first<{ locale: keyof typeof SHIPPED; email: string; items_json: string; details_json: string }>();
     if (!order) throw new Error("order_missing");
     await deps.sendEmail({ to: order.email, from: { email: "orders@yatlifestyle.com", name: "YAT.LIFESTYLE" },
       ...shippedMail(orderId, order.locale, claimed.courier, claimed.tracking_number, JSON.parse(order.items_json), JSON.parse(order.details_json)) });

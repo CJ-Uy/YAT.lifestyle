@@ -1,6 +1,6 @@
 import { Buffer } from "node:buffer";
 import { timingSafeEqual } from "node:crypto";
-import type { CommerceDB } from "./commerce.server.ts";
+import { deliveryDetails, type CommerceDB } from "./commerce.server.ts";
 import { FINANCE_GET, FINANCE_POST, financeAction, sendShippedEmail } from "./admin-finance.server.ts";
 import { notifySettings, runDailyDigest, unseenCount } from "./admin-notify.server.ts";
 
@@ -174,9 +174,9 @@ async function detail(request: Request, deps: AdminDeps, actor: string) {
   // Opening a paid live order as the owner is what counts as "seen" for the daily email.
   if (actor === deps.username) await deps.db.prepare(`INSERT INTO admin_order_seen (order_id, seen_at) SELECT ?, ? WHERE EXISTS (SELECT 1 FROM commerce_orders WHERE id = ? AND status = 'paid' AND mode = 'prod')
     ON CONFLICT(order_id) DO NOTHING`).bind(id, deps.now(), id).run();
-  const row = await deps.db.prepare(`SELECT id, locale, details_json, items_json, subtotal_cents, delivery_cents, discount_cents, total_cents,
-    currency, voucher_code, status AS payment_status, payment_status AS provider_status, mode, created_at, paid_at
-    FROM commerce_orders WHERE id = ?`).bind(id).first<{ details_json: string; items_json: string } & Record<string, unknown>>();
+  const row = await deps.db.prepare(`SELECT o.id, o.locale, COALESCE(d.details_json, o.details_json) AS details_json, o.items_json, o.subtotal_cents, o.delivery_cents, o.discount_cents, o.total_cents,
+    o.currency, o.voucher_code, o.status AS payment_status, o.payment_status AS provider_status, o.mode, o.created_at, o.paid_at, d.updated_at AS details_edited_at, d.updated_by AS details_edited_by
+    FROM commerce_orders o LEFT JOIN admin_order_details d ON d.order_id = o.id WHERE o.id = ?`).bind(id).first<{ details_json: string; items_json: string } & Record<string, unknown>>();
   if (!row) throw new HttpError(404, "That order could not be found.");
   const { details_json, items_json, ...order } = row;
   const fulfillment = await deps.db.prepare("SELECT status, courier, tracking_number, note, version, updated_at, shipping_cents, shipped_email_at FROM admin_order_fulfillment WHERE order_id = ?").bind(id).first<Fulfillment>();
@@ -184,6 +184,31 @@ async function detail(request: Request, deps: AdminDeps, actor: string) {
   const history = await deps.db.prepare("SELECT previous_status, status, courier, tracking_number, note, actor, created_at FROM admin_order_history WHERE order_id = ? ORDER BY id DESC LIMIT 100").bind(id).all();
   const seen = await deps.db.prepare("SELECT seen_at FROM admin_order_seen WHERE order_id = ?").bind(id).first<{ seen_at: number }>();
   return json({ order: { ...order, seen_at: seen?.seen_at ?? null, details: JSON.parse(details_json), items: JSON.parse(items_json), fulfillment: fulfillment ?? { status: "new", courier: "", tracking_number: "", note: "", version: 0, shipping_cents: null, shipped_email_at: null }, history: history.results } });
+}
+
+const DETAIL_FIELDS = ["name", "phone", "district", "building", "street", "notes"] as const;
+async function editDetails(body: Record<string, unknown>, deps: AdminDeps, actor: string) {
+  const id = orderId(body.id), edit = body.details;
+  if (!edit || typeof edit !== "object" || Array.isArray(edit)) throw new HttpError(400, "Check the delivery details.");
+  const row = await deps.db.prepare("SELECT o.details_json AS original, d.details_json AS edited FROM commerce_orders o LEFT JOIN admin_order_details d ON d.order_id = o.id WHERE o.id = ?")
+    .bind(id).first<{ original: string; edited: string | null }>();
+  if (!row) throw new HttpError(404, "That order could not be found.");
+  const current = JSON.parse(row.edited ?? row.original) as Record<string, string>, fields = edit as Record<string, unknown>;
+  // The checkout validator keeps staff edits to the same rules; the verified email is not editable here.
+  let details: Record<string, string>;
+  try { details = deliveryDetails({ ...Object.fromEntries(DETAIL_FIELDS.map((key) => [key, fields[key]])), email: current.email, country: "HK" }); }
+  catch { throw new HttpError(400, "Check the delivery details. Phones need 8 Hong Kong digits."); }
+  const changed = DETAIL_FIELDS.filter((key) => (current[key] ?? "") !== details[key]);
+  if (!changed.length) return json({ ok: true, changed });
+  // Matching the stored correction makes a concurrent edit fail instead of silently overwriting it.
+  const saved = await deps.db.prepare(`INSERT INTO admin_order_details (order_id, details_json, updated_by, updated_at) VALUES (?, ?, ?, ?)
+    ON CONFLICT(order_id) DO UPDATE SET details_json = excluded.details_json, updated_by = excluded.updated_by, updated_at = excluded.updated_at
+    WHERE admin_order_details.details_json = ? RETURNING order_id`).bind(id, JSON.stringify(details), actor, deps.now(), row.edited ?? row.original).first();
+  if (!saved) throw new HttpError(409, "This order changed. Reload it before saving.");
+  const stage = (await deps.db.prepare("SELECT status FROM admin_order_fulfillment WHERE order_id = ?").bind(id).first<{ status: Stage }>())?.status ?? "new";
+  await deps.db.prepare("INSERT INTO admin_order_history (order_id, previous_status, status, courier, tracking_number, note, actor, created_at) VALUES (?, ?, ?, '', '', ?, ?, ?)")
+    .bind(id, stage, stage, `Delivery details changed: ${changed.join(", ")}`, actor, deps.now()).run();
+  return json({ ok: true, changed });
 }
 
 async function fulfill(body: Record<string, unknown>, deps: AdminDeps, actor: string) {
@@ -199,7 +224,8 @@ async function fulfill(body: Record<string, unknown>, deps: AdminDeps, actor: st
   const current = await deps.db.prepare("SELECT status, version FROM admin_order_fulfillment WHERE order_id = ?").bind(id).first<{ status: Stage; version: number }>();
   const previous = current?.status ?? "new", version = current?.version ?? 0;
   if (version !== body.version) throw new HttpError(409, "This order changed. Reload it before saving.");
-  if (status !== previous && STAGES.indexOf(status) !== STAGES.indexOf(previous) + 1) throw new HttpError(409, "Complete each fulfillment step in order.");
+  // Stages move forward one at a time; staff may step back any number to correct a mistake.
+  if (STAGES.indexOf(status) > STAGES.indexOf(previous) + 1) throw new HttpError(409, "Complete each fulfillment step in order.");
   if (status === "dispatched" && (courier.length < 2 || tracking.length < 3 || shipping === null)) throw new HttpError(400, "Add the courier, tracking number and shipping cost before dispatch.");
   // The version guard and history trigger keep a concurrent save from overwriting another operator's work.
   const saved = await deps.db.prepare(`INSERT INTO admin_order_fulfillment (order_id, status, courier, tracking_number, note, shipping_cents, version, updated_by, updated_at)
@@ -378,7 +404,7 @@ export async function handleAdmin(action: string, request: Request, deps: AdminD
     }
     const actor = await viewer(request, deps);
     if (!actor) throw new HttpError(401, "Sign in to continue.");
-    if (["logout", "fulfillment", "shipped-email", "order-cancel", "orders-seen", "notify-test", "voucher-create", "voucher-set-create", "voucher-deactivate"].includes(action) || FINANCE_POST.has(action)
+    if (["logout", "fulfillment", "order-details", "shipped-email", "order-cancel", "orders-seen", "notify-test", "voucher-create", "voucher-set-create", "voucher-deactivate"].includes(action) || FINANCE_POST.has(action)
       || (["mail-settings", "notify-settings"].includes(action) && request.method === "POST")) {
       if (request.method !== "POST") throw new HttpError(405, "Use the admin form.");
       const body = await readJson(request);
@@ -388,6 +414,7 @@ export async function handleAdmin(action: string, request: Request, deps: AdminD
       }
       if (FINANCE_POST.has(action)) return json(await financeAction(action, request, deps, actor, body));
       if (action === "fulfillment") return await fulfill(body, deps, actor);
+      if (action === "order-details") return await editDetails(body, deps, actor);
       if (action === "shipped-email") return await resendShippedEmail(body, deps);
       if (action === "order-cancel") return await cancelOrder(body, deps);
       if (action === "orders-seen") return await markAllSeen(deps, actor);

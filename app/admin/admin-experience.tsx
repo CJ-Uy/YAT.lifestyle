@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
-import { formatPrice } from "../../lib/shop";
+import { HK_DISTRICTS, formatPrice } from "../../lib/shop";
 import { RequestError, amount, cents, date, request } from "./admin-api";
 import { Icon, MoneyPanel, OnsitePanel, SettingsPanel, VoucherSheet, voucherTerms, voucherValue, type IconName, type Voucher } from "./finance-panels";
 import "./admin.css";
@@ -18,12 +18,15 @@ type OrderRow = { id: string; payment_status: string; mode: string; total_cents:
 type Order = OrderRow & {
   subtotal_cents: number; delivery_cents: number; discount_cents: number; voucher_code: string | null; provider_status: string | null;
   details: { name: string; email: string; phone: string; district: string; building: string; street: string; notes: string; country: string };
+  details_edited_at: number | null; details_edited_by: string | null;
   items: { slug: string; name: string; quantity: number; unitPriceCents: number; lineTotalCents: number }[];
   fulfillment: { status: Stage; courier: string; tracking_number: string; note: string; version: number; shipping_cents: number | null; shipped_email_at: number | null };
   history: { previous_status: Stage | null; status: Stage; courier: string; tracking_number: string; note: string; actor: string; created_at: number }[];
 };
 type Notes = { checkedAt: string; introduction: string; sections: { title: string; points: string[] }[]; sources: { label: string; url: string }[]; limitations: string };
 type Draft = { status: Stage; courier: string; trackingNumber: string; note: string; shippingCost: string };
+type DetailsDraft = { name: string; phone: string; district: string; building: string; street: string; notes: string };
+const districtName = (id: string) => HK_DISTRICTS.find(([key]) => key === id)?.[1] ?? id;
 type InboxRow = { id: string; from_email: string; to_email: string; subject: string; received_at: number; forwarded_at: number | null; forward_error: number };
 type InboxEmail = InboxRow & { text_body: string; attachment_names: string[] };
 type MailSettings = { forwardingEnabled: boolean; destination: string };
@@ -49,6 +52,7 @@ export default function AdminExperience() {
   const [payment, setPayment] = useState("all"), [fulfillment, setFulfillment] = useState("all"), [onlyNew, setOnlyNew] = useState(false), [page, setPage] = useState(1), [hasMore, setHasMore] = useState(false);
   const [vouchers, setVouchers] = useState<Voucher[] | null>(null), [voucherKind, setVoucherKind] = useState("percent"), [notes, setNotes] = useState<Notes | null>(null);
   const [draft, setDraft] = useState<Draft>({ status: "new", courier: "", trackingNumber: "", note: "", shippingCost: "" });
+  const [detailsDraft, setDetailsDraft] = useState<DetailsDraft | null>(null);
   const [emails, setEmails] = useState<InboxRow[] | null>(null), [email, setEmail] = useState<InboxEmail | null>(null);
   const [inboxPage, setInboxPage] = useState(1), [inboxHasMore, setInboxHasMore] = useState(false), [mailSettings, setMailSettings] = useState<MailSettings | null>(null);
   const [revision, setRevision] = useState(0);
@@ -112,6 +116,7 @@ export default function AdminExperience() {
   function openOrder(id: string) {
     void perform(async () => {
       const order = await loadOrder(id);
+      setDetailsDraft(null);
       setDraft({ status: order.fulfillment.status, courier: order.fulfillment.courier, trackingNumber: order.fulfillment.tracking_number, note: order.fulfillment.note, shippingCost: amount(order.fulfillment.shipping_cents) });
       requestAnimationFrame(() => document.getElementById("order-heading")?.scrollIntoView({ behavior: "smooth", block: "start" }));
     });
@@ -119,10 +124,20 @@ export default function AdminExperience() {
   async function reloadOrder(id: string) { await loadOrder(id); setRevision((value) => value + 1); }
   function saveFulfillment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); if (!selected) return;
+    const from = STAGES.indexOf(selected.fulfillment.status), to = STAGES.indexOf(draft.status);
+    if (to < from && !window.confirm(`Move this order back from ${stageName[selected.fulfillment.status]} to ${stageName[draft.status]}? The change is kept in its history.`)) return;
     void perform(async () => {
       const saved = await request<{ shippedEmail: keyof typeof SHIPPED_EMAIL | null }>("fulfillment", { id: selected.id, version: selected.fulfillment.version, ...draft });
       await reloadOrder(selected.id);
       setMessage(`Fulfillment saved.${saved.shippedEmail ? ` ${SHIPPED_EMAIL[saved.shippedEmail]}` : ""}`);
+    });
+  }
+  function saveDetails(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault(); if (!selected || !detailsDraft) return;
+    void perform(async () => {
+      const saved = await request<{ changed: string[] }>("order-details", { id: selected.id, details: detailsDraft });
+      await reloadOrder(selected.id); setDetailsDraft(null);
+      setMessage(saved.changed.length ? "Delivery details saved." : "No delivery details changed.");
     });
   }
   function createVoucher(event: FormEvent<HTMLFormElement>) {
@@ -240,15 +255,29 @@ export default function AdminExperience() {
               <h3>Fragrances</h3>
               <ul className="admin-items">{selected.items.map((item) => <li key={item.slug}><span>{item.name} <small>× {item.quantity}</small></span><span className="admin-figure">{formatPrice(item.lineTotalCents)}</span></li>)}</ul>
               <dl className="admin-totals"><div><dt>Items subtotal</dt><dd className="admin-figure">{formatPrice(selected.subtotal_cents)}</dd></div><div><dt>Delivery</dt><dd className="admin-figure">{selected.delivery_cents ? formatPrice(selected.delivery_cents) : "Free"}</dd></div>{selected.discount_cents > 0 && <div><dt>Voucher {selected.voucher_code}</dt><dd className="admin-figure">−{formatPrice(selected.discount_cents)}</dd></div>}<div><dt>Paid</dt><dd className="admin-figure">{formatPrice(selected.total_cents)}</dd></div></dl>
-              <h3>Customer & delivery</h3>
-              <address><strong>{selected.details.name}</strong><a href={`mailto:${selected.details.email}`}>{selected.details.email}</a><a href={`tel:${selected.details.phone}`}>{selected.details.phone}</a><span>{selected.details.building}</span>{selected.details.street && <span>{selected.details.street}</span>}<span>{selected.details.district.split("-").map((word) => word[0].toUpperCase() + word.slice(1)).join(" ")}, Hong Kong</span></address>
+              <div className="admin-card-head"><h3>Customer & delivery</h3>{!detailsDraft && <button type="button" className="admin-link" disabled={busy} onClick={() => setDetailsDraft({ name: selected.details.name, phone: selected.details.phone, district: selected.details.district, building: selected.details.building, street: selected.details.street, notes: selected.details.notes })}>Edit</button>}</div>
+              {detailsDraft ? <form className="admin-form" onSubmit={saveDetails}><fieldset disabled={busy}>
+                <label>Recipient name<input value={detailsDraft.name} maxLength={120} required onChange={(event) => setDetailsDraft({ ...detailsDraft, name: event.target.value })} /></label>
+                <div className="admin-form-row">
+                  <label>Hong Kong phone<input type="tel" value={detailsDraft.phone} maxLength={32} required onChange={(event) => setDetailsDraft({ ...detailsDraft, phone: event.target.value })} /></label>
+                  <label>District<select value={detailsDraft.district} onChange={(event) => setDetailsDraft({ ...detailsDraft, district: event.target.value })}>{HK_DISTRICTS.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select></label>
+                </div>
+                <label>Flat, floor & building<input value={detailsDraft.building} maxLength={300} required onChange={(event) => setDetailsDraft({ ...detailsDraft, building: event.target.value })} /></label>
+                <label>Street<input value={detailsDraft.street} maxLength={300} onChange={(event) => setDetailsDraft({ ...detailsDraft, street: event.target.value })} /></label>
+                <label>Customer note<textarea value={detailsDraft.notes} rows={2} maxLength={1000} onChange={(event) => setDetailsDraft({ ...detailsDraft, notes: event.target.value })} /></label>
+                <p className="admin-hint">Email stays as verified at checkout: {selected.details.email}</p>
+                <div className="admin-form-actions"><button className="admin-primary">Save details</button><button type="button" className="admin-secondary" onClick={() => setDetailsDraft(null)}>Cancel</button></div>
+              </fieldset></form> : <>
+              <address><strong>{selected.details.name}</strong><a href={`mailto:${selected.details.email}`}>{selected.details.email}</a><a href={`tel:${selected.details.phone}`}>{selected.details.phone}</a><span>{selected.details.building}</span>{selected.details.street && <span>{selected.details.street}</span>}<span>{districtName(selected.details.district)}, Hong Kong</span></address>
               {selected.details.notes && <p className="admin-note"><b>Customer note</b>{selected.details.notes}</p>}
+              {selected.details_edited_at !== null && <p className="admin-hint">Corrected by {selected.details_edited_by} · {date(selected.details_edited_at)}. The checkout record keeps the original.</p>}
+              </>}
             </div>
             <div className="admin-card">
               <h3>Fulfillment</h3>
               <form className="admin-form" onSubmit={saveFulfillment}>
                 <fieldset disabled={busy || selected.payment_status !== "paid" || selected.mode !== "prod"}>
-                  <label>Stage<select value={draft.status} onChange={(event) => setDraft({ ...draft, status: event.target.value as Stage })}>{STAGES.map((stage, index) => <option key={stage} value={stage} disabled={index < STAGES.indexOf(selected.fulfillment.status) || index > STAGES.indexOf(selected.fulfillment.status) + 1}>{stageName[stage]}</option>)}</select></label>
+                  <label>Stage<select value={draft.status} onChange={(event) => setDraft({ ...draft, status: event.target.value as Stage })}>{STAGES.map((stage, index) => <option key={stage} value={stage} disabled={index > STAGES.indexOf(selected.fulfillment.status) + 1}>{stageName[stage]}</option>)}</select></label>
                   <div className="admin-form-row">
                     <label>Courier<input value={draft.courier} maxLength={80} required={draft.status === "dispatched"} onChange={(event) => setDraft({ ...draft, courier: event.target.value })} /></label>
                     <label>Tracking number<input value={draft.trackingNumber} maxLength={120} required={draft.status === "dispatched"} onChange={(event) => setDraft({ ...draft, trackingNumber: event.target.value })} /></label>

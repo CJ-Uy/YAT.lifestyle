@@ -12,7 +12,7 @@ const salt = Buffer.alloc(16, 7), PASSWORD_HASH = `pbkdf2-sha256$100000$${salt.t
 
 function setup() {
   const db = new DatabaseSync(":memory:");
-  for (const file of ["0007_commerce.sql", "0008_admin.sql", "0009_inbox.sql", "0010_free_delivery.sql", "0011_admin_finance.sql", "0012_admin_order_seen.sql"]) db.exec(readFileSync(new URL(`../migrations/${file}`, import.meta.url), "utf8"));
+  for (const file of ["0007_commerce.sql", "0008_admin.sql", "0009_inbox.sql", "0010_free_delivery.sql", "0011_admin_finance.sql", "0012_admin_order_seen.sql", "0014_admin_order_details.sql"]) db.exec(readFileSync(new URL(`../migrations/${file}`, import.meta.url), "utf8"));
   const clock = { now: Date.parse("2026-10-12T10:00:00Z") }, limits = { allowed: true, keys: [] as string[] };
   // Match D1's bound-statement shape while exercising the real SQLite constraints and triggers.
   const statement = (sql: string): CommerceStatement => {
@@ -412,4 +412,33 @@ test("admin seen: the daily email goes once per Hong Kong day after the saved ti
   assert.equal(sent.at(-1)!.to, "natasha@example.com"); assert.match(sent.at(-1)!.subject, /^Test:/);
   assert.equal(db.prepare("SELECT last_sent_day FROM admin_notify_settings").get()!.last_sent_day, "2026-10-25");
   assert.equal((await handleAdmin("notify-test", post("notify-test", {}, cookie), { ...mailer, sendEmail: undefined })).status, 503);
+});
+
+test("admin: staff can step a stage back but not skip ahead, and re-dispatch does not email twice", async () => {
+  const { deps, db, seedOrder } = setup(), { cookie } = await signIn(deps);
+  const sent: unknown[] = [], mailer: AdminDeps = { ...deps, sendEmail: async (message) => { sent.push(message); } };
+  const id = seedOrder();
+  db.prepare("INSERT INTO admin_order_fulfillment (order_id, status, courier, tracking_number, note, version, updated_by, updated_at) VALUES (?, 'packed', '', '', '', 1, 'natasha', 0)").run(id);
+  const save = (status: string, version: number) => handleAdmin("fulfillment", post("fulfillment", { id, status, version, courier: "SF Express", trackingNumber: "SF123", note: "", shippingCost: "40" }, cookie), mailer);
+  await ok(await save("dispatched", 1));
+  await ok(await save("packed", 2));
+  assert.equal(db.prepare("SELECT status FROM admin_order_fulfillment WHERE order_id = ?").get(id)!.status, "packed");
+  await ok(await save("new", 3));
+  assert.equal((await save("packed", 4)).status, 409);
+  await ok(await save("making", 4)); await ok(await save("packed", 5)); await ok(await save("dispatched", 6));
+  assert.equal(sent.length, 1);
+});
+
+test("admin: delivery details edit is validated, keeps the verified email and is logged", async () => {
+  const { deps, db, seedOrder } = setup(), { cookie } = await signIn(deps);
+  const id = seedOrder();
+  const edit = (details: Record<string, unknown>) => handleAdmin("order-details", post("order-details", { id, details }, cookie), deps);
+  const base = { name: "Buyer", phone: "+85212345678", district: "wan-chai", building: "Flat 1", street: "Test Street", notes: "Please ring" };
+  assert.equal((await edit({ ...base, phone: "123" })).status, 400);
+  assert.equal((await edit({ ...base, district: "shanghai" })).status, 400);
+  assert.deepEqual((await ok(await edit({ ...base, building: "Flat 9, 3/F", phone: "9876 5432", email: "evil@example.com" }))).changed, ["phone", "building"]);
+  const details = (await ok(await handleAdmin("order", get(`order?id=${id}`, cookie), deps))).order.details;
+  assert.match(db.prepare("SELECT details_json FROM commerce_orders WHERE id = ?").get(id)!.details_json as string, /"Flat 1"/);
+  assert.equal(details.email, "buyer@example.com"); assert.equal(details.phone, "+85298765432"); assert.equal(details.building, "Flat 9, 3/F");
+  assert.match(db.prepare("SELECT note FROM admin_order_history WHERE order_id = ? ORDER BY id DESC").get(id)!.note as string, /phone, building/);
 });
