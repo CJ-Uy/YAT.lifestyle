@@ -24,3 +24,8 @@
 .bag-summary .checkout-totals > div { padding: .45rem 0; }
 .bag-summary .checkout-totals .bag-total { margin-top: .5rem; padding-top: .9rem; font-weight: 600; }
 .bag-summary .checkout-edit-cart { width: 100%; justify-content: center; margin-top: 1rem; }
+
+/* Review step: back and forward actions sit apart; on phones the primary action comes first. */
+.checkout-review-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin: 2rem 0 1rem; }
+.checkout-review-actions > * { justify-content: center; }
+@media (max-width: 560px) { .checkout-review-actions { flex-direction: column-reverse; } }

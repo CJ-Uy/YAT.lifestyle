@@ -325,6 +325,19 @@ export const PRODUCTS: Product[] = [
   }
 ];
 
+// Hong Kong districts as [id, English, Traditional Chinese, Simplified Chinese].
+export const HK_DISTRICTS = [
+  ["central-western", "Central & Western", "中西區", "中西区"], ["eastern", "Eastern", "東區", "东区"],
+  ["southern", "Southern", "南區", "南区"], ["wan-chai", "Wan Chai", "灣仔區", "湾仔区"],
+  ["kowloon-city", "Kowloon City", "九龍城區", "九龙城区"], ["kwun-tong", "Kwun Tong", "觀塘區", "观塘区"],
+  ["sham-shui-po", "Sham Shui Po", "深水埗區", "深水埗区"], ["wong-tai-sin", "Wong Tai Sin", "黃大仙區", "黄大仙区"],
+  ["yau-tsim-mong", "Yau Tsim Mong", "油尖旺區", "油尖旺区"], ["islands", "Islands", "離島區", "离岛区"],
+  ["kwai-tsing", "Kwai Tsing", "葵青區", "葵青区"], ["north", "North", "北區", "北区"],
+  ["sai-kung", "Sai Kung", "西貢區", "西贡区"], ["sha-tin", "Sha Tin", "沙田區", "沙田区"],
+  ["tai-po", "Tai Po", "大埔區", "大埔区"], ["tsuen-wan", "Tsuen Wan", "荃灣區", "荃湾区"],
+  ["tuen-mun", "Tuen Mun", "屯門區", "屯门区"], ["yuen-long", "Yuen Long", "元朗區", "元朗区"],
+] as const;
+
 export function productBySlug(slug: string): Product | undefined {
   return PRODUCTS.find((product) => product.slug === slug);
 }

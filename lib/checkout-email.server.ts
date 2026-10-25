@@ -1,4 +1,5 @@
 import { Buffer } from "node:buffer";
+import { MAIL, mailEyebrow, mailHeading, mailLayout, mailMuted, type MailLocale } from "./email-layout.ts";
 
 type Statement = {
   first<T = Record<string, unknown>>(): Promise<T | null>;
@@ -34,10 +35,21 @@ function sixDigits() {
 }
 
 const mailCopy = {
-  en: (code: string) => ({ subject: "Your YAT.LIFESTYLE checkout code", text: `Your checkout verification code is ${code}. It expires in 10 minutes.\n\nIf you did not request this code, ignore this email.` }),
-  "zh-Hant": (code: string) => ({ subject: "YAT.LIFESTYLE 結帳驗證碼", text: `你的結帳驗證碼是 ${code}，10 分鐘內有效。\n\n如果你沒有要求驗證碼，請忽略這封電郵。` }),
-  "zh-Hans": (code: string) => ({ subject: "YAT.LIFESTYLE 结账验证码", text: `你的结账验证码是 ${code}，10 分钟内有效。\n\n如果你没有要求验证码，请忽略这封邮件。` }),
+  en: { subject: "Your YAT.LIFESTYLE checkout code", text: (code: string) => `Your checkout verification code is ${code}. It expires in 10 minutes.\n\nIf you did not request this code, ignore this email.`,
+    eyebrow: "Checkout verification", heading: "Your checkout code", intro: "Enter this code on the checkout page to verify your email.", expires: "It expires in 10 minutes.", ignore: "If you did not request this code, ignore this email." },
+  "zh-Hant": { subject: "YAT.LIFESTYLE 結帳驗證碼", text: (code: string) => `你的結帳驗證碼是 ${code}，10 分鐘內有效。\n\n如果你沒有要求驗證碼，請忽略這封電郵。`,
+    eyebrow: "結帳驗證", heading: "你的結帳驗證碼", intro: "請在結帳頁面輸入以下驗證碼，以驗證你的電郵。", expires: "驗證碼於 10 分鐘內有效。", ignore: "如果你沒有要求驗證碼，請忽略這封電郵。" },
+  "zh-Hans": { subject: "YAT.LIFESTYLE 结账验证码", text: (code: string) => `你的结账验证码是 ${code}，10 分钟内有效。\n\n如果你没有要求验证码，请忽略这封邮件。`,
+    eyebrow: "结账验证", heading: "你的结账验证码", intro: "请在结账页面输入以下验证码，以验证你的邮箱。", expires: "验证码在 10 分钟内有效。", ignore: "如果你没有要求验证码，请忽略这封邮件。" },
 };
+function codeMail(locale: MailLocale, code: string) {
+  const t = mailCopy[locale];
+  // letter-spacing also trails the last digit, so the matching left padding keeps the code centred.
+  const body = `${mailEyebrow(t.eyebrow)}${mailHeading(t.heading)}<p style="margin:0 0 24px;">${t.intro}</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" style="padding:22px 0 22px 10px;background:${MAIL.paper};border:1px solid ${MAIL.rule};font-family:${MAIL.sans};font-size:36px;font-weight:700;letter-spacing:10px;color:${MAIL.ink};-webkit-user-select:all;user-select:all;">${code}</td></tr></table>
+<p style="margin:16px 0 28px;color:${MAIL.muted};">${t.expires}</p><div style="border-top:1px solid ${MAIL.rule};padding-top:16px;">${mailMuted(t.ignore)}</div>`;
+  return { subject: t.subject, text: t.text(code), html: mailLayout({ locale, preheader: t.text(code).split("\n")[0], body }) };
+}
 
 class BodyError extends Error { status: number; constructor(status: number) { super(); this.status = status; } }
 async function readJson(request: Request): Promise<Record<string, unknown>> {
@@ -92,8 +104,7 @@ async function requestCode(body: Record<string, unknown>, email: string, env: Ch
     return fail(429, "cooldown", Math.max(1, Math.ceil((RESEND_AFTER - (now - (pending?.requested_at ?? now))) / 1000)));
   }
   try {
-    const mail = mailCopy[body.locale](code);
-    await env.EMAIL.send({ from: { email: "orders@yatlifestyle.com", name: "YAT.LIFESTYLE" }, to: email, ...mail, html: `<p>${mail.text.replaceAll("\n\n", "</p><p>")}</p>` });
+    await env.EMAIL.send({ from: { email: "orders@yatlifestyle.com", name: "YAT.LIFESTYLE" }, to: email, ...codeMail(body.locale, code) });
   } catch {
     await env.DB.prepare("DELETE FROM checkout_email_codes WHERE email = ? AND code_hash = ? AND delivered_at IS NULL").bind(email, hash).run();
     return fail(503, "send-failed");

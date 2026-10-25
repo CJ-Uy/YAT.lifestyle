@@ -1,4 +1,5 @@
 import { productBySlug } from "./shop.ts";
+import { MAIL, districtLine, escapeHtml, mailAddress, mailEyebrow, mailHeading, mailItems, mailLabel, mailLayout, mailMuted } from "./email-layout.ts";
 import { HttpError, cleanText, integer, moneyCents, type AdminDeps } from "./admin.server.ts";
 
 // Hong Kong has no daylight saving, so a fixed +8h offset gives its calendar dates.
@@ -267,11 +268,28 @@ export async function financeAction(action: string, request: Request, deps: Admi
 }
 
 const SHIPPED = {
-  en: { subject: "Your YAT.LIFESTYLE order has shipped", lead: "Your order is on its way.", courier: "Courier", tracking: "Tracking number", order: "Order", to: "Delivering to" },
-  "zh-Hant": { subject: "你的 YAT.LIFESTYLE 訂單已寄出", lead: "你的訂單已經寄出。", courier: "速遞公司", tracking: "追蹤編號", order: "訂單", to: "送貨地址" },
-  "zh-Hans": { subject: "你的 YAT.LIFESTYLE 订单已寄出", lead: "你的订单已经寄出。", courier: "快递公司", tracking: "追踪编号", order: "订单", to: "送货地址" },
+  en: { subject: "Your YAT.LIFESTYLE order has shipped", lead: "Your order is on its way.", courier: "Courier", tracking: "Tracking number", order: "Order", to: "Delivering to",
+    eyebrow: "Shipped", heading: "Your order is on its way.", body: "Your fragrances have left our studio. Use the tracking number below with the courier to follow the delivery.", items: "In this parcel", help: "Questions about this order? Reply to this email or write to" },
+  "zh-Hant": { subject: "你的 YAT.LIFESTYLE 訂單已寄出", lead: "你的訂單已經寄出。", courier: "速遞公司", tracking: "追蹤編號", order: "訂單", to: "送貨地址",
+    eyebrow: "已寄出", heading: "你的訂單已經寄出。", body: "你的香水已從我們的工作室寄出。請使用以下追蹤編號，向速遞公司查詢送貨進度。", items: "包裹內容", help: "對訂單有疑問？請直接回覆此電郵，或寫信至" },
+  "zh-Hans": { subject: "你的 YAT.LIFESTYLE 订单已寄出", lead: "你的订单已经寄出。", courier: "快递公司", tracking: "追踪编号", order: "订单", to: "送货地址",
+    eyebrow: "已寄出", heading: "你的订单已经寄出。", body: "你的香水已从我们的工作室寄出。请使用以下追踪编号，向快递公司查询配送进度。", items: "包裹内容", help: "对订单有疑问？请直接回复此邮件，或写信至" },
 };
-const escapeHtml = (value: string) => value.replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character]!));
+type ShippedDetails = { name: string; district: string; phone?: string; building?: string; street?: string };
+export function shippedMail(orderId: string, locale: keyof typeof SHIPPED, courier: string, tracking: string, items: { slug: string; name: string; quantity: number }[], details: ShippedDetails) {
+  const t = SHIPPED[locale] ?? SHIPPED.en, mailLocale = SHIPPED[locale] ? locale : "en";
+  const text = `${t.lead}\n\n${t.courier}: ${courier}\n${t.tracking}: ${tracking}\n\n${items.map((item) => `${item.name} × ${item.quantity}`).join("\n")}\n\n${t.order}: ${orderId}\n${t.to}: ${details.name}, ${districtLine(details.district, mailLocale)}`;
+  const label = `font-size:12px;letter-spacing:2px;text-transform:uppercase;color:${MAIL.muted};`;
+  const body = `${mailEyebrow(t.eyebrow)}${mailHeading(t.heading)}<p style="margin:0 0 24px;">${t.body}</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${MAIL.paper};border:1px solid ${MAIL.rule};"><tr>
+<td valign="top" style="padding:18px 20px;"><div style="${label}">${t.courier}</div><div style="font-size:16px;">${escapeHtml(courier)}</div></td>
+<td valign="top" style="padding:18px 20px;"><div style="${label}">${t.tracking}</div><div style="font-size:18px;font-weight:700;letter-spacing:1px;word-break:break-all;">${escapeHtml(tracking)}</div></td>
+</tr></table>
+${mailLabel(t.items)}${mailItems(items.map(({ slug, name, quantity }) => ({ slug, name, quantity })), mailLocale)}
+${mailLabel(t.to)}${mailAddress(details, mailLocale)}
+<div style="margin-top:32px;padding-top:16px;border-top:1px solid ${MAIL.rule};">${mailMuted(`${t.order}: ${escapeHtml(orderId)}<br>${t.help} <a href="mailto:orders@yatlifestyle.com" style="color:${MAIL.gold};">orders@yatlifestyle.com</a>.`)}</div>`;
+  return { subject: t.subject, text, html: mailLayout({ locale: mailLocale, preheader: `${t.tracking}: ${tracking}`, body }) };
+}
 
 /** Sends the customer's shipped email once per dispatched order. */
 export async function sendShippedEmail(orderId: string, deps: AdminDeps): Promise<"sent" | "already" | "unavailable" | "failed"> {
@@ -283,9 +301,8 @@ export async function sendShippedEmail(orderId: string, deps: AdminDeps): Promis
   try {
     const order = await deps.db.prepare("SELECT locale, email, items_json, details_json FROM commerce_orders WHERE id = ?").bind(orderId).first<{ locale: keyof typeof SHIPPED; email: string; items_json: string; details_json: string }>();
     if (!order) throw new Error("order_missing");
-    const t = SHIPPED[order.locale] ?? SHIPPED.en, items = JSON.parse(order.items_json) as { name: string; quantity: number }[], details = JSON.parse(order.details_json) as { name: string; district: string };
-    const text = `${t.lead}\n\n${t.courier}: ${claimed.courier}\n${t.tracking}: ${claimed.tracking_number}\n\n${items.map((item) => `${item.name} × ${item.quantity}`).join("\n")}\n\n${t.order}: ${orderId}\n${t.to}: ${details.name}, ${details.district}, Hong Kong`;
-    await deps.sendEmail({ to: order.email, from: { email: "orders@yatlifestyle.com", name: "YAT.lifestyle" }, subject: t.subject, text, html: `<p>${escapeHtml(text).replaceAll("\n", "<br>")}</p>` });
+    await deps.sendEmail({ to: order.email, from: { email: "orders@yatlifestyle.com", name: "YAT.LIFESTYLE" },
+      ...shippedMail(orderId, order.locale, claimed.courier, claimed.tracking_number, JSON.parse(order.items_json), JSON.parse(order.details_json)) });
     // shortcut: a crash after the claim and before sending leaves the email marked sent; staff can see the timestamp and resend.
     return "sent";
   } catch {

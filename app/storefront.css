@@ -242,7 +242,6 @@ html:has(.storefront),body:has(.storefront) { background: #f7f3eb; color-scheme:
 .checkout-address dt { color: var(--muted); font-size: .85rem; }
 .checkout-address dd { margin: .25rem 0 0; }
 .checkout-review h2 { font-size: 2.1rem; }
-.checkout-review .store-btn-secondary { margin-bottom: 2rem; }
 .order-preview { width: 100%; max-width: 920px; min-height: 55svh; margin-inline: auto; }
 .order-preview h1,.checkout-layout h1 { font-size: clamp(2.5rem,4vw,4rem); }
 .order-preview .bag-summary { margin-block: 2rem; }

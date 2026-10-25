@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { formatDelivery, formatPrice } from "../../lib/shop";
 import { payWithAirwallex, type Payment } from "../checkout/airwallex-client";
+import { useCart } from "../shop/cart";
 import { useLocale } from "../site-header";
 import { StoreShell } from "../storefront";
 
@@ -43,6 +44,13 @@ export default function OrderExperience() {
   const [order, setOrder] = useState<Order | null>(null), [id, setId] = useState("");
   const [loading, setLoading] = useState(true), [paying, setPaying] = useState(false), [cancelled, setCancelled] = useState(false);
   const [error, setError] = useState<"order" | "payment" | null>(null);
+  const cart = useCart();
+  // Empty the bag once its exact contents are paid for; a later, different bag survives revisiting an old order link.
+  useEffect(() => {
+    if (order?.status !== "paid" || !cart.ready || !cart.items.length) return;
+    const contents = (items: { slug: string; quantity: number }[]) => items.map((item) => `${item.slug}:${item.quantity}`).sort().join();
+    if (contents(cart.items) === contents(order.items)) cart.clear();
+  }, [order, cart]);
 
   async function check(orderId: string, signal?: AbortSignal) {
     setLoading(true); setError(null);

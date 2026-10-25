@@ -7,19 +7,19 @@ import "./email-verification.css";
 const copy = {
   en: {
     title: "Verify your email", intro: "Receive your order confirmation here.", send: "Send verification code", sending: "Sending…", checking: "Checking verification…",
-    code: "Six-digit code", verify: "Verify email", verifying: "Verifying…", resend: "Resend code", verified: "Email verified", sent: "Check your email. The code expires in 10 minutes.",
+    code: "Six-digit code", verify: "Verify email", verifying: "Verifying…", resend: "Resend code", noCode: "Didn't get it?", sentTo: "We sent a six-digit code to", verified: "Email verified", sent: "Check your email. The code expires in 10 minutes.",
     wait: "Please wait before requesting another code.", invalidEmail: "Enter a valid email address above.", invalidCode: "That code is invalid or expired. Try again, or request a new code.",
     sendFailed: "The code could not be sent. Please try again.", unavailable: "Email verification is unavailable. Please try again shortly.", expired: "Email verification expired. Request a new code.",
   },
   "zh-Hant": {
     title: "驗證電郵", intro: "訂單確認將寄到此電郵。", send: "寄送驗證碼", sending: "正在寄送…", checking: "正在檢查驗證…",
-    code: "六位數驗證碼", verify: "驗證電郵", verifying: "正在驗證…", resend: "重新寄送", verified: "電郵已驗證", sent: "請查看電郵，驗證碼於 10 分鐘內有效。",
+    code: "六位數驗證碼", verify: "驗證電郵", verifying: "正在驗證…", resend: "重新寄送", noCode: "收不到？", sentTo: "六位數驗證碼已寄至", verified: "電郵已驗證", sent: "請查看電郵，驗證碼於 10 分鐘內有效。",
     wait: "請稍候再要求另一組驗證碼。", invalidEmail: "請在上方輸入有效電郵地址。", invalidCode: "驗證碼無效或已過期。請再試一次，或要求新的驗證碼。",
     sendFailed: "未能寄送驗證碼，請再試一次。", unavailable: "暫時無法驗證電郵，請稍後再試。", expired: "電郵驗證已過期，請要求新的驗證碼。",
   },
   "zh-Hans": {
     title: "验证邮箱", intro: "订单确认将发送到此邮箱。", send: "发送验证码", sending: "正在发送…", checking: "正在检查验证…",
-    code: "六位数验证码", verify: "验证邮箱", verifying: "正在验证…", resend: "重新发送", verified: "邮箱已验证", sent: "请查看邮件，验证码在 10 分钟内有效。",
+    code: "六位数验证码", verify: "验证邮箱", verifying: "正在验证…", resend: "重新发送", noCode: "收不到？", sentTo: "六位数验证码已发送至", verified: "邮箱已验证", sent: "请查看邮件，验证码在 10 分钟内有效。",
     wait: "请稍候再获取另一组验证码。", invalidEmail: "请在上方输入有效邮箱地址。", invalidCode: "验证码无效或已过期。请再试一次，或获取新的验证码。",
     sendFailed: "未能发送验证码，请再试一次。", unavailable: "暂时无法验证邮箱，请稍后再试。", expired: "邮箱验证已过期，请获取新的验证码。",
   },
@@ -98,18 +98,21 @@ export function EmailVerification({ email, locale, onVerified }: { email: string
     } catch { if (!controller.signal.aborted) { setPhase(action === "verify" ? "sent" : "idle"); setFeedback("unavailable"); } }
   }
 
+  const codeStep = phase === "sent" || phase === "verifying" || resendAt > 0;
+  const sendButton = <button className={codeStep ? "checkout-code-resend" : "store-btn-secondary checkout-code-send"} type="button" disabled={!eligible || busy || remaining > 0} onClick={() => void submit("request")}>
+    {phase === "sending" ? t.sending : resendAt ? `${t.resend}${remaining ? ` (${remaining}s)` : ""}` : t.send}</button>;
   return <section className="checkout-email-verification" aria-labelledby={`${id}-heading`} aria-busy={busy}>
     <h3 id={`${id}-heading`}>{t.title}</h3>
-    {phase === "verified" ? <p className="checkout-email-verified" role="status">{t.verified}: <span>{normalizedEmail}</span></p> : <>
-      <p>{t.intro}</p>
-      {(phase === "sent" || phase === "verifying" || resendAt > 0) && <div className="checkout-code-row"><div><label htmlFor={id}>{t.code}</label><input ref={input} id={id} name="checkout-code" type="text" inputMode="numeric" autoComplete="one-time-code" maxLength={6} pattern="[0-9]{6}" value={code}
+    {phase === "verified" ? <p className="checkout-email-verified" role="status"><svg aria-hidden="true" viewBox="0 0 16 16"><path d="m3.5 8.5 3 3 6-7" /></svg><span>{t.verified}: <b>{normalizedEmail}</b></span></p> : <>
+      <p>{codeStep ? <>{t.sentTo} <b>{normalizedEmail}</b></> : t.intro}</p>
+      {codeStep ? <><label htmlFor={id}>{t.code}</label><div className="checkout-code-row"><input ref={input} id={id} name="checkout-code" type="text" inputMode="numeric" autoComplete="one-time-code" maxLength={6} pattern="[0-9]{6}" value={code}
         aria-invalid={feedback === "invalidCode"} aria-describedby={feedback ? `${id}-feedback` : undefined}
         onChange={(event) => { setCode(event.target.value.replace(/\D/g, "").slice(0, 6)); if (feedback === "invalidCode") setFeedback(null); }}
-        onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); void submit("verify"); } }} /></div>
-        <button className="store-btn-secondary" type="button" disabled={busy || code.length !== 6} onClick={() => void submit("verify")}>{phase === "verifying" ? t.verifying : t.verify}</button></div>}
-      <button className="checkout-code-send" type="button" disabled={!eligible || busy || remaining > 0} onClick={() => void submit("request")}>{phase === "sending" ? t.sending : resendAt ? `${t.resend}${remaining ? ` (${remaining}s)` : ""}` : t.send}</button>
+        onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); void submit("verify"); } }} />
+        <button className="store-btn-secondary" type="button" disabled={busy || code.length !== 6} onClick={() => void submit("verify")}>{phase === "verifying" ? t.verifying : t.verify}</button></div></> : sendButton}
       {phase === "checking" && <p role="status">{t.checking}</p>}
-      {feedback && <p id={`${id}-feedback`} className={feedback === "sent" || feedback === "wait" ? undefined : "checkout-error"} role={feedback === "sent" || feedback === "wait" ? "status" : "alert"}>{t[feedback]}</p>}
+      {feedback && <p id={`${id}-feedback`} className={feedback === "sent" || feedback === "wait" ? "checkout-code-note" : "checkout-error"} role={feedback === "sent" || feedback === "wait" ? "status" : "alert"}>{t[feedback]}</p>}
+      {codeStep && <p className="checkout-code-again">{t.noCode} {sendButton}</p>}
     </>}
   </section>;
 }

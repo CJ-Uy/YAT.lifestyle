@@ -1,14 +1,24 @@
-.checkout-email-verification { grid-column: 1/-1; border-block: 1px solid var(--rule); padding-block: 1.25rem; }
-.checkout-email-verification h3 { font-family: var(--body); font-size: 1rem; margin: 0 0 .4rem; }
-.checkout-email-verification p { color: var(--muted); font-size: .85rem; margin: .35rem 0 .7rem; }
-.checkout-email-verification .checkout-error { color: #a13e2c; }
-.checkout-email-verification .checkout-email-verified { color: var(--warm); margin-bottom: 0; }
-.checkout-email-verified span { overflow-wrap: anywhere; }
-.checkout-code-row { display: flex; align-items: end; flex-wrap: wrap; gap: 1rem; margin: 1rem 0 .4rem; }
-.checkout-code-row > div { display: flex; flex-direction: column; gap: .45rem; }
-.checkout-code-row label { font-size: .85rem; }
-.checkout-code-row input { width: 11rem; font-variant-numeric: tabular-nums; letter-spacing: .15em; }
-.checkout-code-row .store-btn-secondary { min-height: 48px; font-size: .9rem; }
-.checkout-code-send { min-height: 44px; background: transparent; border-bottom: 1px solid var(--gold); color: var(--gold); font-size: .85rem; padding: .45rem 0; }
-.checkout-code-send:hover:not(:disabled) { color: var(--warm); border-color: var(--warm); }
-.checkout-code-send:disabled { border-color: transparent; }
+.checkout-email-verification { grid-column: 1/-1; padding: 1.5rem; border: 1px solid var(--rule); background: var(--carbon); }
+.checkout-email-verification h3 { font-family: var(--body); font-size: 1.05rem; font-weight: 600; margin: 0 0 .35rem; }
+.checkout-email-verification p { color: var(--muted); font-size: .9rem; line-height: 1.55; margin: 0; }
+.checkout-email-verification p b { color: var(--warm); font-weight: 600; overflow-wrap: anywhere; }
+.checkout-email-verification > label { display: block; margin: 1.25rem 0 .5rem; font-size: .85rem; }
+
+/* Before a code is sent: one clear action. */
+.storefront .checkout-code-send { margin-top: 1rem; min-height: 48px; padding-inline: 1.25rem; justify-content: center; background: var(--ink); font-size: .95rem; }
+
+/* After: the code and its button share one height, like the voucher field. */
+.checkout-code-row { display: flex; flex-wrap: wrap; gap: .6rem; }
+.storefront .checkout-code-row input { flex: 1 1 9rem; max-width: 15rem; min-height: 52px; background: var(--ink); font-size: 1.35rem; font-variant-numeric: tabular-nums; letter-spacing: .4em; text-align: center; padding-inline: .85rem .45rem; }
+.checkout-code-row input:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.checkout-code-row .store-btn-secondary { min-height: 52px; padding-inline: 1.25rem; justify-content: center; font-size: .95rem; }
+.checkout-email-verification .checkout-code-again { margin-top: .75rem; }
+.checkout-code-resend { min-height: 44px; padding: 0; border: 0; background: none; color: var(--gold); font: inherit; text-decoration: underline; text-underline-offset: .25em; }
+.checkout-code-resend:hover:not(:disabled) { color: var(--warm); }
+.storefront .checkout-code-resend:disabled { color: var(--muted); text-decoration: none; }
+
+.checkout-email-verification .checkout-code-note,.checkout-email-verification .checkout-error { margin-top: .9rem; padding: .6rem .85rem; border-left: 2px solid var(--gold); background: rgba(115, 88, 45, .07); color: var(--warm); }
+.checkout-email-verification .checkout-error { border-color: #a13e2c; background: rgba(161, 62, 44, .08); color: #8a3322; }
+
+.checkout-email-verification .checkout-email-verified { display: flex; align-items: center; gap: .65rem; margin-top: .6rem; color: var(--warm); }
+.checkout-email-verified svg { flex: none; width: 1.6rem; height: 1.6rem; padding: .3rem; border-radius: 50%; background: var(--gold); fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }

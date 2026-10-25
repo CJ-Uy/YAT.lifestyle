@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { PRICE_CENTS, formatDelivery, formatPrice, productBySlug, type CartItem } from "../../lib/shop";
+import { HK_DISTRICTS, PRICE_CENTS, formatDelivery, formatPrice, productBySlug, type CartItem } from "../../lib/shop";
 import { useCart } from "../shop/cart";
 import { useLocale } from "../site-header";
 import { StoreShell } from "../storefront";
@@ -21,17 +21,7 @@ const liveCopy = {
   "zh-Hans": { intro: "验证邮箱、填写地址，再核对订单。", preview: "Airwallex 安全付款", privacy: "我们使用你的资料验证邮箱、处理订单及发送通知。详情请参阅隐私政策。", bag: "购物车", loading: "正在加载购物车…", empty: "请先加入香水，再结账。", reviewButton: "核对订单", reviewIntro: "继续安全付款前，请核对资料。", confirm: "前往付款", confirmationHint: "付款卡资料由 Airwallex 处理。付款成功后，订单才会确认。", editBag: "修改购物车", total: "总额", delivery: "送货上门", timing: "香港免费配送，两星期内送达。", voucher: "优惠码", apply: "应用", discount: "优惠", remove: "移除", calculating: "正在核对总额…", paying: "正在打开安全付款…", verifyError: "请先用验证码验证邮箱。", paymentError: "无法打开付款。请重试；购物车已保留。", voucherError: "无法使用此优惠码。请核对，或移除后继续。", voucherRejected: "{code} 无法使用，可能已停用、过期、用完或输入有误。", applied: "已应用", quoteError: "无法核对总额，请重试。", retry: "重试" },
 };
 
-const districts = [
-  ["central-western", "Central & Western", "中西區", "中西区"], ["eastern", "Eastern", "東區", "东区"],
-  ["southern", "Southern", "南區", "南区"], ["wan-chai", "Wan Chai", "灣仔區", "湾仔区"],
-  ["kowloon-city", "Kowloon City", "九龍城區", "九龙城区"], ["kwun-tong", "Kwun Tong", "觀塘區", "观塘区"],
-  ["sham-shui-po", "Sham Shui Po", "深水埗區", "深水埗区"], ["wong-tai-sin", "Wong Tai Sin", "黃大仙區", "黄大仙区"],
-  ["yau-tsim-mong", "Yau Tsim Mong", "油尖旺區", "油尖旺区"], ["islands", "Islands", "離島區", "离岛区"],
-  ["kwai-tsing", "Kwai Tsing", "葵青區", "葵青区"], ["north", "North", "北區", "北区"],
-  ["sai-kung", "Sai Kung", "西貢區", "西贡区"], ["sha-tin", "Sha Tin", "沙田區", "沙田区"],
-  ["tai-po", "Tai Po", "大埔區", "大埔区"], ["tsuen-wan", "Tsuen Wan", "荃灣區", "荃湾区"],
-  ["tuen-mun", "Tuen Mun", "屯門區", "屯门区"], ["yuen-long", "Yuen Long", "元朗區", "元朗区"],
-] as const;
+const districts = HK_DISTRICTS;
 
 const copy = {
   en: {
@@ -171,8 +161,8 @@ export default function CheckoutExperience() {
           </form> : <section className="checkout-review" aria-labelledby="review-heading">
             <h2 id="review-heading" tabIndex={-1} ref={reviewRef}>{t.reviewHeading}</h2><p>{t.reviewIntro}</p>
             <dl className="checkout-address"><div><dt>{t.name}</dt><dd>{review.delivery.name}</dd></div><div><dt>{t.email}</dt><dd>{review.delivery.email}</dd></div><div><dt>{t.phone}</dt><dd>{review.delivery.phone}</dd></div><div><dt>{t.district}</dt><dd>{districts.find(([id]) => id === review.delivery.district)?.[languageIndex]}</dd></div><div><dt>{t.building}</dt><dd>{review.delivery.building}</dd></div>{review.delivery.street && <div><dt>{t.street}</dt><dd>{review.delivery.street}</dd></div>}{review.delivery.notes && <div><dt>{t.notes}</dt><dd>{review.delivery.notes}</dd></div>}</dl>
-            <button className="store-btn-secondary" type="button" onClick={() => { setReview(null); requestAnimationFrame(() => nameRef.current?.focus()); }}>{t.edit}</button>
-            <button className="store-btn" type="button" onClick={pay} disabled={paying || !quote}>{paying ? t.paying : t.confirm}</button><p className="store-muted">{t.confirmationHint}</p>
+            <div className="checkout-review-actions"><button className="store-btn-secondary" type="button" onClick={() => { setReview(null); requestAnimationFrame(() => nameRef.current?.focus()); }}>{t.edit}</button>
+            <button className="store-btn" type="button" onClick={pay} disabled={paying || !quote}>{paying ? t.paying : t.confirm}</button></div><p className="store-muted">{t.confirmationHint}</p>
             {paymentError && <p className="checkout-error" role="alert">{t.paymentError}</p>}
           </section>}
           <aside className="bag-summary" aria-labelledby="checkout-summary-heading">

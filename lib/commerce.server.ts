@@ -1,7 +1,8 @@
 import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import { Buffer } from "node:buffer";
-import { normalizeCart, productBySlug, PRODUCTS, PRICE_CENTS, DELIVERY_CENTS, MAX_PER_SCENT, MAX_BAG_COUNT, type CartItem } from "./shop.ts";
+import { normalizeCart, productBySlug, formatDelivery, formatPrice, PRODUCTS, HK_DISTRICTS, PRICE_CENTS, DELIVERY_CENTS, MAX_PER_SCENT, MAX_BAG_COUNT, type CartItem } from "./shop.ts";
 import { getVerifiedEmail } from "./checkout-email.server.ts";
+import { MAIL, districtLine, escapeHtml, mailAddress, mailEyebrow, mailHeading, mailItems, mailLabel, mailLayout, mailMuted, mailRows } from "./email-layout.ts";
 
 export type CommerceResult = { success: boolean; meta?: { changes?: number } };
 export type CommerceStatement = {
@@ -42,7 +43,7 @@ type Quote = { items: OrderItem[]; subtotalCents: number; deliveryCents: number;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 const INTENT_ID = /^int_[A-Za-z0-9_]{8,120}$/;
 const EMAIL = /^[a-z0-9.!#$%&'*+/=?^_`{|}~-]{1,64}@[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+$/;
-const DISTRICTS = new Set(["central-western", "eastern", "southern", "wan-chai", "kowloon-city", "kwun-tong", "sham-shui-po", "wong-tai-sin", "yau-tsim-mong", "islands", "kwai-tsing", "north", "sai-kung", "sha-tin", "tai-po", "tsuen-wan", "tuen-mun", "yuen-long"]);
+const DISTRICTS = new Set<string>(HK_DISTRICTS.map(([id]) => id));
 const ORDER_COLUMNS = "id, request_id, request_digest, access_hash, access_expires_at, locale, email, details_json, items_json, subtotal_cents, delivery_cents, discount_cents, total_cents, currency, voucher_code, status, payment_intent_id, payment_status, mode, return_origin, created_at, updated_at, paid_at, receipt_sent_at";
 const tokens = new Map<string, { value: string; expires: number }>();
 const hash = (value: string) => createHash("sha256").update(value).digest("hex");
@@ -198,7 +199,28 @@ function orderView(order: OrderRow) {
   return { id: order.id, orderId: order.id, status: order.status, paymentStatus: order.payment_status, mode: order.mode, items: JSON.parse(order.items_json) as OrderItem[], details: JSON.parse(order.details_json) as Details,
     subtotalCents: order.subtotal_cents, deliveryCents: order.delivery_cents, discountCents: order.discount_cents, totalCents: order.total_cents, currency: order.currency, voucherCode: order.voucher_code, createdAt: order.created_at, paidAt: order.paid_at };
 }
-const escapeHtml = (value: string) => value.replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character]!));
+const RECEIPT = {
+  en: { subject: "Your YAT.LIFESTYLE payment confirmation", lead: "Payment received. Thank you for your order.", eyebrow: "Order confirmed", thanks: (name: string) => `Thank you, ${name}.`,
+    body: "We have received your payment and are preparing your order. It is estimated to arrive within 2 weeks.", reference: "Order reference", summary: "Your order", pack: "Each: 10 mL perfume · blue gift box · artificial flowers",
+    subtotal: "Items subtotal", discount: "Voucher", delivery: "Hong Kong delivery", total: "Total paid", to: "Delivering to", help: "Questions about this order? Reply to this email or write to" },
+  "zh-Hant": { subject: "YAT.LIFESTYLE 付款確認", lead: "已收到付款，感謝你的訂單。", eyebrow: "訂單已確認", thanks: (name: string) => `謝謝你，${name}。`,
+    body: "我們已收到付款，正在準備你的訂單，預計兩星期內送達。", reference: "訂單編號", summary: "訂單明細", pack: "每份：10 mL 香水 · 藍色禮盒 · 人造花",
+    subtotal: "商品小計", discount: "優惠碼", delivery: "香港送貨", total: "已付總額", to: "送貨地址", help: "對訂單有疑問？請直接回覆此電郵，或寫信至" },
+  "zh-Hans": { subject: "YAT.LIFESTYLE 付款确认", lead: "已收到付款，感谢你的订单。", eyebrow: "订单已确认", thanks: (name: string) => `谢谢你，${name}。`,
+    body: "我们已收到付款，正在准备你的订单，预计两星期内送达。", reference: "订单编号", summary: "订单明细", pack: "每份：10 mL 香水 · 蓝色礼盒 · 人造花",
+    subtotal: "商品小计", discount: "优惠码", delivery: "香港配送", total: "已付总额", to: "配送地址", help: "对订单有疑问？请直接回复此邮件，或写信至" },
+};
+export function receiptMail(order: OrderRow) {
+  const t = RECEIPT[order.locale] ?? RECEIPT.en, items = JSON.parse(order.items_json) as OrderItem[], details = JSON.parse(order.details_json) as Details;
+  const rows: [string, string][] = [[t.subtotal, formatPrice(order.subtotal_cents)], ...(order.discount_cents > 0 ? [[`${t.discount}${order.voucher_code ? ` · ${order.voucher_code}` : ""}`, `−${formatPrice(order.discount_cents)}`] as [string, string]] : []),
+    [t.delivery, formatDelivery(order.delivery_cents, order.locale)], [t.total, formatPrice(order.total_cents)]];
+  const text = `${t.lead}\n${t.reference}: ${order.id}\n\n${items.map((item) => `${item.name} × ${item.quantity}  ${formatPrice(item.lineTotalCents)}`).join("\n")}\n\n${rows.map(([label, value]) => `${label}: ${value}`).join("\n")}\n\n${t.to}:\n${[details.name, details.phone, details.building, details.street, districtLine(details.district, order.locale)].filter(Boolean).join("\n")}\n\n${t.help} orders@yatlifestyle.com`;
+  const body = `${mailEyebrow(t.eyebrow)}${mailHeading(t.thanks(details.name))}<p style="margin:0 0 12px;">${t.body}</p>${mailMuted(`${t.reference}: ${escapeHtml(order.id)}`)}
+${mailLabel(t.summary)}${mailItems(items, order.locale)}<div style="padding:12px 0 18px;">${mailMuted(t.pack)}</div>${mailRows(rows, true)}
+${mailLabel(t.to)}${mailAddress(details, order.locale)}
+<div style="margin-top:32px;padding-top:16px;border-top:1px solid ${MAIL.rule};">${mailMuted(`${t.help} <a href="mailto:orders@yatlifestyle.com" style="color:${MAIL.gold};">orders@yatlifestyle.com</a>.`)}</div>`;
+  return { subject: t.subject, text, html: mailLayout({ locale: order.locale, preheader: `${t.eyebrow} · ${formatPrice(order.total_cents)}`, body }) };
+}
 async function sendReceipt(order: OrderRow, env: CommerceEnv): Promise<boolean> {
   if (order.mode === "sandbox" || order.status !== "paid" || order.receipt_sent_at !== null) return true;
   if (!env.EMAIL) return false;
@@ -206,11 +228,7 @@ async function sendReceipt(order: OrderRow, env: CommerceEnv): Promise<boolean> 
   const claimed = await env.DB.prepare(`UPDATE commerce_orders SET receipt_lock_until = ? WHERE id = ? AND status = 'paid' AND receipt_sent_at IS NULL AND (receipt_lock_until IS NULL OR receipt_lock_until < ?) RETURNING id`).bind(now + 60000, order.id, now).first<{ id: string }>();
   if (!claimed) return true;
   try {
-    const items = JSON.parse(order.items_json) as OrderItem[], details = JSON.parse(order.details_json) as Details;
-    const subject = order.locale === "en" ? "Your YAT.lifestyle payment confirmation" : order.locale === "zh-Hant" ? "YAT.lifestyle 付款確認" : "YAT.lifestyle 付款确认";
-    const lead = order.locale === "en" ? "Payment received. Thank you for your order." : order.locale === "zh-Hant" ? "已收到付款，感謝你的訂單。" : "已收到付款，感谢你的订单。";
-    const summary = `${lead}\n${order.id}\n\n${items.map((item) => `${item.name} × ${item.quantity}`).join("\n")}\n\nHK$${(order.total_cents / 100).toFixed(2)}\n${details.name}\n${details.building}\n${details.street}\n${details.district}, Hong Kong`;
-    await env.EMAIL.send({ to: order.email, from: { email: "orders@yatlifestyle.com", name: "YAT.lifestyle" }, subject, text: summary, html: `<p>${escapeHtml(summary).replaceAll("\n", "<br>")}</p>` });
+    await env.EMAIL.send({ to: order.email, from: { email: "orders@yatlifestyle.com", name: "YAT.LIFESTYLE" }, ...receiptMail(order) });
     // shortcut: a crash between send and this write can repeat a receipt; use provider idempotency if it becomes necessary.
     const saved = await env.DB.prepare("UPDATE commerce_orders SET receipt_sent_at = ?, receipt_lock_until = NULL WHERE id = ? AND receipt_sent_at IS NULL").bind(Date.now(), order.id).run();
     if (!saved.success) throw new Error("receipt_write_failed");
