@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
 import { PRODUCTS } from "../../lib/shop";
-import { StyledQr } from "../element/styled-qr";
+import { StyledQr } from "./styled-qr";
 import { amount, cents, date, hkToday, money, request } from "./admin-api";
 
 export type PanelProps = { busy: boolean; perform: (work: () => Promise<void>) => void; notify: (message: string) => void };

@@ -32,11 +32,10 @@ Twelve portrait 4:5 still lifes were made with the built-in OpenAI imagegen tool
 
 Quiet, Pure and White may use any of the available caps. Their black/silver/gold image choices are creative references, not a selectable SKU or guaranteed cap finish. Preserve originals and exact prompts; no generated bottle text substitutes for the readable product name/price/copy on the page.
 
-## Restored home and retained Element assets
+## Restored home assets
 
-Element is deferred and has no ordinary-shop entry. Its existing routes and original artwork remain intact. The original cinematic `HomeExperience` composition is retained as an inactive historical reference. `/` mounts `StoreHome` with `DropletJourney`, which restores the original 48-frame golden-drop film, taper repair and YAT signature finish using the established renderer geometry and motion helpers. The film/poster and Hong Kong dawn atmosphere surround the actual gift-box, Natasha portrait and in-hand sequence. Midnight/Golden/Forest still lifes remain catalogue/featured-product imagery rather than cinematic story plates. Obsolete coming-soon and Element promotions remain inactive. No new raster was generated or replaced for this restoration.
+Element (the hackathon scent-study line) and the old cinematic `HomeExperience` home are archived on the `element-hackathon` branch and are not part of production. `/` mounts `StoreHome` with `DropletJourney`.
 
-- `element-daylight-lab-original.png` and `element-daylight-lab.webp`: Element's new daylight laboratory still life, generated with the built-in OpenAI image tool on 2026-09-25, 1024 x 1536. Warm ivory bench, amber liquid and restrained glassware align with Hours and Afterimage. Quality-86 WebP derivative; full prompt in `element-daylight-lab.json`. A conceptual illustration, not the actual founder's laboratory.
 
 - `hours-clock-tower-original.png` and `hours-clock-tower.webp`: generated architectural study of the Tsim Sha Tsui Clock Tower for the retained Hours collection/scroll chapter. Landmark reference: https://www.discoverhongkong.com/eng/place-to-go/travel.guide-clock-tower.html. Conceptual unobstructed view, not documentation of current maintenance conditions or ordinary-shop imagery.
 - `afterimage-morning-tea-original.png` and `afterimage-morning-tea.webp`: generated Hong Kong windowsill, tea and morning light for Afterimage, as requested by the user. Both new assets use built-in OpenAI generation, 1024 x 1536, with quality-86 WebP derivatives and full prompts in adjacent JSON files. No Higgsfield credits used.
@@ -53,8 +52,7 @@ Element is deferred and has no ordinary-shop entry. Its existing routes and orig
 - `yat-logo-reference.jpg`: user-supplied logo reference. The restored home reuses the original SVG YAT letter geometry and gold-gradient vector drop handed off from the filmed drop. The reference image is not rendered; the treatment is not final house-logo approval.
 - `hours-dawn.png`: synthetic Hong Kong harbour at first light. The restored droplet journey's subdued full-width atmosphere (30% opacity) renders its quality-60 derivatives: `hours-dawn-960.webp` below 760 px and `hours-dawn-1536.webp` above.
 - `afterimage-tram.png`: synthetic vintage tram interior, retained with its WebP for possible future use; no longer displayed in Afterimage.
-- `element-lab.png`: original dark pipette and sample-tube still life, preserved but no longer displayed.
-- `hours-dawn.webp`, `afterimage-tram.webp`, `element-lab.webp`: preserved optimized derivatives of the corresponding PNG originals. The harbour WebP remains for the inactive `HomeExperience`; the tram and dark laboratory images are saved but unused.
+- `hours-dawn.webp`, `afterimage-tram.webp`: preserved optimized derivatives of the corresponding PNG originals; the tram image is saved but unused.
 
 The original generated images have adjacent JSON sidecars and embedded prompt metadata. The derived scroll frames inherit the portrait film's provenance.
 
@@ -62,7 +60,6 @@ The original generated images have adjacent JSON sidecars and embedded prompt me
 
 - Hours frames: Hong Kong dawn and public-transit moments.
 - Afterimage frames: harbour, ferry, tea steam, forest rain, and place-memory details.
-- Element frames: pipette, test tubes, and real laboratory glass without unsupported scientific claims.
 - Origin frames: founder-safe laboratory work and Hong Kong source material once authentic photography is available.
 - Subtle 35mm grain and edge light-leak textures, bounded away from body copy.
 

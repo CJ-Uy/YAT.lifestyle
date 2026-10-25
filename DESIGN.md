@@ -220,6 +220,8 @@ components:
 
 ## Overview
 
+> Element (the hackathon scent-study line), its laboratory world and the old cinematic home are archived on the `element-hackathon` branch. Their sections below describe that branch, not production.
+
 **Creative North Star: "Afterimage Hong Kong"**
 
 This is an ordinary extension of the incumbent world. The October 2026 live-checkout work preserves the existing palette, typography, token frontmatter, Element rules and homepage signature; it does not establish a new visual world.

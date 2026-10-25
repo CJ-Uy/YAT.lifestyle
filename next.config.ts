@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
     return [
       { source: "/:path*", has: [{ type: "host", value: "admin.yatlifestyle.com" }], headers: noindex },
       // vinext's `:path*` needs at least one segment, so the section roots are listed too.
-      ...["/admin", "/admin/:path*", "/api/:path*", "/element", "/element/:path*"].map((source) => ({ source, headers: noindex })),
+      ...["/admin", "/admin/:path*", "/api/:path*"].map((source) => ({ source, headers: noindex })),
     ];
   },
 };

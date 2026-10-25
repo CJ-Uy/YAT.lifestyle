@@ -22,14 +22,13 @@ admin and incoming-email Worker are deployed, with live checks recorded below.
 The real HKD hosted payment page has been opened and inspected; no charge or
 refund was performed. Paid-order confirmation, receipt and settlement still
 require the owner's live payment test.
-Element is deferred:
-its existing routes, code and artwork remain, with no public storefront entry.
+Element, the hackathon scent-study line, is archived on the `element-hackathon` branch and is not part of production.
+Remake it on that branch when the product returns.
 
 The Worker uses D1 (`yat-lifestyle-prod-db`,
-`7526a59a-6ad8-4ede-ba74-5ed18c51c47c`) for newsletter signups and Element
-sessions, readings, results and profiles. R2 (`yat-lifestyle-prod-assets`) stores
-photos and label art, and Vectorize (`element-tags`) supports voice matching.
-Workers AI, Email Sending and rate limiters support the existing features and
+`7526a59a-6ad8-4ede-ba74-5ed18c51c47c`) for newsletter signups and commerce.
+Its Element tables (migrations `0002`–`0005`) still hold the hackathon demo data. R2 (`yat-lifestyle-prod-assets`) stores
+private files. Email Sending and rate limiters support the newsletter and
 checkout. Additive migrations `0006`–`0009` provide email verification, orders and
 vouchers, admin sessions/fulfillment history, and the incoming inbox. Private R2
 objects preserve original incoming emails and attachments. Remote migrations
@@ -192,7 +191,7 @@ checkout codes and paid-order receipts use the configured sending service.
 - `npm run build` builds the Cloudflare Worker output.
 - `npm run start` starts the built Worker locally with Wrangler.
 - `npm run deploy` deploys the Cloudflare Worker.
-- `npm test` runs offline storefront, newsletter, checkout, commerce, admin, inbox and Element checks.
+- `npm test` runs offline storefront, newsletter, checkout, commerce, admin and inbox checks.
 - `npm run higgsfield:video -- "prompt"` generates a design video with Seedance 2.0.
 
 ## Higgsfield Seedance 2.0
@@ -224,7 +223,7 @@ photographs, brief captions and a ruled shopping rail with a gold-outline action
 Reduced motion shows a complete static poster opening,
 collapses the long story and preloads no frames. Ambient light is static, with no
 Pause/Resume control. The original `HomeExperience` composition
-remains an inactive historical reference; `StoreHome` now mounts `DropletJourney` with
+is archived on the `element-hackathon` branch; `StoreHome` now mounts `DropletJourney` with
 the original renderer geometry and motion helpers. No new raster was made for the restoration.
 The ivory sections retain real three-bottle and gift-box photographs in Gift, and the evening/in-hand
 pair in About. The catalogue renders twelve built-in imagegen scent still lifes (1,147,194 WebP bytes

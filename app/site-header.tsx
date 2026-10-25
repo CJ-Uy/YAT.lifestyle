@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { ElementSignature } from "./element/element-signature";
 
 export type Locale = "en" | "zh-Hant" | "zh-Hans";
 const languages: { id: Locale; name: string }[] = [
@@ -53,10 +52,8 @@ export function useLocale(initial: Locale = "en") {
   return [locale, changeLocale] as const;
 }
 
-export default function SiteHeader({ locale, onLocaleChange, brand, bagCount }: { locale: Locale; onLocaleChange: (locale: Locale) => void; shop?: boolean; subpage?: boolean; brand?: "yat" | "element"; bagCount?: number }) {
+export default function SiteHeader({ locale, onLocaleChange, brand, bagCount }: { locale: Locale; onLocaleChange: (locale: Locale) => void; shop?: boolean; subpage?: boolean; brand?: "yat"; bagCount?: number }) {
   const pathname = usePathname();
-  const elementPage = pathname?.startsWith("/element") ?? false;
-  const elementBrand = brand === "element" || (!brand && elementPage);
   const languageRef = useRef<HTMLDetailsElement>(null);
   useEffect(() => {
     const dismiss = (event: PointerEvent) => {
@@ -66,16 +63,15 @@ export default function SiteHeader({ locale, onLocaleChange, brand, bagCount }: 
     return () => document.removeEventListener("pointerdown", dismiss);
   }, []);
   const t = navigation[locale];
-  return <header className={`site-header site-header-simple${elementBrand ? " site-header-element" : ""}`}>
-    <a className={`wordmark${elementBrand ? " element-wordmark" : ""}`} href={elementBrand ? "/element" : "/#top"} aria-label={elementBrand ? "Element" : `YAT.lifestyle · ${t.home}`}>
-      {elementBrand ? <ElementSignature compact /> : <><img className="brand-drop" src={bagCount === undefined ? "/brand-emblem.svg" : "/brand-emblem-light.svg"} alt="" width="64" height="100" />{bagCount !== undefined && <span className="store-wordmark">YAT.LIFESTYLE</span>}</>}
+  return <header className="site-header site-header-simple">
+    <a className="wordmark" href="/#top" aria-label={`YAT.lifestyle · ${t.home}`}>
+      <img className="brand-drop" src={bagCount === undefined ? "/brand-emblem.svg" : "/brand-emblem-light.svg"} alt="" width="64" height="100" />{bagCount !== undefined && <span className="store-wordmark">YAT.LIFESTYLE</span>}
     </a>
     <nav aria-label={t.primary} className="primary-nav">
       {bagCount === undefined ? <a href="/#top" aria-current={pathname === "/" ? "page" : undefined}>{t.home}</a> : <>
         <a href="/" aria-current={pathname === "/" ? "page" : undefined}>{lineIcon(icons.home)}<span className="store-nav-label">{t.home}</span></a>
         <a href="/shop" aria-current={pathname?.startsWith("/shop") ? "page" : undefined}>{lineIcon(icons.shop)}<span className="store-nav-label">{t.shop}</span></a>
       </>}
-      {elementPage && <a href="/element" aria-current={pathname === "/element" ? "page" : "location"}>Element</a>}
     </nav>
     <div className="header-tools">
       <details className="language-select" ref={languageRef} onBlur={(event) => {
