@@ -1,5 +1,5 @@
 import { Buffer } from "node:buffer";
-import { MAIL, mailEyebrow, mailHeading, mailLayout, mailMuted, type MailLocale } from "./email-layout.ts";
+import { MAIL, mailEyebrow, mailHeading, mailLayout, mailMuted, mailPanel, mailRule, mailSpace, mailText, type MailLocale } from "./email-layout.ts";
 
 type Statement = {
   first<T = Record<string, unknown>>(): Promise<T | null>;
@@ -45,9 +45,9 @@ const mailCopy = {
 function codeMail(locale: MailLocale, code: string) {
   const t = mailCopy[locale];
   // letter-spacing also trails the last digit, so the matching left padding keeps the code centred.
-  const body = `${mailEyebrow(t.eyebrow)}${mailHeading(t.heading)}<p style="margin:0 0 24px;">${t.intro}</p>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" style="padding:22px 0 22px 10px;background:${MAIL.paper};border:1px solid ${MAIL.rule};font-family:${MAIL.sans};font-size:36px;font-weight:700;letter-spacing:10px;color:${MAIL.ink};-webkit-user-select:all;user-select:all;">${code}</td></tr></table>
-<p style="margin:16px 0 28px;color:${MAIL.muted};">${t.expires}</p><div style="border-top:1px solid ${MAIL.rule};padding-top:16px;">${mailMuted(t.ignore)}</div>`;
+  const body = `${mailEyebrow(t.eyebrow)}${mailHeading(t.heading)}${mailText(t.intro)}${mailSpace(24)}
+${mailPanel([mailText(code, "font-size:36px;font-weight:700;letter-spacing:10px;line-height:44px;text-align:center;-webkit-user-select:all;user-select:all;")], "24px 0 24px 10px")}
+${mailSpace(16)}${mailText(t.expires, `color:${MAIL.muted};`)}${mailSpace(28)}${mailRule()}${mailSpace(16)}${mailMuted(t.ignore)}`;
   return { subject: t.subject, text: t.text(code), html: mailLayout({ locale, preheader: t.text(code).split("\n")[0], body }) };
 }
 

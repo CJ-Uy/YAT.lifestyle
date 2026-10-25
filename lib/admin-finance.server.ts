@@ -1,5 +1,5 @@
 import { productBySlug } from "./shop.ts";
-import { MAIL, districtLine, escapeHtml, mailAddress, mailEyebrow, mailHeading, mailItems, mailLabel, mailLayout, mailMuted } from "./email-layout.ts";
+import { MAIL, districtLine, escapeHtml, mailAddress, mailEyebrow, mailHeading, mailItems, mailLabel, mailLayout, mailLink, mailMuted, mailPanel, mailRule, mailSpace, mailText } from "./email-layout.ts";
 import { HttpError, cleanText, integer, moneyCents, type AdminDeps } from "./admin.server.ts";
 
 // Hong Kong has no daylight saving, so a fixed +8h offset gives its calendar dates.
@@ -280,14 +280,11 @@ export function shippedMail(orderId: string, locale: keyof typeof SHIPPED, couri
   const t = SHIPPED[locale] ?? SHIPPED.en, mailLocale = SHIPPED[locale] ? locale : "en";
   const text = `${t.lead}\n\n${t.courier}: ${courier}\n${t.tracking}: ${tracking}\n\n${items.map((item) => `${item.name} × ${item.quantity}`).join("\n")}\n\n${t.order}: ${orderId}\n${t.to}: ${details.name}, ${districtLine(details.district, mailLocale)}`;
   const label = `font-size:12px;letter-spacing:2px;text-transform:uppercase;color:${MAIL.muted};`;
-  const body = `${mailEyebrow(t.eyebrow)}${mailHeading(t.heading)}<p style="margin:0 0 24px;">${t.body}</p>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${MAIL.paper};border:1px solid ${MAIL.rule};"><tr>
-<td valign="top" style="padding:18px 20px;"><div style="${label}">${t.courier}</div><div style="font-size:16px;">${escapeHtml(courier)}</div></td>
-<td valign="top" style="padding:18px 20px;"><div style="${label}">${t.tracking}</div><div style="font-size:18px;font-weight:700;letter-spacing:1px;word-break:break-all;">${escapeHtml(tracking)}</div></td>
-</tr></table>
+  const body = `${mailEyebrow(t.eyebrow)}${mailHeading(t.heading)}${mailText(t.body)}${mailSpace(24)}
+${mailPanel([mailText(t.courier, label) + mailText(escapeHtml(courier), "font-size:16px;line-height:24px;"), mailText(t.tracking, label) + mailText(escapeHtml(tracking), "font-size:18px;font-weight:700;letter-spacing:1px;word-break:break-all;")])}
 ${mailLabel(t.items)}${mailItems(items.map(({ slug, name, quantity }) => ({ slug, name, quantity })), mailLocale)}
 ${mailLabel(t.to)}${mailAddress(details, mailLocale)}
-<div style="margin-top:32px;padding-top:16px;border-top:1px solid ${MAIL.rule};">${mailMuted(`${t.order}: ${escapeHtml(orderId)}<br>${t.help} <a href="mailto:orders@yatlifestyle.com" style="color:${MAIL.gold};">orders@yatlifestyle.com</a>.`)}</div>`;
+${mailSpace(32)}${mailRule()}${mailSpace(16)}${mailMuted(`${t.order}: ${escapeHtml(orderId)}<br>${t.help} ${mailLink("mailto:orders@yatlifestyle.com", "orders@yatlifestyle.com")}.`)}`;
   return { subject: t.subject, text, html: mailLayout({ locale: mailLocale, preheader: `${t.tracking}: ${tracking}`, body }) };
 }
 

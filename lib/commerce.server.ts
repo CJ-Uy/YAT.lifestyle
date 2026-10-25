@@ -2,7 +2,7 @@ import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import { Buffer } from "node:buffer";
 import { normalizeCart, productBySlug, formatDelivery, formatPrice, PRODUCTS, HK_DISTRICTS, PRICE_CENTS, DELIVERY_CENTS, MAX_PER_SCENT, MAX_BAG_COUNT, type CartItem } from "./shop.ts";
 import { getVerifiedEmail } from "./checkout-email.server.ts";
-import { MAIL, districtLine, escapeHtml, mailAddress, mailEyebrow, mailHeading, mailItems, mailLabel, mailLayout, mailMuted, mailRows } from "./email-layout.ts";
+import { districtLine, escapeHtml, mailAddress, mailEyebrow, mailHeading, mailItems, mailLabel, mailLayout, mailLink, mailMuted, mailRows, mailRule, mailSpace, mailText } from "./email-layout.ts";
 
 export type CommerceResult = { success: boolean; meta?: { changes?: number } };
 export type CommerceStatement = {
@@ -215,10 +215,10 @@ export function receiptMail(order: OrderRow) {
   const rows: [string, string][] = [[t.subtotal, formatPrice(order.subtotal_cents)], ...(order.discount_cents > 0 ? [[`${t.discount}${order.voucher_code ? ` · ${order.voucher_code}` : ""}`, `−${formatPrice(order.discount_cents)}`] as [string, string]] : []),
     [t.delivery, formatDelivery(order.delivery_cents, order.locale)], [t.total, formatPrice(order.total_cents)]];
   const text = `${t.lead}\n${t.reference}: ${order.id}\n\n${items.map((item) => `${item.name} × ${item.quantity}  ${formatPrice(item.lineTotalCents)}`).join("\n")}\n\n${rows.map(([label, value]) => `${label}: ${value}`).join("\n")}\n\n${t.to}:\n${[details.name, details.phone, details.building, details.street, districtLine(details.district, order.locale)].filter(Boolean).join("\n")}\n\n${t.help} orders@yatlifestyle.com`;
-  const body = `${mailEyebrow(t.eyebrow)}${mailHeading(t.thanks(details.name))}<p style="margin:0 0 12px;">${t.body}</p>${mailMuted(`${t.reference}: ${escapeHtml(order.id)}`)}
-${mailLabel(t.summary)}${mailItems(items, order.locale)}<div style="padding:12px 0 18px;">${mailMuted(t.pack)}</div>${mailRows(rows, true)}
+  const body = `${mailEyebrow(t.eyebrow)}${mailHeading(t.thanks(details.name))}${mailText(t.body)}${mailSpace(12)}${mailMuted(`${t.reference}: ${escapeHtml(order.id)}`)}
+${mailLabel(t.summary)}${mailItems(items, order.locale)}${mailSpace(12)}${mailMuted(t.pack)}${mailSpace(18)}${mailRows(rows, true)}
 ${mailLabel(t.to)}${mailAddress(details, order.locale)}
-<div style="margin-top:32px;padding-top:16px;border-top:1px solid ${MAIL.rule};">${mailMuted(`${t.help} <a href="mailto:orders@yatlifestyle.com" style="color:${MAIL.gold};">orders@yatlifestyle.com</a>.`)}</div>`;
+${mailSpace(32)}${mailRule()}${mailSpace(16)}${mailMuted(`${t.help} ${mailLink("mailto:orders@yatlifestyle.com", "orders@yatlifestyle.com")}.`)}`;
   return { subject: t.subject, text, html: mailLayout({ locale: order.locale, preheader: `${t.eyebrow} · ${formatPrice(order.total_cents)}`, body }) };
 }
 async function sendReceipt(order: OrderRow, env: CommerceEnv): Promise<boolean> {
