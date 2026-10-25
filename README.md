@@ -190,9 +190,56 @@ checkout codes and paid-order receipts use the configured sending service.
 - `npm run dev` starts the vinext dev server.
 - `npm run build` builds the Cloudflare Worker output.
 - `npm run start` starts the built Worker locally with Wrangler.
-- `npm run deploy` deploys the Cloudflare Worker.
+- `npm run deploy` builds and deploys the main Worker by hand (pushes to `main` deploy automatically; see below).
 - `npm test` runs offline storefront, newsletter, checkout, commerce, admin and inbox checks.
 - `npm run higgsfield:video -- "prompt"` generates a design video with Seedance 2.0.
+
+## Deploying
+
+Every push to `main` deploys the main Worker, `yat-lifestyle-prod`, through
+Cloudflare Workers Builds (the Worker's Git connection). Each build runs on
+Cloudflare:
+
+1. `npm clean-install` (automatic, from `package-lock.json`)
+2. Build command: `npm test && npm run build`
+3. Deploy command: `npm run deploy -- --skip-build`
+
+A failing test stops the build before anything is uploaded, and the live version
+keeps serving. GitHub shows the result as a check on the commit; full logs are on
+the Worker's **Deployments** tab under **View build history**. Builds for other
+branches are off, so only `main` reaches Cloudflare. The settings live in the
+dashboard under **Workers & Pages** > `yat-lifestyle-prod` > **Settings** >
+**Builds**. Builds use Cloudflare's default Node.js (24). Deploys do not change
+the Worker's secrets.
+
+The pipeline never applies D1 migrations. When a change needs a new migration,
+apply it to the remote database first, then push the code that uses it:
+
+```powershell
+npx wrangler d1 migrations apply yat-lifestyle-prod-db --remote
+git push origin main
+```
+
+Keep migrations additive, so the live version still works between the migration
+and the end of the build.
+
+The incoming-email Worker (`wrangler.inbox.jsonc`) is not connected to Builds and
+still deploys by hand:
+
+```powershell
+npx wrangler deploy --config wrangler.inbox.jsonc
+```
+
+To deploy the main Worker by hand, for example while Builds is unavailable
+(`npm run deploy` runs the build itself):
+
+```powershell
+$env:CLOUDFLARE_ACCOUNT_ID = "28aa5d214ab31fc266ffde3ba169711d"
+npm test && npm run deploy
+```
+
+To roll back, promote an earlier version on the Worker's **Deployments** tab, or
+run `npx wrangler rollback --name yat-lifestyle-prod`.
 
 ## Higgsfield Seedance 2.0
 
