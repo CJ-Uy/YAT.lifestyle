@@ -3,8 +3,10 @@ import "@fontsource/bodoni-moda/400.css";
 import "@fontsource/bodoni-moda/latin-600.css";
 import "./globals.css";
 import "./storefront.css";
+import { SITE_URL } from "../lib/seo";
 
 export const metadata: Metadata = {
+	metadataBase: new URL(SITE_URL),
 	title: "YAT.LIFESTYLE | Perfume",
 	description: "Explore twelve unisex fragrances from YAT.LIFESTYLE. Each 10 mL perfume comes in a blue gift box with decorative flowers for HK$258, with free Hong Kong delivery.",
 	icons: {

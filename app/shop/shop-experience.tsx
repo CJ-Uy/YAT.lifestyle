@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { lineIcon, useLocale } from "../site-header";
+import { lineIcon, useLocale, type Locale } from "../site-header";
 import { StoreShell, ProductCard, storeCopy } from "../storefront";
 import { PRODUCTS } from "../../lib/shop";
 import NewsletterForm from "./newsletter-form";
@@ -24,8 +24,11 @@ const serviceIcons = {
   payment: "M6 11h12v10H6ZM8.5 11V8a3.5 3.5 0 0 1 7 0v3M12 15v2",
 };
 
-export default function ShopExperience() {
-  const [locale, setLocale] = useLocale();
+// Four columns from 1200px. Only the first photo is the LCP candidate: React preloads every high-priority image ahead of the CSS.
+const CATALOGUE_SIZES = "(max-width: 370px) 100vw, (max-width: 760px) 50vw, (max-width: 1199px) 33vw, 25vw";
+
+export default function ShopExperience({ initialLocale }: { initialLocale?: Locale }) {
+  const [locale, setLocale] = useLocale(initialLocale);
   const [filter, setFilter] = useState<Filter>("all");
   useEffect(() => { const initial = new URLSearchParams(location.search).get("family"); if (initial && Object.hasOwn(filters.en, initial)) setFilter(initial as Filter); }, []);
   const t = storeCopy[locale];
@@ -36,7 +39,8 @@ export default function ShopExperience() {
       <div className="store-catalogue-heading"><h1>{t.all}</h1><p>{t.chooseBody}</p></div>
       <ul className="store-service-strip" role="list">{(["gift", "delivery", "payment"] as const).map((id) => <li key={id}>{lineIcon(serviceIcons[id])}<div><strong>{service[id][0]}</strong><span>{service[id][1]}</span></div></li>)}</ul>
       <div className="store-filter-bar"><div role="group" aria-label={t.familyLabel}>{(Object.keys(filters.en) as Filter[]).map((id) => <button key={id} type="button" aria-pressed={filter === id} onClick={() => { setFilter(id); const url = new URL(location.href); if (id === "all") url.searchParams.delete("family"); else url.searchParams.set("family", id); history.replaceState(null, "", url); }}>{filters[locale][id]}</button>)}</div><span role="status" aria-live="polite">{service.count(selected.length)}</span></div>
-      <div className="store-catalogue-grid">{selected.map((product) => <ProductCard key={product.slug} product={product} locale={locale} />)}</div>
+      <h2 className="visually-hidden">{filters[locale][filter]}</h2>
+      <div className="store-catalogue-grid">{selected.map((product, index) => <ProductCard key={product.slug} product={product} locale={locale} priority={index === 0} sizes={CATALOGUE_SIZES} />)}</div>
       <NewsletterForm locale={locale} />
     </main>
   </StoreShell>;

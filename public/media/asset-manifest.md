@@ -48,13 +48,13 @@ Element is deferred and has no ordinary-shop entry. Its existing routes and orig
 - `hong-kong-harbour-afterimage.mp4`: Higgsfield Seedance 2.0 hero plate, 5 seconds, 720p, 16:9, silent.
 - `hong-kong-harbour-afterimage-poster.jpg`: reduced-motion poster extracted from the approved hero plate.
 - `hong-kong-drop-mobile.mp4`: Higgsfield Seedance 2.0 portrait pipette and falling drop, 5 seconds, 720p, 9:16, silent.
-- `hong-kong-drop-mobile-poster.jpg`: opening/fallback poster from the portrait film, active in the restored home. Reduced motion shows its complete static opening and collapses the long story without preloading the scroll frames.
+- `hong-kong-drop-mobile-poster.jpg`: opening/fallback poster from the portrait film. Its quality-80 WebP, `hong-kong-drop-mobile-poster.webp` (12,428 bytes, same frame), is what the restored home renders. Reduced motion shows its complete static opening and collapses the long story without preloading the scroll frames.
 - `drop-sequence/frame-000.webp` through `frame-047.webp`: 48 scroll-controlled frames derived from the first four seconds of `hong-kong-drop-mobile.mp4` at 12 fps, native 720×1280, WebP quality 90. A mild luminance-only unsharp filter restores edge definition without AI upscaling. No additional API request was made for these frames. Rebuild with `ffmpeg -i public/media/hong-kong-drop-mobile.mp4 -vf "fps=12,unsharp=5:5:0.35:3:3:0" -frames:v 48 -start_number 0 -c:v libwebp -quality 90 -compression_level 6 public/media/drop-sequence/frame-%03d.webp` (add `-y` to replace existing derivatives). The source MP4 is preserved.
 - `yat-logo-reference.jpg`: user-supplied logo reference. The restored home reuses the original SVG YAT letter geometry and gold-gradient vector drop handed off from the filmed drop. The reference image is not rendered; the treatment is not final house-logo approval.
-- `hours-dawn.png`: synthetic Hong Kong harbour at first light. Its retained WebP is active as the restored droplet journey's subdued full-width atmosphere.
+- `hours-dawn.png`: synthetic Hong Kong harbour at first light. The restored droplet journey's subdued full-width atmosphere (30% opacity) renders its quality-60 derivatives: `hours-dawn-960.webp` below 760 px and `hours-dawn-1536.webp` above.
 - `afterimage-tram.png`: synthetic vintage tram interior, retained with its WebP for possible future use; no longer displayed in Afterimage.
 - `element-lab.png`: original dark pipette and sample-tube still life, preserved but no longer displayed.
-- `hours-dawn.webp`, `afterimage-tram.webp`, `element-lab.webp`: preserved optimized derivatives of the corresponding PNG originals. The harbour is active in the restored home journey; the tram and dark laboratory images are saved but unused.
+- `hours-dawn.webp`, `afterimage-tram.webp`, `element-lab.webp`: preserved optimized derivatives of the corresponding PNG originals. The harbour WebP remains for the inactive `HomeExperience`; the tram and dark laboratory images are saved but unused.
 
 The original generated images have adjacent JSON sidecars and embedded prompt metadata. The derived scroll frames inherit the portrait film's provenance.
 
@@ -76,3 +76,15 @@ The original generated images have adjacent JSON sidecars and embedded prompt me
 - Semantic HTML: navigation, locale controls, collection chapters, labels, copy, calls to action, availability, and footer.
 
 The approved comp is reference-only and must not be cropped into production assets.
+
+## Web delivery derivatives — 24 October 2026
+
+Made with ffmpeg for page speed. None adds, removes or regenerates content; framing and colour are unchanged. Each derivative is listed under `derivatives` in its source's JSON sidecar with size, bytes and method.
+
+- `scents/<slug>-480.webp` and `scents/<slug>-800.webp`: lanczos downscales of the twelve still lifes, libwebp quality 78. Product photos use them through `srcset`, with the original WebP as the 1024w candidate; cart thumbnails use the 480 size. The 24 files total 608,608 bytes; a catalogue phone visit now fetches about 17 KB per tile instead of about 95 KB.
+- `hours-dawn-960.webp` (50,108 bytes) and `hours-dawn-1536.webp` (113,554 bytes): quality-60 encodes of `hours-dawn.png` for the journey atmosphere, replacing the 244,728-byte WebP there.
+- `hong-kong-drop-mobile-poster.webp` (12,428 bytes): quality-80 WebP of the 26,168-byte JPEG poster.
+- `yat-official-in-hand-800.webp` (26,040 bytes): 800 px downscale of the official in-hand photograph for the About pair and the journey's smaller screens; the 1600 px WebP remains the large `srcset` candidate.
+- `og-gift-box.jpg` (1200 x 630, 72,426 bytes): Open Graph and Twitter card for the storefront. The unchanged gift-box photograph is centred over a blurred, darkened enlargement of itself. It has no added text or objects.
+
+The 48 drop frames are unchanged. The journey now requests them, and the three story photographs, at low priority after the page `load` event, because they stay hidden until the visitor scrolls. Under reduced motion they are not requested.

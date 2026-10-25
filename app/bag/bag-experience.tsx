@@ -62,7 +62,7 @@ export default function BagExperience() {
               setMessage(`${t.changed} ${product.name}. ${t.quantity}: ${next}.`);
             };
             return <li className="bag-line" key={item.slug}>
-              <a href={`/shop/${item.slug}`} className="bag-item-image bag-item-stack" tabIndex={-1} aria-hidden="true"><span className="bag-stack-box" /><img className="bag-stack-scent" src={`/media/scents/${item.slug}.webp`} alt="" width="1120" height="1400" /></a>
+              <a href={`/shop/${item.slug}`} className="bag-item-image bag-item-stack" tabIndex={-1} aria-hidden="true"><span className="bag-stack-box" /><img className="bag-stack-scent" src={`/media/scents/${item.slug}-480.webp`} alt="" width="1120" height="1400" decoding="async" /></a>
               <div className="bag-item-copy">
                 <h2><a href={`/shop/${item.slug}`}>{product.name}</a></h2>
                 <p>{product.copy[locale].subtitle}</p>

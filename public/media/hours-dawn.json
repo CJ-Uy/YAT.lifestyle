@@ -1,5 +1,23 @@
 {
   "synthetic": true,
   "placement": "Hours collection editorial panel",
-  "prompt": "A cinematic Hong Kong harbour at first light, viewed from the water with a Star Ferry silhouette crossing the frame, misty skyline, deep obsidian shadows, warm restrained gold sunrise, luxury fragrance campaign photography, elegant grain, atmospheric reflections, no people, no text, no logos, 16:9 composition"
+  "prompt": "A cinematic Hong Kong harbour at first light, viewed from the water with a Star Ferry silhouette crossing the frame, misty skyline, deep obsidian shadows, warm restrained gold sunrise, luxury fragrance campaign photography, elegant grain, atmospheric reflections, no people, no text, no logos, 16:9 composition",
+  "derivatives": [
+    {
+      "file": "hours-dawn-960.webp",
+      "width": 960,
+      "height": 640,
+      "bytes": 50108,
+      "method": "ffmpeg lanczos downscale of hours-dawn.png to 960 px, libwebp quality 60; served below 760 px as the journey atmosphere (rendered at 30% opacity)",
+      "createdAt": "2026-10-24"
+    },
+    {
+      "file": "hours-dawn-1536.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 113554,
+      "method": "ffmpeg re-encode of hours-dawn.png at full size, libwebp quality 60; journey atmosphere above 760 px (rendered at 30% opacity)",
+      "createdAt": "2026-10-24"
+    }
+  ]
 }

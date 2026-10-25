@@ -721,7 +721,7 @@ html:has(.demo) { scroll-padding-bottom: 10rem; }
 .soon .availability { max-width: 28ch; white-space: normal; }
 .scent-error { display: grid; grid-template-columns: minmax(0, .75fr) minmax(0, 1fr); align-items: center; gap: 7vw; min-height: 100svh; padding: 9rem 6vw 5rem; }
 .cold-drop { display: flex; justify-content: center; padding: 3rem; border-right: 1px solid var(--rule); }
-.cold-drop img { width: min(100%, 280px); opacity: .7; }
+.cold-drop img { width: min(100%, 280px); height: auto; opacity: .7; }
 .scent-error h1 { font-family: var(--display); font-size: clamp(3rem, 5.4vw, 5.7rem); font-weight: 400; line-height: 1.05; letter-spacing: -.025em; margin: 1.5rem 0 2rem; max-width: 12ch; }
 .scent-error p { color: var(--muted); line-height: 1.8; max-width: 45ch; }
 .scent-error button { cursor: pointer; }

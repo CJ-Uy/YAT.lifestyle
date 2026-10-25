@@ -22,17 +22,31 @@ const icons = {
 };
 export const lineIcon = (d: string) => <svg className="line-icon" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"><path d={d} fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
-export function useLocale() {
-  const [locale, setLocale] = useState<Locale>("en");
+const isLocale = (value: unknown): value is Locale => languages.some((language) => language.id === value);
+
+// The server renders `initial` from ?lang=; a ?lang= link outranks the saved choice, and the URL follows the language so each edition keeps its own address.
+export function useLocale(initial: Locale = "en") {
+  const [locale, setLocale] = useState<Locale>(initial);
   useEffect(() => {
+    const linked = new URLSearchParams(location.search).get("lang");
+    if (isLocale(linked)) setLocale(linked);
     try {
-      const saved = localStorage.getItem("yat-language");
-      if (languages.some((language) => language.id === saved)) setLocale(saved as Locale);
+      if (isLocale(linked)) localStorage.setItem("yat-language", linked);
+      else {
+        const saved = localStorage.getItem("yat-language");
+        if (isLocale(saved)) setLocale(saved);
+      }
     } catch { /* Private browsing may disable storage. Language changes still work. */ }
   }, []);
-  useEffect(() => { document.documentElement.lang = locale; }, [locale]);
+  useEffect(() => {
+    document.documentElement.lang = locale;
+    const url = new URL(location.href);
+    if ((url.searchParams.get("lang") ?? "en") === locale) return;
+    if (locale === "en") url.searchParams.delete("lang"); else url.searchParams.set("lang", locale);
+    history.replaceState(history.state, "", url);
+  }, [locale]);
   const changeLocale = (next: Locale) => {
-    if (!languages.some((language) => language.id === next)) return;
+    if (!isLocale(next)) return;
     setLocale(next);
     try { localStorage.setItem("yat-language", next); } catch { /* Keep the in-page choice. */ }
   };

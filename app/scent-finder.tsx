@@ -51,7 +51,7 @@ export function ScentFinder({ locale }: { locale: Locale }) {
       <div className="scent-finder-results">
         <div className="scent-results-intro"><div><h3>{t.suggestions}</h3><p>{t.source}</p></div><p className="scent-results-selection">{t[family]}<span aria-hidden="true"> / </span>{t.feelings[feel]}</p></div>
         <p className="scent-announcement" role="status" aria-live="polite" aria-atomic="true">{t.announced}: {suggestions.map((product) => product.name).join(", ")}.</p>
-        <div className="scent-recommendations">{suggestions.map((product) => <ProductCard key={product.slug} product={product} locale={locale} />)}</div>
+        <div className="scent-recommendations">{suggestions.map((product) => <ProductCard key={product.slug} product={product} locale={locale} sizes="(max-width: 640px) 28vw, (max-width: 900px) 30vw, 20vw" />)}</div>
         <div className="scent-results-footer"><span>10 mL · {shared.unisex} · {formatPrice(PRICE_CENTS)}</span><a className="store-text-link" href="/shop">{shared.all}<Arrow /></a></div>
       </div>
     </div>

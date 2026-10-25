@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useLocale } from "../../site-header";
+import { useLocale, type Locale } from "../../site-header";
 import { StoreShell, storeCopy, ProductPhoto, ProductCard, Arrow } from "../../storefront";
 import { PRODUCTS, PRICE_CENTS, MAX_PER_SCENT, MAX_BAG_COUNT, formatPrice, type Product } from "../../../lib/shop";
 import { useCart } from "../cart";
@@ -14,8 +14,8 @@ const copy = {
   "zh-Hans": { add: "加入购物车", added: "已加入购物车", bag: "查看购物车", notes: "主要香调", smell: "气味描述", profile: "香气轮廓", box: "礼盒内容", quantity: "数量", limit: `每款最多可选 ${MAX_PER_SCENT} 件，购物车合共最多 ${MAX_BAG_COUNT} 份礼盒。`, delivery: "配送", more: "你可能也会喜欢", detail: "气味描述根据香调诠释，并非天然原料清单。", noStorage: "浏览器无法跨页保存购物车。请启用存储功能以保留选择。", included: "每瓶香水均附", preview: "体验结账预览，不会扣款或创建订单。", boxBody: "10 mL 香水放进蓝色礼盒，配上人造花。照片为实际礼盒。" },
 };
 
-export default function ProductExperience({ product }: { product: Product }) {
-  const [locale, setLocale] = useLocale();
+export default function ProductExperience({ product, initialLocale }: { product: Product; initialLocale?: Locale }) {
+  const [locale, setLocale] = useLocale(initialLocale);
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
   const cart = useCart();
@@ -28,7 +28,7 @@ export default function ProductExperience({ product }: { product: Product }) {
       <nav className="store-breadcrumb" aria-label={s.all}><a href="/shop">{s.all}</a><span>/</span><span>{product.name}</span></nav>
       <div className="store-product-layout">
         <header className="store-product-identity"><h1>{product.name}</h1><p className="store-product-subtitle">{p.subtitle}</p><div className="store-product-price-row"><p className="store-product-price">{formatPrice(PRICE_CENTS)}</p></div><p className="store-inclusion">{s.inclusion}</p></header>
-        <figure className="store-product-gallery"><ProductPhoto product={product} locale={locale} /></figure>
+        <figure className="store-product-gallery"><ProductPhoto product={product} locale={locale} priority sizes="(max-width: 760px) 400px, 520px" /></figure>
         <div className="store-purchase">
           <div className="store-product-notes"><h2>{t.smell}</h2><p>{p.description}</p><h3>{t.notes}</h3><p>{p.notes}</p></div>
           <div className="store-add-row"><label className="store-quantity-label">{t.quantity}<span className="store-quantity-control"><select value={quantity} onChange={(event) => { setQuantity(Number(event.target.value)); setAdded(false); }}>{Array.from({ length: MAX_PER_SCENT }, (_, index) => <option key={index + 1} value={index + 1}>{index + 1}</option>)}</select><svg viewBox="0 0 16 16" width="16" height="16" fill="none" aria-hidden="true"><path d="m4 6 4 4 4-4" stroke="currentColor" strokeWidth="1.5" /></svg></span></label><button className="store-btn" type="button" disabled={!cart.ready || limit} onClick={() => { cart.add(product.slug, quantity); setAdded(true); }}>{t.add}<Arrow /></button></div>
@@ -37,7 +37,7 @@ export default function ProductExperience({ product }: { product: Product }) {
         </div>
       </div>
       <ScentProfile product={product} locale={locale} title={t.profile} />
-      <section className="store-product-box"><img src="/media/yat-official-gift-box.webp" width="896" height="1195" loading="lazy" alt={s.boxAlt} /><div><h2>{t.box}</h2><p>{t.boxBody}</p><p className="store-inclusion">{t.included}</p><h3>{t.delivery}</h3><p>{s.shipping}</p><p className="store-muted">{t.detail}</p></div></section>
+      <section className="store-product-box"><img className="store-photo-frame" src="/media/yat-official-gift-box.webp" width="896" height="1195" loading="lazy" decoding="async" alt={s.boxAlt} /><div><h2>{t.box}</h2><p>{t.boxBody}</p><p className="store-inclusion">{t.included}</p><h3>{t.delivery}</h3><p>{s.shipping}</p><p className="store-muted">{t.detail}</p></div></section>
       <section className="store-related"><h2>{t.more}</h2><div className="store-featured-grid">{related.map((candidate) => <ProductCard key={candidate.slug} product={candidate} locale={locale} />)}</div></section>
     </main>
   </StoreShell>;

@@ -1,4 +1,22 @@
 {
   "prompt": "Use case: product-mockup\nAsset type: portrait 4:5 fragrance catalogue image for the YAT.LIFESTYLE website, compose for 1024 by 1280 pixels.\nInput images: Image 1 (IMG_7733.PNG) is the PRIMARY real product reference: preserve the actual tall slim bottle's rectangular faceted glass geometry and printed identity. Image 2 is a SECONDARY dimension guide only, not a style reference; use approximately 120–126 mm total height and 17–18 mm width, an approximately 1:7 width-to-height silhouette. Do not copy dimensional labels or the three-bottle layout.\nSubject: ONE upright transparent 10 mL rectangular travel perfume bottle, centered. Thick clear glass base, transparent elongated inner reservoir and slender visible dip tube. The exact vertical black sans-serif bottle print reads \"YAT.LIFESTYLE\", spelled Y A T . L I F E S T Y L E. Print runs along the long bottle axis on the front, matching the real reference. No other bottle text or fragrance name.\nComposition/framing: whole bottle entirely visible, occupies approximately 62% of the portrait frame height; centered with generous breathing room, front-facing with a slight natural three-quarter facet visible. Tiny foreground accents never overlap the vertical print. Minimal selective depth of field, atmospheric softly blurred background, bottle and print sharply resolved.\nMaterials/textures: real transparent glass, physically credible reflections and refracted dip tube, polished metal, matte warm studio surface, natural delicate botanical texture.\nConstraints: faithful travel-bottle size and slimness; one single bottle only; no wide perfume flacon, no round body, no cap detached, no floating objects, no invented label, no box, no diagrams, no dimensional annotations, no extra brand, no watermark, no typography anywhere except the exact bottle print. Props are conceptual scent accords, not raw ingredient claims. Output one portrait 4:5 photorealistic image.\nPrimary request: an exceptionally realistic luxury studio still life for High Tea, a quiet tea-and-white-floral perfume accord.\nCap: reflective GOLD metallic cylindrical cap occupying approximately the upper quarter of total bottle height.\nScene/backdrop: warm ivory and pale taupe studio surface and atmospheric backdrop. A tiny white jasmine sprig is the lead foreground accent, with one small neroli blossom tucked beside it. A subtle slender sandalwood shaving and a small pear slice low at the frame edge, tiny and subordinate. In the softly blurred far background, a low plain ivory tea cup without a handle visible and pale tea, indistinct and barely suggested. No abundant ingredient pile; exquisite visual restraint.\nLighting/mood: dramatic but luminous afternoon studio light, subtle gilded highlights and clear-glass rim reflections, elegant unhurried warmth, soft directional shadow. Warm ivory remains legible and airy, never a black background.\n",
-  "createdAt": "2026-10-11T17:36:54.607Z"
+  "createdAt": "2026-10-11T17:36:54.607Z",
+  "derivatives": [
+    {
+      "file": "high-tea-480.webp",
+      "width": 480,
+      "height": 600,
+      "bytes": 14912,
+      "method": "ffmpeg lanczos downscale of the high-tea.webp WebP, libwebp quality 78; framing and colour unchanged; responsive srcset size",
+      "createdAt": "2026-10-24"
+    },
+    {
+      "file": "high-tea-800.webp",
+      "width": 800,
+      "height": 1000,
+      "bytes": 29112,
+      "method": "ffmpeg lanczos downscale of the high-tea.webp WebP, libwebp quality 78; framing and colour unchanged; responsive srcset size",
+      "createdAt": "2026-10-24"
+    }
+  ]
 }

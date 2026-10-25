@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import ShopExperience from "./shop-experience";
+import { PAGE_COPY, localeFromParam, storeMetadata } from "../../lib/seo";
 
-export const metadata: Metadata = { title: "Fragrances | YAT.LIFESTYLE", description: "Find your scent among twelve unisex fragrances. Each 10 mL perfume includes a blue gift box with decorative flowers for HK$258, with free Hong Kong delivery." };
+type Props = { searchParams: Promise<{ lang?: string | string[] }> };
 
-export default function Shop() { return <ShopExperience />; }
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const locale = localeFromParam((await searchParams).lang);
+  return storeMetadata("/shop", locale, PAGE_COPY.shop[locale]);
+}
+
+export default async function Shop({ searchParams }: Props) { return <ShopExperience initialLocale={localeFromParam((await searchParams).lang)} />; }

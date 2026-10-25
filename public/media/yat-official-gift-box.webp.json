@@ -1,4 +1,14 @@
 {
   "prompt": "Origin: owner-supplied codex-clipboard-c1d4a6a3-c0b1-4236-b960-054054a34533.png, 12 October 2026; optimized WebP, unchanged framing and colour. Owner confirmed real delivered blue gift box with one 10 mL perfume and artificial decorative flowers.",
-  "createdAt": "2026-10-11T17:35:28.212Z"
+  "createdAt": "2026-10-11T17:35:28.212Z",
+  "derivatives": [
+    {
+      "file": "og-gift-box.jpg",
+      "width": 1200,
+      "height": 630,
+      "bytes": 72426,
+      "method": "1200x630 social sharing card: the unchanged photograph scaled to 630 px high, centred over a blurred, darkened enlargement of the same photograph; no added text or objects",
+      "createdAt": "2026-10-24"
+    }
+  ]
 }

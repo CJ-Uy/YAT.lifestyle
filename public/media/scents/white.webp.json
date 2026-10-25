@@ -1,4 +1,22 @@
 {
   "prompt": "Use case: product-mockup\nAsset type: portrait 4:5 fragrance catalogue image for the YAT.LIFESTYLE website, compose for 1024 by 1280 pixels.\nInput images: Image 1 (IMG_7733.PNG) is the PRIMARY real product reference: preserve the actual tall slim bottle's rectangular faceted glass geometry and printed identity. Image 2 is a SECONDARY dimension guide only, not a style reference; use approximately 120–126 mm total height and 17–18 mm width, an approximately 1:7 width-to-height silhouette. Do not copy dimensional labels or the three-bottle layout.\nSubject: ONE upright transparent 10 mL rectangular travel perfume bottle, centered. Thick clear glass base, transparent elongated inner reservoir and slender visible dip tube. The exact vertical black sans-serif bottle print reads \"YAT.LIFESTYLE\", spelled Y A T . L I F E S T Y L E. Print runs along the long bottle axis on the front, matching the real reference. No other bottle text or fragrance name.\nComposition/framing: whole bottle entirely visible, occupies approximately 62% of the portrait frame height; centered with generous breathing room, front-facing with a slight natural three-quarter facet visible. Tiny foreground accents never overlap the vertical print. Minimal selective depth of field, atmospheric softly blurred background, bottle and print sharply resolved.\nMaterials/textures: real transparent glass, physically credible reflections and refracted dip tube, polished metal, matte warm studio surface, natural delicate botanical texture.\nConstraints: faithful travel-bottle size and slimness; one single bottle only; no wide perfume flacon, no round body, no cap detached, no floating objects, no invented label, no box, no diagrams, no dimensional annotations, no extra brand, no watermark, no typography anywhere except the exact bottle print. Props are conceptual scent accords, not raw ingredient claims. Output one portrait 4:5 photorealistic image.\nPrimary request: an exceptionally realistic luxury studio still life for White, a lily-of-the-valley and soft white-musk perfume accord.\nCap: reflective GOLD metallic cylindrical cap occupying approximately the upper quarter of total bottle height.\nScene/backdrop: warm ivory and pale taupe studio surface and atmospheric backdrop. A single small arching stem of LILY OF THE VALLEY with delicate little white hanging BELL-shaped flowers rests near the foot of the bottle. This specific flower is Convallaria with tiny round bells, never a large true lily or trumpet-shaped lily. A subtle folded ivory fabric edge softly blurred behind suggests the soft musk mood. One botanical accent only, no ingredient pile, no animal imagery.\nLighting/mood: dramatic but luminous gentle studio daylight, soft gilded cap highlights, warm ivory bounce light through the glass, delicate directional shadow. Quiet white-floral tenderness and real natural texture, never a dark or black background.\n",
-  "createdAt": "2026-10-11T17:36:54.142Z"
+  "createdAt": "2026-10-11T17:36:54.142Z",
+  "derivatives": [
+    {
+      "file": "white-480.webp",
+      "width": 480,
+      "height": 600,
+      "bytes": 14222,
+      "method": "ffmpeg lanczos downscale of the white.webp WebP, libwebp quality 78; framing and colour unchanged; responsive srcset size",
+      "createdAt": "2026-10-24"
+    },
+    {
+      "file": "white-800.webp",
+      "width": 800,
+      "height": 1000,
+      "bytes": 27696,
+      "method": "ffmpeg lanczos downscale of the white.webp WebP, libwebp quality 78; framing and colour unchanged; responsive srcset size",
+      "createdAt": "2026-10-24"
+    }
+  ]
 }

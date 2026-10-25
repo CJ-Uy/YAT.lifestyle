@@ -10,5 +10,15 @@
     "resolution": "720p",
     "aspect_ratio": "9:16",
     "audio": false
-  }
+  },
+  "derivatives": [
+    {
+      "file": "hong-kong-drop-mobile-poster.webp",
+      "width": 720,
+      "height": 1280,
+      "bytes": 12428,
+      "method": "ffmpeg libwebp quality 80 re-encode of hong-kong-drop-mobile-poster.jpg; same frame and colour; active reduced-motion and opening poster",
+      "createdAt": "2026-10-24"
+    }
+  ]
 }

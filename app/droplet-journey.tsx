@@ -46,10 +46,15 @@ const copy = {
   },
 } as const;
 
-const sceneImages = ["/media/yat-official-gift-box.webp", "/media/yat-official-evening.webp", "/media/yat-official-in-hand.webp"];
+const sceneImages = [
+  { src: "/media/yat-official-gift-box.webp", width: 896, height: 1195 },
+  { src: "/media/yat-official-evening.webp", width: 1206, height: 1570 },
+  { src: "/media/yat-official-in-hand-800.webp", width: 800, height: 1200, srcSet: "/media/yat-official-in-hand-800.webp 800w, /media/yat-official-in-hand.webp 1600w", sizes: "(max-width: 760px) 100vw, 62vw" },
+];
 
 export function DropletJourney({ locale }: { locale: Locale }) {
   const [reducedMotion, setReducedMotion] = useState(true);
+  const [mediaReady, setMediaReady] = useState(false);
   const journeyRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -64,6 +69,14 @@ export function DropletJourney({ locale }: { locale: Locale }) {
     update();
     query.addEventListener("change", update);
     return () => query.removeEventListener("change", update);
+  }, []);
+
+  // Film frames and story photos stay hidden until the visitor scrolls, so fetch them only after the opening has loaded.
+  useEffect(() => {
+    const ready = () => setMediaReady(true);
+    if (document.readyState === "complete") ready();
+    else window.addEventListener("load", ready, { once: true });
+    return () => window.removeEventListener("load", ready);
   }, []);
 
   useEffect(() => {
@@ -173,8 +186,9 @@ export function DropletJourney({ locale }: { locale: Locale }) {
         frame = 0;
       } else schedule();
     };
-    frames.forEach((image, index) => {
+    if (mediaReady) frames.forEach((image, index) => {
       image.decoding = "async";
+      image.fetchPriority = "low";
       image.onload = () => {
         const region = dropTipGeometry(index);
         if (region) {
@@ -209,14 +223,14 @@ export function DropletJourney({ locale }: { locale: Locale }) {
       document.removeEventListener("visibilitychange", visibility);
       cancelAnimationFrame(frame);
     };
-  }, [reducedMotion]);
+  }, [reducedMotion, mediaReady]);
 
   return <section aria-labelledby={`${signatureId}-heading`} className={`journey store-journey${reducedMotion ? " is-still" : ""}`} ref={journeyRef}>
     <div className={`journey-stage${reducedMotion ? " is-still" : ""}`} ref={stageRef}>
       <div aria-hidden="true" className="journey-media">
-        <img alt="" className="journey-atmosphere" src="/media/hours-dawn.webp" />
-        {sceneImages.map((src, index) => <div className={`scene-photograph scene-photo-${index + 1}`} key={src}><img alt="" src={src} /></div>)}
-        <img alt="" className="journey-poster" src="/media/hong-kong-drop-mobile-poster.jpg" fetchPriority="high" />
+        <picture><source media="(max-width: 760px)" srcSet="/media/hours-dawn-960.webp" width="960" height="640" /><img alt="" className="journey-atmosphere" src="/media/hours-dawn-1536.webp" width="1536" height="1024" fetchPriority="high" /></picture>
+        {sceneImages.map((image, index) => <div className={`scene-photograph scene-photo-${index + 1}`} key={image.src}><img alt="" src={mediaReady && !reducedMotion ? image.src : undefined} srcSet={mediaReady && !reducedMotion ? image.srcSet : undefined} sizes={image.sizes} width={image.width} height={image.height} decoding="async" /></div>)}
+        <img alt="" className="journey-poster" src="/media/hong-kong-drop-mobile-poster.webp" width="720" height="1280" fetchPriority="high" />
         <div className="hero-ambient"><div className="hero-backlight" /></div>
         <canvas className="journey-canvas" ref={canvasRef} />
         <div className="journey-shade" />

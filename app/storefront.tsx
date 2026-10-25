@@ -18,7 +18,7 @@ export function Arrow() { return <svg aria-hidden="true" width="22" height="12" 
 export function StoreShell({ locale, onLocaleChange, children }: { locale: Locale; onLocaleChange: (locale: Locale) => void; children: ReactNode }) {
   const cart = useCart();
   const t = storeCopy[locale];
-  return <div className="storefront" id="top">
+  return <div className="storefront" id="top" lang={locale}>
     <a className="skip-link" href="#store-content">{t.skip}</a>
     <SiteHeader locale={locale} onLocaleChange={onLocaleChange} brand="yat" bagCount={cart.count} />
     {children}
@@ -32,12 +32,17 @@ export function StoreShell({ locale, onLocaleChange, children }: { locale: Local
 }
 
 // shortcut: AI still lifes interpret scent accords; retain the real package photograph as the delivery reference.
-export function ProductPhoto({ product, locale }: { product: Product; locale: Locale }) {
+// Matches the 3-column grid that stacks to 2 below 760px and 1 below 370px.
+export const CARD_SIZES = "(max-width: 370px) 100vw, (max-width: 760px) 50vw, 33vw";
+
+// `priority` marks above-the-fold photos: eager and fetched first. Everything else waits until scrolled near.
+export function ProductPhoto({ product, locale, priority = false, sizes = CARD_SIZES }: { product: Product; locale: Locale; priority?: boolean; sizes?: string }) {
   const alt = locale === "en" ? `AI scent still life for ${product.name}: ${product.copy.en.notes}` : locale === "zh-Hant" ? `${product.name} AI 香氣意象：${product.copy[locale].notes}` : `${product.name} AI 香气意象：${product.copy[locale].notes}`;
-  return <div className="store-product-photo"><img src={`/media/scents/${product.slug}.webp`} width="1120" height="1400" loading="lazy" alt={alt} /></div>;
+  const src = `/media/scents/${product.slug}`;
+  return <div className="store-product-photo"><img src={`${src}-800.webp`} srcSet={`${src}-480.webp 480w, ${src}-800.webp 800w, ${src}.webp 1024w`} sizes={sizes} width="1120" height="1400" loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : undefined} decoding={priority ? undefined : "async"} alt={alt} /></div>;
 }
 
-export function ProductCard({ product, locale }: { product: Product; locale: Locale }) {
+export function ProductCard({ product, locale, priority, sizes }: { product: Product; locale: Locale; priority?: boolean; sizes?: string }) {
   const t = storeCopy[locale];
   const cart = useCart();
   const [added, setAdded] = useState(false);
@@ -48,7 +53,7 @@ export function ProductCard({ product, locale }: { product: Product; locale: Loc
   }, [added]);
   const full = (cart.items.find((item) => item.slug === product.slug)?.quantity ?? 0) >= MAX_PER_SCENT || cart.count >= MAX_BAG_COUNT;
   return <article className="store-product-card">
-    <a href={`/shop/${product.slug}`} className="store-product-image-link" aria-label={`${t.view}: ${product.name}`}><ProductPhoto product={product} locale={locale} /></a>
+    <a href={`/shop/${product.slug}`} className="store-product-image-link" aria-label={`${t.view}: ${product.name}`}><ProductPhoto product={product} locale={locale} priority={priority} sizes={sizes} /></a>
     <div className="store-product-card-top"><h3><a href={`/shop/${product.slug}`}>{product.name}</a></h3><span className="store-product-card-price">{formatPrice(PRICE_CENTS)}</span></div>
     <p>{product.copy[locale].subtitle}</p>
     <button className="store-card-add" type="button" data-added={added || undefined} disabled={!cart.ready || full} aria-label={`${t.addTo}: ${product.name}`} onClick={() => { cart.add(product.slug, 1); setAdded(true); }}>
@@ -57,8 +62,8 @@ export function ProductCard({ product, locale }: { product: Product; locale: Loc
   </article>;
 }
 
-export function StoreHome() {
-  const [locale, setLocale] = useLocale();
+export function StoreHome({ initialLocale }: { initialLocale?: Locale }) {
+  const [locale, setLocale] = useLocale(initialLocale);
   const t = storeCopy[locale];
   return <StoreShell locale={locale} onLocaleChange={setLocale}>
     <main id="store-content">
@@ -67,7 +72,7 @@ export function StoreHome() {
         <ScentFinder locale={locale} />
       </section>
       <section className="store-gift" id="gift-box" aria-labelledby="gift-heading">
-        <figure><img src="/media/yat-official-gift-box.webp" width="896" height="1195" loading="lazy" alt={t.boxAlt} /></figure>
+        <figure className="store-photo-frame"><img src="/media/yat-official-gift-box.webp" width="896" height="1195" loading="lazy" decoding="async" alt={t.boxAlt} /></figure>
         <div className="store-gift-copy">
           <p className="store-gift-eyebrow">YAT.LIFESTYLE · {t.unisex}</p>
           <h2 id="gift-heading">{t.gift}</h2><p className="store-gift-description">{t.giftBody}</p>
@@ -76,7 +81,7 @@ export function StoreHome() {
           <p className="store-gift-delivery">{t.shipping}</p>
         </div>
       </section>
-      <section className="store-about" id="about"><div><h2>{t.about}</h2><p>{t.aboutBody}</p></div><div className="store-about-photos"><figure><img src="/media/yat-official-evening.webp" width="1206" height="1569" loading="lazy" alt={t.eveningAlt} /></figure><figure><img src="/media/yat-official-in-hand.webp" width="1600" height="2400" loading="lazy" alt={t.handAlt} /></figure></div></section>
+      <section className="store-about" id="about"><div><h2>{t.about}</h2><p>{t.aboutBody}</p></div><div className="store-about-photos"><figure className="store-photo-frame"><img src="/media/yat-official-evening.webp" width="1206" height="1570" loading="lazy" decoding="async" alt={t.eveningAlt} /></figure><figure className="store-photo-frame"><img src="/media/yat-official-in-hand-800.webp" srcSet="/media/yat-official-in-hand-800.webp 800w, /media/yat-official-in-hand.webp 1600w" sizes="(max-width: 760px) 40vw, 310px" width="1600" height="2400" loading="lazy" decoding="async" alt={t.handAlt} /></figure></div></section>
     </main>
   </StoreShell>;
 }

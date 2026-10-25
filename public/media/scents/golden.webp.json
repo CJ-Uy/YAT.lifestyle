@@ -1,4 +1,22 @@
 {
   "prompt": "Use case: product-mockup\nAsset type: individual fragrance photograph for the YAT.LIFESTYLE web shop, portrait 4:5.\nInput images: Image 1 is the authoritative reference for the real product's bottle geometry, glass, branding and cap finish. Image 2 is only a scale/dimension guide; use the slim rectangular/faceted bottle form seen in image 1, not the round bottle alternatives in image 2.\nSubject: one photorealistic YAT.LIFESTYLE 10 mL perfume spray bottle, upright, fully visible and centered. Tall narrow clear rectangular faceted glass, about 120–126 mm high and 17–18 mm wide: preserve the slender roughly 1:7 width-to-height proportion. Clear inner reservoir, believable transparent liquid and visible dip tube. Cylindrical cap occupies the upper quarter of the overall bottle. No broad square perfume bottle, no large atomizer bottle.\nComposition: full bottle occupies about 62% of frame height, centered horizontally; base near 81% frame height. Consistent camera height, natural product perspective, enough warm neutral negative space around the product. Supporting scent props remain beside or softly behind it, never cover the branding.\nStyle: realistic high-end studio still-life photography with authentic glass refractions, crisp product edges, natural textures, restrained dramatic directional lighting and visible shadows.\nBackground: warm ivory and taupe studio wall and matte tabletop, elegant tonal depth, legible in a light website catalogue. Do not use a pitch-black background.\nText: the exact brand text \"YAT.LIFESTYLE\" printed in dark slim sans-serif capitals vertically along the glass, reading bottom to top as in the actual reference. Spell Y A T . L I F E S T Y L E exactly. No additional text, no scent-name label, no logos added, no measurement annotations, no watermarks.\nTruth: staged scent-accord illustration, not a documentary ingredient photo. No packaging or gift box.\nFragrance: Golden, peach, pear and freesia. Cap finish: polished warm gold. Scene: one peach half with natural soft fuzz, a restrained slice of pear, and a few freesia blooms beside and softly behind the bottle. Warm peach and cream accents on ivory/taupe, dramatic directional sunlight-like studio light, authentic fruit texture without juice splashes or fantasy effects.\n",
-  "createdAt": "2026-10-11T17:32:27.618Z"
+  "createdAt": "2026-10-11T17:32:27.618Z",
+  "derivatives": [
+    {
+      "file": "golden-480.webp",
+      "width": 480,
+      "height": 600,
+      "bytes": 18060,
+      "method": "ffmpeg lanczos downscale of the golden.webp WebP, libwebp quality 78; framing and colour unchanged; responsive srcset size",
+      "createdAt": "2026-10-24"
+    },
+    {
+      "file": "golden-800.webp",
+      "width": 800,
+      "height": 1000,
+      "bytes": 37376,
+      "method": "ffmpeg lanczos downscale of the golden.webp WebP, libwebp quality 78; framing and colour unchanged; responsive srcset size",
+      "createdAt": "2026-10-24"
+    }
+  ]
 }
