@@ -71,6 +71,7 @@ html:has(.admin-shell), body:has(.admin-shell) { background: #f5f4f0; color-sche
 .admin-card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin: 1.5rem 0 .75rem; }
 .admin-card-head h3 { margin: 0; }
 .admin-form-actions { display: flex; flex-wrap: wrap; gap: .6rem; }
+.admin-form-actions.is-stretch > * { flex: 1 1 auto; }
 .admin-panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
 .admin-panel-head span { color: var(--muted); font-size: .8125rem; }
 .admin-primary, .admin-secondary, .admin-small { display: inline-flex; align-items: center; justify-content: center; gap: .45rem; min-height: 40px; padding: .5rem 1rem; border-radius: var(--radius-sm); font-size: .9375rem; font-weight: 550; text-decoration: none; white-space: nowrap; transition: background-color .15s, border-color .15s, color .15s; }
@@ -142,6 +143,8 @@ html:has(.admin-shell), body:has(.admin-shell) { background: #f5f4f0; color-sche
 .admin-form { display: grid; gap: 1rem; }
 .admin-form fieldset { display: grid; gap: 1rem; min-width: 0; margin: 0; padding: 0; border: 0; }
 .admin-form fieldset:disabled { opacity: .6; }
+.admin-form fieldset.is-locked:disabled { opacity: 1; }
+.admin-form .is-locked :is(input, select, textarea) { background: var(--bg); border-color: var(--line); color: var(--text); }
 .admin-form label, .onsite-start label, .onsite-close label { display: flex; flex-direction: column; gap: .35rem; color: var(--text); font-size: .875rem; font-weight: 550; }
 .admin-form :is(input:not([type="checkbox"]), select, textarea), .onsite-start input, .onsite-close input {
   width: 100%; min-width: 0; min-height: 42px; padding: .5rem .75rem; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--surface);

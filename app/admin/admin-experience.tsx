@@ -53,6 +53,7 @@ export default function AdminExperience() {
   const [vouchers, setVouchers] = useState<Voucher[] | null>(null), [voucherKind, setVoucherKind] = useState("percent"), [notes, setNotes] = useState<Notes | null>(null);
   const [draft, setDraft] = useState<Draft>({ status: "new", courier: "", trackingNumber: "", note: "", shippingCost: "" });
   const [detailsDraft, setDetailsDraft] = useState<DetailsDraft | null>(null);
+  const [editingFulfillment, setEditingFulfillment] = useState(false);
   const [emails, setEmails] = useState<InboxRow[] | null>(null), [email, setEmail] = useState<InboxEmail | null>(null);
   const [inboxPage, setInboxPage] = useState(1), [inboxHasMore, setInboxHasMore] = useState(false), [mailSettings, setMailSettings] = useState<MailSettings | null>(null);
   const [revision, setRevision] = useState(0);
@@ -116,19 +117,27 @@ export default function AdminExperience() {
   function openOrder(id: string) {
     void perform(async () => {
       const order = await loadOrder(id);
-      setDetailsDraft(null);
+      setDetailsDraft(null); setEditingFulfillment(false);
       setDraft({ status: order.fulfillment.status, courier: order.fulfillment.courier, trackingNumber: order.fulfillment.tracking_number, note: order.fulfillment.note, shippingCost: amount(order.fulfillment.shipping_cents) });
       requestAnimationFrame(() => document.getElementById("order-heading")?.scrollIntoView({ behavior: "smooth", block: "start" }));
     });
   }
   async function reloadOrder(id: string) { await loadOrder(id); setRevision((value) => value + 1); }
+  // A saved fulfillment stays read-only until Edit is pressed, so a stray click cannot change it.
+  const fulfillmentLocked = !!selected && selected.fulfillment.version > 0 && !editingFulfillment;
+  function cancelFulfillmentEdit() {
+    if (!selected) return;
+    const saved = selected.fulfillment;
+    setDraft({ status: saved.status, courier: saved.courier, trackingNumber: saved.tracking_number, note: saved.note, shippingCost: amount(saved.shipping_cents) });
+    setEditingFulfillment(false);
+  }
   function saveFulfillment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); if (!selected) return;
     const from = STAGES.indexOf(selected.fulfillment.status), to = STAGES.indexOf(draft.status);
     if (to < from && !window.confirm(`Move this order back from ${stageName[selected.fulfillment.status]} to ${stageName[draft.status]}? The change is kept in its history.`)) return;
     void perform(async () => {
       const saved = await request<{ shippedEmail: keyof typeof SHIPPED_EMAIL | null }>("fulfillment", { id: selected.id, version: selected.fulfillment.version, ...draft });
-      await reloadOrder(selected.id);
+      await reloadOrder(selected.id); setEditingFulfillment(false);
       setMessage(`Fulfillment saved.${saved.shippedEmail ? ` ${SHIPPED_EMAIL[saved.shippedEmail]}` : ""}`);
     });
   }
@@ -276,7 +285,7 @@ export default function AdminExperience() {
             <div className="admin-card">
               <h3>Fulfillment</h3>
               <form className="admin-form" onSubmit={saveFulfillment}>
-                <fieldset disabled={busy || selected.payment_status !== "paid" || selected.mode !== "prod"}>
+                <fieldset className={fulfillmentLocked ? "is-locked" : undefined} disabled={busy || fulfillmentLocked || selected.payment_status !== "paid" || selected.mode !== "prod"}>
                   <label>Stage<select value={draft.status} onChange={(event) => setDraft({ ...draft, status: event.target.value as Stage })}>{STAGES.map((stage, index) => <option key={stage} value={stage} disabled={index > STAGES.indexOf(selected.fulfillment.status) + 1}>{stageName[stage]}</option>)}</select></label>
                   <div className="admin-form-row">
                     <label>Courier<input value={draft.courier} maxLength={80} required={draft.status === "dispatched"} onChange={(event) => setDraft({ ...draft, courier: event.target.value })} /></label>
@@ -285,8 +294,10 @@ export default function AdminExperience() {
                   <label>Shipping cost you paid (HK$)<input className="admin-figure" value={draft.shippingCost} inputMode="decimal" pattern="\d{1,6}(\.\d{1,2})?" required={draft.status === "dispatched"} onChange={(event) => setDraft({ ...draft, shippingCost: event.target.value })} /><span className="admin-hint">Needed to dispatch. Money subtracts it from this order.</span></label>
                   <label>Private note<textarea value={draft.note} rows={3} maxLength={2000} onChange={(event) => setDraft({ ...draft, note: event.target.value })} /></label>
                   {draft.status === "dispatched" && selected.fulfillment.shipped_email_at === null && <p className="admin-alert is-info"><Icon name="mail" />Saving as Dispatched emails the customer their courier and tracking number.</p>}
-                  <button className="admin-primary">Save fulfillment</button>
+                  {!fulfillmentLocked && <div className="admin-form-actions is-stretch"><button className="admin-primary">Save fulfillment</button>
+                    {selected.fulfillment.version > 0 && <button type="button" className="admin-secondary" onClick={cancelFulfillmentEdit}>Cancel</button>}</div>}
                 </fieldset>
+                {fulfillmentLocked && <button type="button" className="admin-secondary" disabled={busy || selected.payment_status !== "paid" || selected.mode !== "prod"} onClick={() => setEditingFulfillment(true)}>Edit fulfillment</button>}
               </form>
               {selected.fulfillment.status === "dispatched" && <p className="admin-shipped-email">{selected.fulfillment.shipped_email_at !== null ? <><Icon name="check" size={16} />Shipped email sent {date(selected.fulfillment.shipped_email_at)}</> : "The shipped email has not been sent."}{" "}
                 <button type="button" className="admin-link" disabled={busy} onClick={() => void perform(async () => { await request("shipped-email", { id: selected.id }); await reloadOrder(selected.id); setMessage("Shipped email sent to the customer."); })}>{selected.fulfillment.shipped_email_at !== null ? "Resend" : "Send now"}</button></p>}
